@@ -194,22 +194,24 @@ class HtmlParser {
 
         }
 
-        fun parsegoogleurl(response: String): String?{
-            var m3u8Url: String?= ""
+        fun parsegoogleurl(response: String): ArrayList<String?>{
+            var m3u8Url:ArrayList<String?> = ArrayList()
             val document = Jsoup.parse(response)
+            var flag = false
             val info = document?.getElementsByClass("mirror_link")
             val pattern = Pattern.compile(C.M3U8_REGEX_PATTERN)
             val matcher = pattern.matcher(info.toString())
             return try{
                 while (matcher.find()){
-                  if (matcher.group(0)!!.contains("mp4")) {
-                       m3u8Url = matcher.group(0)
-//                        if( matcher.group(0)!!.contains("storage.googleapis.com"))
-//                        {
-//                            m3u8Url = matcher.group(0)?.replace("storage.googleapis.com","")
+                  if (matcher.group(0)!!.contains("google")) {
+                       m3u8Url.add(matcher.group(0))
+                      flag = true
                       }
+                    else if(!flag && matcher.group(0)!!.contains("gogo-cdn"))
+                  {
+                        m3u8Url.add(matcher.group(0))
+                  }
 
-                    break
                 }
                 m3u8Url
             } catch (npe:NullPointerException){

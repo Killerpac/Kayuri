@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.support.v4.media.session.MediaSessionCompat
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.source.hls.HlsDataSourceFactory
@@ -27,9 +29,7 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.HttpDataSource.InvalidResponseCodeException
 import kotlinx.android.synthetic.main.error_screen_video_player.view.*
 import kotlinx.android.synthetic.main.exo_player_custom_controls.*
@@ -47,6 +47,7 @@ import timber.log.Timber
 import java.io.IOException
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
+import java.util.regex.Pattern
 
 class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListener,
     AudioManager.OnAudioFocusChangeListener {
@@ -109,8 +110,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     private fun initializePlayer() {
         trackSelectionFactory = AdaptiveTrackSelection.Factory()
-        trackSelector = DefaultTrackSelector(trackSelectionFactory)
-        player = ExoPlayerFactory.newSimpleInstance(context, trackSelector)
+        trackSelector = DefaultTrackSelector(requireContext(),trackSelectionFactory)
+        player = ExoPlayerFactory.newSimpleInstance(requireContext(), trackSelector!!)
 
         val audioAttributes: AudioAttributes = AudioAttributes.Builder()
             .setUsage(C.USAGE_MEDIA)
@@ -120,7 +121,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         player.playWhenReady = true
         player.audioAttributes = audioAttributes
         player.addListener(this)
-        player.seekParameters = SeekParameters.CLOSEST_SYNC
+        player.setSeekParameters(SeekParameters.CLOSEST_SYNC)
         rootView.exoPlayerView.player = player
 
 
@@ -148,23 +149,28 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
         val sergeant = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"
         val lastPath = uri.lastPathSegment
-        val defaultDataSourceFactory = DefaultHttpDataSourceFactory(sergeant)
+        val defaultDataSourceFactory =  {
+            val dataSource:HttpDataSource = DefaultHttpDataSource(sergeant)
+            dataSource.setRequestProperty("Referer","https://goload.one/")
+            dataSource
+        }
 
         if(lastPath!!.contains("m3u8")){
             return HlsMediaSource.Factory(
                 HlsDataSourceFactory {
                     val dataSource: HttpDataSource =
                         DefaultHttpDataSource(sergeant)
-                    dataSource.setRequestProperty("Referer", "https://streamani.io/")
+                    dataSource.setRequestProperty("Referer", "https://goload.one/")
                     dataSource
                 })
                 .setAllowChunklessPreparation(true)
-                .createMediaSource(uri)
+                .createMediaSource(MediaItem.fromUri(uri))
         }else{
 //            val dashChunkSourceFactory = DefaultDashChunkSource.Factory(defaultDataSourceFactory)
 //            return ExtractorMediaSource.Factory(defaultDataSourceFactory)
 //                .createMediaSource(uri)
-            return ProgressiveMediaSource.Factory(defaultDataSourceFactory).createMediaSource(uri)
+            return ProgressiveMediaSource.Factory(defaultDataSourceFactory).createMediaSource(
+                MediaItem.fromUri(uri))
         }
 
     }
@@ -173,7 +179,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         Timber.e("Content Updated uRL: ${content.url}")
         this.content = content
         episodeName.text = content.episodeName
-        exoPlayerView.videoSurfaceView.visibility =View.GONE
+        exoPlayerView.videoSurfaceView?.visibility =View.GONE
 
         this.content.nextEpisodeUrl?.let {
             nextEpisode.visibility = View.VISIBLE
@@ -199,13 +205,35 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     }
 
     private fun loadVideo(seekTo: Long? = 0, playWhenReady: Boolean = true) {
+        val links:ArrayList<MediaSource> = ArrayList()
         showLoading(true)
         showErrorLayout(false, 0, 0)
-        val mediaSource = buildMediaSource(Uri.parse(videoUrl))
+        val mediaSource:MediaSource
+        if(videoUrl.startsWith("[") and videoUrl.endsWith("]"))
+        {
+            val pattern = Pattern.compile(net.sanic.Kayuri.utils.constants.C.M3U8_REGEX_PATTERN)
+            val matcher = pattern.matcher(videoUrl)
+            while(matcher.find())
+            {
+                links.add(buildMediaSource(Uri.parse(matcher.group(0))))
+            }
+
+            mediaSource = when(links.size){
+                1 -> MergingMediaSource(links[0])
+                2 -> MergingMediaSource(links[0],links[1])
+                3 -> MergingMediaSource(links[0],links[1],links[2])
+                4 -> MergingMediaSource(links[0],links[1],links[2],links[3])
+                else -> MergingMediaSource(links[0])
+            }
+        }
+        else{
+            mediaSource = buildMediaSource(Uri.parse(videoUrl))
+        }
         seekTo?.let {
             player.seekTo(it)
         }
-        player.prepare(mediaSource, false, false)
+        player.setMediaSource(mediaSource)
+        player.prepare()
         player.playWhenReady = playWhenReady
     }
 
@@ -240,7 +268,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         if (isFullScreen) {
             exoPlayerFrameLayout.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
             exoPlayerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-            player.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
+            player.videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT
             isFullScreen = false
             context?.let {
                 exo_full_Screen.setImageDrawable(
@@ -254,7 +282,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         } else {
             exoPlayerFrameLayout.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
             exoPlayerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
-            player.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+            player.videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
             isFullScreen = true
             context?.let {
                 exo_full_Screen.setImageDrawable(
@@ -350,9 +378,9 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
         try {
             TrackSelectionDialogBuilder(
-                context,
+                requireContext(),
                 getString(R.string.video_quality),
-                trackSelector,
+                trackSelector!!,
                 0
 
             ).build().show()
@@ -363,7 +391,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     // set playback speed for exoplayer
     private fun setPlaybackSpeed(speed: Float) {
         val params = PlaybackParameters(speed)
-        player.playbackParameters = params
+        player.setPlaybackParameters(params)
     }
 
     // set the speed, selectedItem and change the text
@@ -401,12 +429,12 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     }
 
     override fun onTracksChanged(
-        trackGroups: TrackGroupArray?,
-        trackSelections: TrackSelectionArray?
+        trackGroups: TrackGroupArray,
+        trackSelections: TrackSelectionArray
     ) {
         try {
 
-            val videoQuality = trackSelections!!.get(0)!!.selectedFormat!!.height.toString() + "p"
+            val videoQuality = trackSelections.get(0)!!.selectedFormat.height.toString() + "p"
             //TODO Change controls for quality
             exo_track_selection_view.text = videoQuality
         } catch (ignore: NullPointerException) {
@@ -414,7 +442,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     }
 
-    override fun onPlayerError(error: ExoPlaybackException?) {
+    override fun onPlayerError(error: ExoPlaybackException) {
         isVideoPlaying = false
         if (error!!.type === ExoPlaybackException.TYPE_SOURCE) {
             val cause: IOException = error!!.sourceException
@@ -435,6 +463,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                     Timber.e("Response Code $responseCode")
                     // message and headers.
                 } else {
+                    content.url = ""
                     showErrorLayout(
                         show = true,
                         errorMsgId = R.string.no_internet,
@@ -459,7 +488,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             showLoading(false)
         }
         if (playbackState == Player.STATE_READY) {
-            exoPlayerView.videoSurfaceView.visibility = View.VISIBLE
+            exoPlayerView.videoSurfaceView?.visibility = View.VISIBLE
         }
     }
 

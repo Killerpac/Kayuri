@@ -118,8 +118,8 @@ dependencies {
     implementation 'org.apmem.tools:layouts:1.10@aar'
 
     //Exo Player
-    implementation 'com.google.android.exoplayer:exoplayer:2.10.8'
-    implementation 'com.google.android.exoplayer:extension-mediasession:2.10.8'
+    implementation 'com.google.android.exoplayer:exoplayer:2.12.1'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.12.1'
 
     //Expandable TextView
     implementation 'com.ms-square:expandableTextView:0.1.4'

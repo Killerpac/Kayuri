@@ -92,15 +92,10 @@ class VideoPlayerViewModel : CommonViewModel() {
                     _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
                 } else if (type == C.TYPE_M3U8_URL) {
                     var m3u8Url:String? = ""
-                    if (PreferenceHelper.sharedPreference.getGoogleServer())
-                    {
-                        m3u8Url = HtmlParser.parsegoogleurl(response = response.string())
-                        Timber.e(m3u8Url)
-                    }
-                    else
-                    {
-                        m3u8Url = HtmlParser.parseM3U8Url(response = response.string())
-                        Timber.e(m3u8Url)
+                    m3u8Url = if (PreferenceHelper.sharedPreference.getGoogleServer()) {
+                        HtmlParser.parsegoogleurl(response = response.string()).toString()
+                    } else {
+                        HtmlParser.parseM3U8Url(response = response.string())
                     }
                     val content = _content.value
                     content?.url = m3u8Url
