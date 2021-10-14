@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:cardCornerRadius="20dp"
+    app:cardCornerRadius="15dp"
     app:cardBackgroundColor="@color/episode_background"
     android:clickable="true"
     android:id="@+id/cardView"
@@ -14,18 +14,19 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:background="@android:color/transparent">
+
         <ProgressBar
             android:id="@+id/watchedProgress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:progress="50"
-            android:scaleY="20"
             android:progressBackgroundTint="@android:color/transparent"
             android:progressTint="@color/episode_watched_progress"
+            android:scaleY="20"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,17 +36,27 @@
             android:id="@+id/episodeNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            tools:text="EP 127"
-            android:paddingTop="12dp"
-            android:textColor="@color/episode_text"
-            android:gravity="center"
-
             android:layout_marginBottom="10dp"
+            android:gravity="start"
+            android:paddingLeft="30dp"
+            android:paddingTop="12dp"
+
+            android:textColor="@color/episode_text"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="EP 127" />
+
+        <ImageButton
+            android:id="@+id/downloadbutton"
+            android:layout_width="48dp"
+            android:layout_height="51dp"
+            android:backgroundTint="@android:color/transparent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_download" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

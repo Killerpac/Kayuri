@@ -35,16 +35,6 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             return true
         }
 
-        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            //   gestureDetector.setIsLongpressEnabled(true)
-            //  onTouch(e)
-            return true}
-
-        override fun onUp(ev: MotionEvent?) {
-            (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
-            (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
-            (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
-        }
         fun getdisplayheight():Int
         {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
@@ -87,6 +77,25 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             }
         }
 
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            //   gestureDetector.setIsLongpressEnabled(true)
+            //  onTouch(e)
+            if((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
+            else ((context as VideoPlayerActivity).exoPlayerView.showController())
+            return true}
+
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+
+            return super.onDoubleTap(e)
+        }
+
+
+        override fun onUp(ev: MotionEvent?) {
+            (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
+            (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
+            (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
+        }
+
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             val height = getdisplayheight()
             val width = getdisplaywidth()
@@ -119,10 +128,10 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             else if (mode == 1) {
 
                 val audiomanager = (context as VideoPlayerActivity).getSystemService(Context.AUDIO_SERVICE)  as AudioManager
-                var currentVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value
 
                 val maxVolume = audiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) // Get the maximum volume of the system
-                currentVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value
+                var currentVolume: Int =
+                    audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value // Get the current value
                 if (abs(distanceY)> abs(distanceX)) {// Vertical movement is greater than horizontal movement
                     if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 1.0f)) {// Turn up the volume, pay attention to the coordinate system when the screen is horizontal, although the upper left corner is the origin, distanceY is positive when sliding up horizontally
                         if (currentVolume <maxVolume) {// To avoid too fast adjustment, distanceY should be greater than a set value
@@ -197,10 +206,6 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
             (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
             (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
-        }
-        else
-        {
-            (context as VideoPlayerActivity).exoPlayerView.hideController()
         }
         return gestureDetector.onTouchEvent(event)
     }

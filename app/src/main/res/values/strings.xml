@@ -7,8 +7,8 @@
     <string name="released">Released:</string>
     <string name="type">Type:</string>
     <string name="status">Status:</string>
-    <string name="next_episode"><u>Next Episode</u>&gt;</string>
-    <string name="previous_episode">&lt;<u>Previous Episode</u></string>
+    <string name="next_episode">Next Ep</string>
+    <string name="previous_episode">Prev Ep</string>
     <string name="back_button">Back Button</string>
     <string name="search">Search</string>
     <string name="something_went_wrong">Something Went Wrong</string>

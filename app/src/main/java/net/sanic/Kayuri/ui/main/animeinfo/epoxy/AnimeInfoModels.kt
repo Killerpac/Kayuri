@@ -1,6 +1,7 @@
 package net.sanic.Kayuri.ui.main.animeinfo.epoxy
 
 import android.view.View
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -27,6 +28,7 @@ abstract class EpisodeModel : EpoxyModelWithHolder<EpisodeModel.HomeHeaderHolder
         super.bind(holder)
         holder.episodeText.text = episodeModel.episodeNumber
         holder.cardView.setOnClickListener(clickListener)
+        holder.downloadbuton.setOnClickListener(clickListener)
         holder.progressBar.progress = if(watchedProgress >90) 100  else if(watchedProgress in 1..10) 10 else watchedProgress.toInt()
         holder.cardView.setCardBackgroundColor(ResourcesCompat.getColor(holder.cardView.resources, R.color.episode_background, null))
 
@@ -36,11 +38,13 @@ abstract class EpisodeModel : EpoxyModelWithHolder<EpisodeModel.HomeHeaderHolder
         lateinit var episodeText: TextView
         lateinit var cardView: CardView
         lateinit var progressBar: ProgressBar
+        lateinit var downloadbuton:ImageView
 
         override fun bindView(itemView: View) {
             episodeText = itemView.episodeNumber
             cardView = itemView.cardView
             progressBar = itemView.watchedProgress
+            downloadbuton = itemView.downloadbutton
         }
     }
 

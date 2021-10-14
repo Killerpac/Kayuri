@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.support.v4.media.session.MediaSessionCompat
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +28,8 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
-import com.google.android.exoplayer2.upstream.*
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource.InvalidResponseCodeException
 import kotlinx.android.synthetic.main.error_screen_video_player.view.*
 import kotlinx.android.synthetic.main.exo_player_custom_controls.*
@@ -56,7 +56,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     companion object {
         private val TAG = VideoPlayerFragment::class.java.simpleName
     }
-
+    private val requests = net.sanic.Kayuri.utils.constants.C
     private lateinit var videoUrl: String
     private lateinit var rootView: View
     private lateinit var player: SimpleExoPlayer
@@ -84,7 +84,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         rootView = inflater.inflate(R.layout.fragment_video_player, container, false)
         setClickListeners()
@@ -119,7 +119,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             .build()
 
         player.playWhenReady = true
-        player.audioAttributes = audioAttributes
+        player.setAudioAttributes(audioAttributes)
         player.addListener(this)
         player.setSeekParameters(SeekParameters.CLOSEST_SYNC)
         rootView.exoPlayerView.player = player
@@ -139,7 +139,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     private fun setOnTouchListeners(){
         if(PreferenceHelper.sharedPreference.getadvancecontrols()) {
-            rootView.scrollayout.setOnTouchListener(object : OnSwipeTouchListener(this.activity) {
+            rootView.exoPlayerView.setOnTouchListener(object : OnSwipeTouchListener(this.activity) {
                 override fun onSwipeLeft() {}
                 override fun onSwipeRight() {}
             })
@@ -147,11 +147,10 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
     }
     private fun buildMediaSource(uri: Uri): MediaSource {
 
-        val sergeant = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"
         val lastPath = uri.lastPathSegment
         val defaultDataSourceFactory =  {
-            val dataSource:HttpDataSource = DefaultHttpDataSource(sergeant)
-            dataSource.setRequestProperty("Referer","https://goload.one/")
+            val dataSource:HttpDataSource = DefaultHttpDataSource(requests.USER_AGENT)
+            dataSource.setRequestProperty("Referer",requests.REFERER)
             dataSource
         }
 
@@ -159,8 +158,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             return HlsMediaSource.Factory(
                 HlsDataSourceFactory {
                     val dataSource: HttpDataSource =
-                        DefaultHttpDataSource(sergeant)
-                    dataSource.setRequestProperty("Referer", "https://goload.one/")
+                        DefaultHttpDataSource(requests.USER_AGENT)
+                    dataSource.setRequestProperty("Referer",requests.REFERER)
                     dataSource
                 })
                 .setAllowChunklessPreparation(true)
@@ -266,7 +265,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     private fun toggleFullView() {
         if (isFullScreen) {
-            exoPlayerFrameLayout.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+            exoPlayerFrameLayout.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
             exoPlayerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
             player.videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT
             isFullScreen = false
@@ -444,8 +443,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     override fun onPlayerError(error: ExoPlaybackException) {
         isVideoPlaying = false
-        if (error!!.type === ExoPlaybackException.TYPE_SOURCE) {
-            val cause: IOException = error!!.sourceException
+        if (error.type === ExoPlaybackException.TYPE_SOURCE) {
+            val cause: IOException = error.sourceException
             if (cause is HttpDataSource.HttpDataSourceException) {
                 // An HTTP error occurred.
                 val httpError: HttpDataSource.HttpDataSourceException = cause

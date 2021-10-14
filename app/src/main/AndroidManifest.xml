@@ -4,7 +4,8 @@
     package="net.sanic.Kayuri">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 
     <application
@@ -16,8 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
-            android:name="net.sanic.Kayuri.SplashActivity"
+            android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,19 +28,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="net.sanic.Kayuri.MainActivity"
-            android:launchMode="singleTask"/>
+            android:name=".MainActivity"
+            android:launchMode="singleTask" />
         <activity
-            android:name="net.sanic.Kayuri.ui.main.player.VideoPlayerActivity"
-            android:screenOrientation="sensorLandscape"
-            android:theme="@style/VideoPlayer"
-            android:supportsPictureInPicture="true"
+            android:name=".ui.main.player.VideoPlayerActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTask"
-            android:configChanges=
-                "screenSize|smallestScreenSize|screenLayout|orientation"
+            android:screenOrientation="sensorLandscape"
+            android:supportsPictureInPicture="true"
+            android:theme="@style/VideoPlayer"
             tools:ignore="LockedOrientationActivity"
             tools:targetApi="n" />
-
     </application>
 
 </manifest>

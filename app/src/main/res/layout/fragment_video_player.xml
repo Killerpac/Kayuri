@@ -33,7 +33,9 @@
                 app:show_buffering="when_playing"
                 app:resize_mode="fit"
                 app:show_timeout="3000"
+                app:played_color="#ff8080"
                 app:scrubber_dragged_size="25dp"
+                app:scrubber_enabled_size="15dp"
                 app:controller_layout_id="@layout/exo_player_custom_controls"
                 app:rewind_increment="10000"
                 app:fastforward_increment="10000"/>
@@ -43,6 +45,7 @@
 
         <include layout="@layout/fragment_video_player_placeholder"/>
         <include layout="@layout/error_screen_video_player"/>
+
 
         <RelativeLayout
             android:id="@+id/root_layout"

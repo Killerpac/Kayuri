@@ -53,8 +53,8 @@ class C {
 
         //Network Requests Header
         const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36"
-        const val ORIGIN = "https://streamani.io"
-        const val  REFERER = "https://streamani.io"
+        const val ORIGIN = "https://goload.one/"
+        const val  REFERER = "https://goload.one/"
 
         //Realm
         const val MAX_TIME_M3U8_URL = 2 * 60 * 60 *1000
