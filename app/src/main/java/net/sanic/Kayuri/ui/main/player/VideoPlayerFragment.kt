@@ -222,7 +222,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 2 -> MergingMediaSource(links[0],links[1])
                 3 -> MergingMediaSource(links[0],links[1],links[2])
                 4 -> MergingMediaSource(links[0],links[1],links[2],links[3])
-                else -> MergingMediaSource(links[0])
+                else -> buildMediaSource(Uri.parse(videoUrl))
             }
         }
         else{

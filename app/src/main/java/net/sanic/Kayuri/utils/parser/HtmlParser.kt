@@ -185,7 +185,7 @@ class HtmlParser {
 //                            m3u8Url = matcher.group(0)?.replace("storage.googleapis.com","")
 //                        }
                      }
-                        break
+                    break
                 }
                 m3u8Url
             } catch (npe:NullPointerException){

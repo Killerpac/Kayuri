@@ -13,6 +13,7 @@ import android.os.Environment
 import android.view.View
 import androidx.core.app.ActivityCompat
 import com.airbnb.epoxy.TypedEpoxyController
+import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -36,6 +37,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
     private val episodeRepository = EpisodeRepository()
     private val READ_STORAGE_PERMISSION_REQUEST_CODE = 41
     private lateinit var isWatchedHelper: net.sanic.Kayuri.utils.helper.WatchedEpisode
+    private lateinit var load:AlertDialog
     override fun buildModels(data: ArrayList<EpisodeModel>?) {
         data?.forEach {
             EpisodeModel_()
@@ -51,6 +53,12 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                             }
                             else {
                                 downloadshit(model.episodeModel(), clickedView)
+                                   val shit = AlertDialog.Builder(clickedView.context,R.style.RoundedCornersDialog).apply {
+                                    setView(R.layout.load)
+                                    setCancelable(false)
+                                }
+                                load = shit.create()
+                                load.show()
                             }
                         }
                     }
@@ -100,7 +108,8 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                             4 -> quality = q4
                             else -> arrayOf("Highest quality")
                         }
-                        val dialog = AlertDialog.Builder(clickedView.context)
+                        load.dismiss()
+                       val dialog = AlertDialog.Builder(clickedView.context,R.style.RoundedCornersDialog)
                         dialog.apply {
                             setTitle("Choose Quality")
                             setSingleChoiceItems(quality, items) { _, which ->
@@ -142,6 +151,11 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                         }
                     } else if (type == C.TYPE_M3U8_URL) {
                         urls = HtmlParser.parsegoogleurl(response = response.string())
+                        if(urls.isNullOrEmpty())
+                        {
+                            load.dismiss()
+                            Snackbar.make(clickedView.rootView,"No Download Links Found Sorry!!",3000).show()
+                        }
                         Timber.e(urls.toString())
 
                     }
@@ -171,7 +185,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
             .setTitle("$animeName:${episodeModel.episodeNumber}")
             .setDescription("Downloading..")
             .addRequestHeader("Referer",C.REFERER)
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setAllowedOverMetered(true)
             .setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES,"$animeName/$animeName:${episodeModel.episodeNumber}.mp4")
         val manager = clickedView.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager

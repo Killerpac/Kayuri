@@ -158,6 +158,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/holder"
     app:layout_constraintBottom_toBottomOf="parent"
+    android:paddingBottom="5dp"
     android:gravity="center">
     <TextView
         android:id="@+id/previousEpisode"

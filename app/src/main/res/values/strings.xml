@@ -13,7 +13,7 @@
     <string name="search">Search</string>
     <string name="something_went_wrong">Something Went Wrong</string>
 
-    <string name="no_internet">No Internet Connection</string>
+    <string name="no_internet">No Internet or Links not found</string>
     <string name="favourite">Favourites</string>
     <string name="status_code_default">Something went Wrong</string>
     <string name="server_error">Server Error</string>
@@ -32,8 +32,8 @@
     <string name="switch_between_light_dark_theme"><![CDATA[Switch Between Light & Dark Theme]]></string>
     <string name="picture_in_picture">Picture in Picture</string>
     <string name="toggle_pip_mode">Toggle PIP Mode</string>
-    <string name="Google_Server">Google Server</string>
-    <string name="Toogle_Google_Server">1080p only! Faster Speeds</string>
+    <string name="Google_Server">Gogo-Cdn Servers</string>
+    <string name="Toogle_Google_Server">Backup Servers Might Be Faster!!</string>
     <string name="controlsname">Player Controls</string>
     <string name="controlstext">Slide Contols For Volume And Brightness in Player</string>
 
