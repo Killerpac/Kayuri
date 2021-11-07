@@ -28,6 +28,7 @@
  Therefore any heavy changes on this site might cause the
  app to stop working, But we will try our
  best to get this app running</string>
+    <string name="dlloaction" translatable="false">The Default Download location is In Movies Directory In Internal Storage</string>
     <string name="night_mode">Night Mode</string>
     <string name="switch_between_light_dark_theme"><![CDATA[Switch Between Light & Dark Theme]]></string>
     <string name="picture_in_picture">Picture in Picture</string>

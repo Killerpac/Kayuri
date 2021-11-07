@@ -122,6 +122,19 @@
                 app:layout_constraintTop_toBottomOf="@id/appName" />
 
             <TextView
+                android:id="@+id/dl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/dlloaction"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@id/largeDisc"
+                />
+
+
+            <TextView
                 android:id="@+id/largeDisc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -130,7 +143,8 @@
                 android:text="@string/large_disc"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@id/littleDisc" />
+                app:layout_constraintTop_toBottomOf="@id/littleDisc"
+                />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/nightModeContainer"
@@ -139,7 +153,7 @@
                 android:layout_marginTop="36dp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@id/largeDisc">
+                app:layout_constraintTop_toBottomOf="@id/dl">
 
                 <TextView
                     android:id="@+id/nightModeText"

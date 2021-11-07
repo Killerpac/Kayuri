@@ -110,11 +110,13 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
                 mode = 0
             } else {
                 if (mOldX > width * 3.0 / 5) { //Volume
+                    (context as VideoPlayerActivity).exoPlayerView.hideController()
                     (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.VISIBLE
                     (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
                     (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
                     mode = 1
                 } else if (mOldX < width * 2.0 / 5) { // Brightness
+                    (context as VideoPlayerActivity).exoPlayerView.hideController()
                     (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.VISIBLE
                     (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
                     (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
@@ -133,13 +135,13 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
                 var currentVolume: Int =
                     audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value // Get the current value
                 if (abs(distanceY)> abs(distanceX)) {// Vertical movement is greater than horizontal movement
-                    if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 1.0f)) {// Turn up the volume, pay attention to the coordinate system when the screen is horizontal, although the upper left corner is the origin, distanceY is positive when sliding up horizontally
+                    if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 2.0f)) {// Turn up the volume, pay attention to the coordinate system when the screen is horizontal, although the upper left corner is the origin, distanceY is positive when sliding up horizontally
                         if (currentVolume <maxVolume) {// To avoid too fast adjustment, distanceY should be greater than a set value
                             currentVolume++
 
                         }
                         //   gesture_iv_player_volume.setImageResource(R.drawable.player_volume);
-                    } else if (distanceY <= -DensityUtil.dip2px((context as VideoPlayerActivity), 1.0f)) {// Turn down the volume
+                    } else if (distanceY <= -DensityUtil.dip2px((context as VideoPlayerActivity), 2.0f)) {// Turn down the volume
                         if (currentVolume > 0) {
                             currentVolume--
 //                                                if (currentVolume == 0) {// Mute, set mute unique picture
@@ -159,12 +161,12 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
 
                 var mBrightness = (context as VideoPlayerActivity).window.attributes.screenBrightness
                 if (mBrightness <= 0.00f)
-                    mBrightness = 0.50f
+                    mBrightness = 0.01f
                 if (mBrightness < 0.01f)
                     mBrightness = 0.01f
 
                 val lpa = (context as VideoPlayerActivity).window.attributes
-                lpa.screenBrightness = mBrightness + (mOldY - y) / height
+                lpa.screenBrightness = mBrightness + (mOldY - y) / height * 0.1f
                 if (lpa.screenBrightness > 1.0f)
                     lpa.screenBrightness = 1.0f
                 else if (lpa.screenBrightness < 0.01f)

@@ -382,7 +382,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 trackSelector!!,
                 0
 
-            ).build().show()
+            ).setTheme(R.style.RoundedCornersDialog).build().show()
         } catch (ignored: java.lang.NullPointerException) {
         }
     }
@@ -402,7 +402,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     // show dialog to select the speed.
     private fun showDialogForSpeedSelection() {
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = AlertDialog.Builder(requireContext(),R.style.RoundedCornersDialog)
         builder.apply {
             setTitle("Set your playback speed")
             setSingleChoiceItems(showableSpeed, checkedItem) {_, which ->

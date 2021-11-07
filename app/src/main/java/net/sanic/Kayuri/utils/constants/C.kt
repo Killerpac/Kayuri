@@ -3,7 +3,7 @@ package net.sanic.Kayuri.utils.constants
 class C {
     companion object{
 
-        const val GIT_DOWNLOAD_URL = ""
+        const val GIT_DOWNLOAD_URL = "https://github.com/Killerpac/Kayuri"
 
         //Error Codes
         const val RESPONSE_UNKNOWN: Int = 1000
@@ -11,7 +11,7 @@ class C {
         const val NO_INTERNET_CONNECTION = 1001
 
         //Base URLS
-        var BASE_URL = "https://gogoanime.pe/"
+        var BASE_URL = "https://gogoanime.cm/"
         const val EPISODE_LOAD_URL = "https://ajax.gogocdn.net/ajax/load-list-episode"
         const val SEARCH_URL = "/search.html"
 
