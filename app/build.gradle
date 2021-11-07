@@ -9,15 +9,6 @@ apply plugin: 'realm-android'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-
-//    signingConfigs {
-//        release {
-//            storeFile file('E:\\Projects\\animexstream.jks')
-//            storePassword 'labrador1'
-//            keyAlias = 'xblacky'
-//            keyPassword 'labrador1'
-//        }
-//    }
     compileSdkVersion 30
     buildToolsVersion "29.0.2"
     compileOptions {
@@ -32,7 +23,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 8
-        versionName "1.2.0"
+        versionName "1.2.5"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "Kayuri-v$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
