@@ -56,5 +56,7 @@ Your ideas, translations, design changes, code cleaning, or real heavy code chan
 [Pull requests](https://github.com/Killerpac/Kayuri/pulls) will be reviewed
 
 #### Known issues and limitations
-- Last Episode Progress not showing when getting back from player.
 - Keyboard not showing sometimes for search
+
+### Credits
+Anime X Stream For The Heart Of the Code 
