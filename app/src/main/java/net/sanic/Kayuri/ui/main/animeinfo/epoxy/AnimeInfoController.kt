@@ -179,7 +179,6 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
     }
 
     fun downloadmanager(link:String,episodeModel: EpisodeModel,clickedView: View){
-
         val download:DownloadManager.Request = DownloadManager.Request(Uri.parse(link.replace("|","%")))
             .setTitle("$animeName:${episodeModel.episodeNumber}")
             .setDescription("Downloading..")
