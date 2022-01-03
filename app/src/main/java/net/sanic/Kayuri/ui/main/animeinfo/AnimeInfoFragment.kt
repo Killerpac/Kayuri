@@ -125,9 +125,7 @@ class AnimeInfoFragment : Fragment() {
                     p1: Int,
                     p2: Boolean,
                     p3: Float
-                ) {
-
-                }
+                ) {}
 
                 override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
                     rootView.topView.cardElevation = 0F

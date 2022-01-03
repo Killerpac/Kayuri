@@ -4,7 +4,8 @@
     package="net.sanic.Kayuri">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 
@@ -20,10 +21,10 @@
 
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -38,7 +39,7 @@
             android:supportsPictureInPicture="true"
             android:theme="@style/VideoPlayer"
             tools:ignore="LockedOrientationActivity"
-            tools:targetApi="n" />
+            tools:targetApi="n_mr1" />
     </application>
 
 </manifest>
