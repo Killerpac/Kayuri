@@ -45,11 +45,10 @@ class Settings : Fragment(), View.OnClickListener {
         rootView.pipRadioButton.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setPIPMode(isChecked)
         }
-        rootView.googletoogle.isChecked = sharesPreference.getGoogleServer()
-        rootView.googletoogle.setOnCheckedChangeListener { _, isChecked ->
-            sharesPreference.setGoogleServer(isChecked)
-        }
-
+//        rootView.googletoogle.isChecked = sharesPreference.getGoogleServer()
+//        rootView.googletoogle.setOnCheckedChangeListener { _, isChecked ->
+//            sharesPreference.setGoogleServer(isChecked)
+//        }
         rootView.toogleadvance.isChecked = sharesPreference.getadvancecontrols()
         rootView.toogleadvance.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setadvancecontrols(isChecked)

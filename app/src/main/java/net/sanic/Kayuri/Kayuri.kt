@@ -9,6 +9,7 @@ import timber.log.Timber
 class Kayuri : Application() {
 
     override fun onCreate() {
+
         super.onCreate()
         InitalizeRealm.initializeRealm(this)
         PreferenceHelper(context = this)

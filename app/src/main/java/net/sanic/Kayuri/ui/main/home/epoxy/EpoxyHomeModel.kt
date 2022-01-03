@@ -10,6 +10,7 @@ import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlinx.android.synthetic.main.recycler_anime_mini_header.view.*
 import kotlinx.android.synthetic.main.recycler_anime_popular.view.*
 import kotlinx.android.synthetic.main.recycler_anime_recent_sub_dub_2.view.*
@@ -32,7 +33,11 @@ abstract class AnimeSubDubModel2 : EpoxyModelWithHolder<AnimeSubDubModel2.SubDub
     lateinit var clickListener: View.OnClickListener
 
     override fun bind(holder: SubDubHolder) {
-        Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl).into(holder.animeImageView)
+        Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl).transition(
+            DrawableTransitionOptions.withCrossFade(100)).into(holder.animeImageView)
+        holder.animeImageView.scaleX = 0.9f
+        holder.animeImageView.scaleY = 0.9f
+        holder.animeImageView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start()
         holder.animeTitle.text = animeMetaModel.title
         holder.animeEpisode.text = animeMetaModel.episodeNumber
         holder.background.setOnClickListener(clickListener)

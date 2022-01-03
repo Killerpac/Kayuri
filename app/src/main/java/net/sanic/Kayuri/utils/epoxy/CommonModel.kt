@@ -24,7 +24,10 @@ abstract class AnimeCommonModel : EpoxyModelWithHolder<AnimeCommonModel.MovieHol
 
     override fun bind(holder: MovieHolder) {
         Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl).transition(
-            DrawableTransitionOptions.withCrossFade()).into(holder.animeImageView)
+            DrawableTransitionOptions.withCrossFade(100)).into(holder.animeImageView)
+        holder.animeImageView.scaleX = 0.9f
+        holder.animeImageView.scaleY = 0.9f
+        holder.animeImageView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start()
         holder.animeTitle.text = animeMetaModel.title
         animeMetaModel.releasedDate?.let {
             holder.releasedDate.text = it

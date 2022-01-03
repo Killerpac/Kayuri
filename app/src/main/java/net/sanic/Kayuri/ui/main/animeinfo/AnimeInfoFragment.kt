@@ -35,34 +35,38 @@ class AnimeInfoFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         rootView = inflater.inflate(R.layout.fragment_animeinfo, container, false)
+        return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModelFactory = AnimeInfoViewModelFactory(AnimeInfoFragmentArgs.fromBundle(requireArguments()).categoryUrl!!)
         viewModel = ViewModelProvider(this, viewModelFactory).get(AnimeInfoViewModel::class.java)
         setupRecyclerView()
         setObserver()
         transitionListener()
         setOnClickListeners()
-        return rootView
     }
 
 
 
     private fun setObserver() {
-        viewModel.animeInfoModel.observe(viewLifecycleOwner, Observer {
+        viewModel.animeInfoModel.observe(viewLifecycleOwner, {
             it?.let {
                 updateViews(it)
             }
         })
 
-        viewModel.episodeList.observe(viewLifecycleOwner, Observer {
+        viewModel.episodeList.observe(viewLifecycleOwner, {
             it?.let {
                 rootView.animeInfoRoot.visibility = View.VISIBLE
                 episodeController.setData(it)
             }
         })
 
-        viewModel.isLoading.observe(viewLifecycleOwner, Observer {
+        viewModel.isLoading.observe(viewLifecycleOwner, {
 
             if(it.isLoading){
                 rootView.loading.visibility = View.VISIBLE
@@ -73,7 +77,7 @@ class AnimeInfoFragment : Fragment() {
 
 
 
-        viewModel.isFavourite.observe(viewLifecycleOwner, Observer {
+        viewModel.isFavourite.observe(viewLifecycleOwner, {
             if(it){
                 favourite.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_favorite , null))
             }else{

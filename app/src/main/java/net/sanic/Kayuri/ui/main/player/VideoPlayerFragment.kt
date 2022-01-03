@@ -19,10 +19,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.MergingMediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.source.*
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
 import com.google.android.exoplayer2.source.hls.HlsDataSourceFactory
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.*
@@ -210,13 +208,15 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         val mediaSource:MediaSource
         if(videoUrl.startsWith("[") and videoUrl.endsWith("]"))
         {
+            Timber.e(videoUrl)
             val pattern = Pattern.compile(net.sanic.Kayuri.utils.constants.C.M3U8_REGEX_PATTERN)
             val matcher = pattern.matcher(videoUrl)
+            Timber.e(videoUrl)
             while(matcher.find())
             {
-                links.add(buildMediaSource(Uri.parse(matcher.group(0))))
+                links.add(buildMediaSource(Uri.parse(matcher.group(0)?.replace("|","%"))))
             }
-
+            Timber.e(links.toString())
             mediaSource = when(links.size){
                 1 -> MergingMediaSource(links[0])
                 2 -> MergingMediaSource(links[0],links[1])
@@ -382,7 +382,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
                 trackSelector!!,
                 0
 
-            ).build().show()
+            ).setTheme(R.style.RoundedCornersDialog).build().show()
         } catch (ignored: java.lang.NullPointerException) {
         }
     }
@@ -402,7 +402,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
 
     // show dialog to select the speed.
     private fun showDialogForSpeedSelection() {
-        val builder = AlertDialog.Builder(requireContext())
+        val builder = AlertDialog.Builder(requireContext(),R.style.RoundedCornersDialog)
         builder.apply {
             setTitle("Set your playback speed")
             setSingleChoiceItems(showableSpeed, checkedItem) {_, which ->

@@ -13,7 +13,6 @@ import android.os.Environment
 import android.view.View
 import androidx.core.app.ActivityCompat
 import com.airbnb.epoxy.TypedEpoxyController
-import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -181,7 +180,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
 
     fun downloadmanager(link:String,episodeModel: EpisodeModel,clickedView: View){
 
-        val download:DownloadManager.Request = DownloadManager.Request(Uri.parse(link))
+        val download:DownloadManager.Request = DownloadManager.Request(Uri.parse(link.replace("|","%")))
             .setTitle("$animeName:${episodeModel.episodeNumber}")
             .setDescription("Downloading..")
             .addRequestHeader("Referer",C.REFERER)

@@ -170,9 +170,22 @@ class HtmlParser {
             )
         }
 
+
+        fun parseencryptajax(response: String):String?{
+            Timber.e("Reached ajax")
+            val document=Jsoup.parse(response)
+            val value6 = document.getElementsByAttributeValue("data-name","ts").attr("data-value")
+            val value5 = document.getElementsByAttributeValue("name","crypto").attr("content")
+            Timber.e(value6.toString())
+            Timber.e(value5.toString())
+            return ""
+        }
+
         fun parseM3U8Url(response: String): String?{
+            Timber.e("Reached Here")
             var m3u8Url: String?= ""
             val document = Jsoup.parse(response)
+            Timber.e(document.toString())
             val info = document?.getElementsByClass("videocontent")
             val pattern = Pattern.compile(C.M3U8_REGEX_PATTERN)
             val matcher = pattern.matcher(info.toString())
@@ -203,8 +216,8 @@ class HtmlParser {
             val matcher = pattern.matcher(info.toString())
             return try{
                 while (matcher.find()){
-                  if (matcher.group(0)!!.contains("google")) {
-                       m3u8Url.add(matcher.group(0))
+                  if (matcher.group(0)!!.contains("vidstreamingcdn")) {
+                       m3u8Url.add(matcher.group(0)!!.replace(";","&").replace("%","|"))
                       flag = true
                       }
                     else if(!flag && matcher.group(0)!!.contains("gogo-cdn"))

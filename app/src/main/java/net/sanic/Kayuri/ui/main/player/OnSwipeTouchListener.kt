@@ -14,10 +14,7 @@ import kotlin.math.abs
 open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
     private var context: Context? = null
     init {
-
         context = c
-
-
         /** you can do multi if else statements for multi activity classes  */
     }
 
@@ -97,6 +94,7 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
         }
 
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+            if((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
             val height = getdisplayheight()
             val width = getdisplaywidth()
             val mOldX = e1.x
@@ -133,13 +131,13 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
                 var currentVolume: Int =
                     audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value // Get the current value
                 if (abs(distanceY)> abs(distanceX)) {// Vertical movement is greater than horizontal movement
-                    if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 1.0f)) {// Turn up the volume, pay attention to the coordinate system when the screen is horizontal, although the upper left corner is the origin, distanceY is positive when sliding up horizontally
+                    if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 2.0f)) {// Turn up the volume, pay attention to the coordinate system when the screen is horizontal, although the upper left corner is the origin, distanceY is positive when sliding up horizontally
                         if (currentVolume <maxVolume) {// To avoid too fast adjustment, distanceY should be greater than a set value
                             currentVolume++
 
                         }
                         //   gesture_iv_player_volume.setImageResource(R.drawable.player_volume);
-                    } else if (distanceY <= -DensityUtil.dip2px((context as VideoPlayerActivity), 1.0f)) {// Turn down the volume
+                    } else if (distanceY <= -DensityUtil.dip2px((context as VideoPlayerActivity), 2.0f)) {// Turn down the volume
                         if (currentVolume > 0) {
                             currentVolume--
 //                                                if (currentVolume == 0) {// Mute, set mute unique picture
@@ -164,7 +162,7 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
                     mBrightness = 0.01f
 
                 val lpa = (context as VideoPlayerActivity).window.attributes
-                lpa.screenBrightness = mBrightness + (mOldY - y) / height
+                lpa.screenBrightness = mBrightness + (mOldY - y) / height * 0.05f
                 if (lpa.screenBrightness > 1.0f)
                     lpa.screenBrightness = 1.0f
                 else if (lpa.screenBrightness < 0.01f)

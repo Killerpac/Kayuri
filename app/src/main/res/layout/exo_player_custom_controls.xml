@@ -35,7 +35,7 @@
         app:layout_constraintEnd_toStartOf="@id/exo_full_Screen"
         app:layout_constraintStart_toEndOf="@id/back"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Naruto Shippuden Episode 7fdhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhfhddddddddddddddddddddddddfhdddddddddd" />
+        tools:text="epaff" />
 
     <ImageButton
         android:id="@+id/exo_play"
@@ -51,19 +51,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <ImageButton-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/exo_rew"-->
-<!--        android:src="@drawable/exo_controls_rewind"-->
-<!--        android:padding="16dp"-->
-<!--        android:background="?selectableItemBackgroundBorderless"-->
-<!--        android:layout_marginEnd="20dp"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.2"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"/>-->
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/exo_rew"
+        android:src="@drawable/ic_media_seek_backward"
+        android:padding="16dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
     <ImageButton
@@ -82,19 +82,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.501" />
 
-<!--    <ImageButton-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/exo_ffwd"-->
-<!--        android:background="?selectableItemBackgroundBorderless"-->
-<!--        android:padding="16dp"-->
-<!--        android:layout_marginStart="20dp"-->
-<!--        android:src="@drawable/exo_controls_fastforward"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.8"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/exo_ffwd"
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="16dp"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/ic_media_seek_forward"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/exo_position"

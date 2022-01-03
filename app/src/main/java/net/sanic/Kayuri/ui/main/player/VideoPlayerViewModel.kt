@@ -16,7 +16,7 @@ class VideoPlayerViewModel : CommonViewModel() {
 
     private val episodeRepository = EpisodeRepository()
     private var compositeDisposable = CompositeDisposable()
-    private var _content = MutableLiveData<Content>(Content())
+    private var _content = MutableLiveData(Content())
     var liveContent: LiveData<Content> = _content
 
     init {
@@ -83,6 +83,7 @@ class VideoPlayerViewModel : CommonViewModel() {
                                             getEpisodeUrlObserver(C.TYPE_M3U8_URL)
                                         )
                                 )
+
                             }
                         }
                     val watchedEpisode =
@@ -95,7 +96,7 @@ class VideoPlayerViewModel : CommonViewModel() {
                     m3u8Url = if (PreferenceHelper.sharedPreference.getGoogleServer()) {
                         HtmlParser.parsegoogleurl(response = response.string()).toString()
                     } else {
-                        HtmlParser.parseM3U8Url(response = response.string())
+                        HtmlParser.parseencryptajax(response = response.string())
                     }
                     val content = _content.value
                     content?.url = m3u8Url

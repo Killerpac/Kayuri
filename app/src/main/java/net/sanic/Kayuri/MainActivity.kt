@@ -1,5 +1,6 @@
 package net.sanic.Kayuri
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -12,6 +13,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         toggleDayNight()
         setContentView(R.layout.main_activity)
+        if (!PreferenceHelper.sharedPreference.getGoogleServer())
+        {
+            PreferenceHelper.sharedPreference.setGoogleServer(true)
+        }
     }
 
 //    fun toggleDayNight() {

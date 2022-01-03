@@ -32,7 +32,8 @@
     <string name="switch_between_light_dark_theme"><![CDATA[Switch Between Light & Dark Theme]]></string>
     <string name="picture_in_picture">Picture in Picture</string>
     <string name="toggle_pip_mode">Toggle PIP Mode</string>
-    <string name="Google_Server">Gogo-Cdn Servers</string>
+    <string name="Google_Server">Gogo-cdn Servers</string>
+    <string name="dllocation" translatable="false">The Default Location For Download is Movies Folder in Internal Storage</string>
     <string name="Toogle_Google_Server">Backup Servers Might Be Faster!!</string>
     <string name="controlsname">Player Controls</string>
     <string name="controlstext">Slide Contols For Volume And Brightness in Player</string>

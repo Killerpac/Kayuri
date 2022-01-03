@@ -3,7 +3,7 @@ package net.sanic.Kayuri.utils.constants
 class C {
     companion object{
 
-        const val GIT_DOWNLOAD_URL = ""
+        const val GIT_DOWNLOAD_URL = "https://github.com/Killerpac/Kayuri"
 
         //Error Codes
         const val RESPONSE_UNKNOWN: Int = 1000
@@ -11,7 +11,7 @@ class C {
         const val NO_INTERNET_CONNECTION = 1001
 
         //Base URLS
-        var BASE_URL = "https://gogoanime.pe/"
+        var BASE_URL = "https://gogoanime.wiki/"
         const val EPISODE_LOAD_URL = "https://ajax.gogocdn.net/ajax/load-list-episode"
         const val SEARCH_URL = "/search.html"
 
@@ -45,16 +45,15 @@ class C {
         //Anime Info URL Type
         const val TYPE_ANIME_INFO = 1000
         const val TYPE_EPISODE_LIST = 1001
-        const val M3U8_REGEX_PATTERN = "(http|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?"
-        const val GOOGLE_SERVER_REGEX = "\"((?:(?:https?%3A%2F%2F)(?:www\\.)?(?:\\S+)%2F|(?:https?:\\/\\/)(?:www\\.)?(?:\\S+)\\/)(?:.*)?\\.(mp4|mkv|wmv|m4v|mov|avi|flv|webm|flac|mka|m4a|aac|ogg)(?=[^.]*\$))\"gm"
+        const val M3U8_REGEX_PATTERN = "(http|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@|?;^=%&:/~+#-]*[\\w;@?|^=%&/~+#-])?"
         //Anime Search Types
         const val TYPE_SEARCH_NEW = 2000
         const val TYPE_SEARCH_UPDATE = 2001
 
         //Network Requests Header
         const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36"
-        const val ORIGIN = "https://goload.one/"
-        const val  REFERER = "https://goload.one/"
+        const val ORIGIN = "https://gogoplay1.com/"
+        const val  REFERER = "https://gogoplay1.com/"
 
         //Realm
         const val MAX_TIME_M3U8_URL = 2 * 60 * 60 *1000

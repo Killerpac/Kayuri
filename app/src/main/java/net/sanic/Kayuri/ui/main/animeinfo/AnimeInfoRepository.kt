@@ -28,18 +28,6 @@ class AnimeInfoRepository {
             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun fetchEpisodeMediaUrl(url: String): Observable<ResponseBody> {
-        val mediaUrlService = retrofit.create(NetworkInterface.FetchEpisodeMediaUrl::class.java)
-        return mediaUrlService.get(Utils.getHeader(),url).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-    }
-
-    fun fetchGoogleUrl(url: String): Observable<ResponseBody> {
-        val m3u8urlService = retrofit.create(NetworkInterface.FetchGoogleUrl::class.java)
-        return m3u8urlService.get(Utils.getGoogle(),url).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-    }
-
     fun isFavourite(id: String): Boolean {
         val result = realm.where(FavouriteModel::class.java).equalTo("ID", id).findFirst()
         result?.let {

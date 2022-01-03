@@ -3,6 +3,7 @@ package net.sanic.Kayuri.ui.main.home
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,10 +31,8 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         rootView = inflater.inflate(R.layout.fragment_home, container, false)
-        setAdapter()
-        setClickListeners()
         return rootView
     }
 
@@ -41,6 +40,12 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         viewModelObserver()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setAdapter()
+        setClickListeners()
     }
     
 
