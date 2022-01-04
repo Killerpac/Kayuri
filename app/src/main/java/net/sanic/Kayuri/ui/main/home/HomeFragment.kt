@@ -1,5 +1,6 @@
 package net.sanic.Kayuri.ui.main.home
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,6 +13,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.javiersantos.appupdater.AppUpdater
+import com.github.javiersantos.appupdater.enums.Display
+import com.github.javiersantos.appupdater.enums.Duration
+import com.github.javiersantos.appupdater.enums.UpdateFrom
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import net.sanic.Kayuri.BuildConfig
 import net.sanic.Kayuri.R
@@ -33,19 +38,17 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         savedInstanceState: Bundle?
     ): View {
         rootView = inflater.inflate(R.layout.fragment_home, container, false)
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         return rootView
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        viewModelObserver()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
         setClickListeners()
+        viewModelObserver()
+        checkUpdate()
     }
     
 
@@ -126,7 +129,16 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         }
 
     }
-
+    private fun checkUpdate() {
+        AppUpdater(activity)
+            .setGitHubUserAndRepo("Killerpac","Kayuri")
+            .setUpdateFrom(UpdateFrom.GITHUB)
+            .setDisplay(Display.DIALOG)
+            .showAppUpdated(false)
+            .setCancelable(false)
+            .setDuration(Duration.NORMAL)
+            .start()
+    }
     private fun showDialog(whatsNew: String) {
         AlertDialog.Builder(requireContext()).setTitle("New Update Available")
             .setMessage("What's New ! \n$whatsNew")

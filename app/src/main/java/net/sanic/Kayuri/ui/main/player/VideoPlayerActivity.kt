@@ -34,10 +34,6 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         setContentView(R.layout.activity_video_player)
         viewModel = ViewModelProvider(this).get(VideoPlayerViewModel::class.java)
         getExtra(intent)
-//        (playerFragment as VideoPlayerFragment).updateContent(Content(
-//            url = url,
-//            episodeNumber = "153"
-//        ))
         setObserver()
         goFullScreen()
     }
@@ -184,7 +180,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     }
 
     private fun setObserver() {
-        viewModel.liveContent.observe(this, Observer {
+        viewModel.liveContent.observe(this, {
             this.content = it
             it?.let {
                 if (!it.url.isNullOrEmpty()) {
@@ -192,10 +188,10 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
                 }
             }
         })
-        viewModel.isLoading.observe(this, Observer {
+        viewModel.isLoading.observe(this, {
             (playerFragment as VideoPlayerFragment).showLoading(it.isLoading)
         })
-        viewModel.errorModel.observe(this, Observer {
+        viewModel.errorModel.observe(this, {
             (playerFragment as VideoPlayerFragment).showErrorLayout(
                 it.show,
                 it.errorMsgId,

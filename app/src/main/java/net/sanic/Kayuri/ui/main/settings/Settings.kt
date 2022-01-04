@@ -20,7 +20,7 @@ class Settings : Fragment(), View.OnClickListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         rootView = inflater.inflate(R.layout.fragment_settings, container, false)
         setOnClickListeners()
         return rootView
@@ -45,10 +45,10 @@ class Settings : Fragment(), View.OnClickListener {
         rootView.pipRadioButton.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setPIPMode(isChecked)
         }
-//        rootView.googletoogle.isChecked = sharesPreference.getGoogleServer()
-//        rootView.googletoogle.setOnCheckedChangeListener { _, isChecked ->
-//            sharesPreference.setGoogleServer(isChecked)
-//        }
+        rootView.googletoogle.isChecked = sharesPreference.getGoogleServer()
+        rootView.googletoogle.setOnCheckedChangeListener { _, isChecked ->
+            sharesPreference.setGoogleServer(isChecked)
+        }
         rootView.toogleadvance.isChecked = sharesPreference.getadvancecontrols()
         rootView.toogleadvance.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setadvancecontrols(isChecked)

@@ -13,15 +13,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         toggleDayNight()
         setContentView(R.layout.main_activity)
-        if (!PreferenceHelper.sharedPreference.getGoogleServer())
-        {
-            PreferenceHelper.sharedPreference.setGoogleServer(true)
-        }
     }
 
 
     fun toggleDayNight() {
-            if (PreferenceHelper.sharedPreference.getNightMode()) {
+            if (PreferenceHelper.sharedPreference.getNightMode() ) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
             } else {

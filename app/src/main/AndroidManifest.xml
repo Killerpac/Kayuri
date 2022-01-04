@@ -30,6 +30,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:immersive="true"
             android:launchMode="singleTask" />
         <activity
             android:name=".ui.main.player.VideoPlayerActivity"

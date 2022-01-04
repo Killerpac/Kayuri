@@ -40,8 +40,9 @@ class SearchFragment : Fragment(), View.OnClickListener,
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         rootView = inflater.inflate(R.layout.fragment_search, container, false)
+        viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
         setOnClickListeners()
         setAdapters()
         setRecyclerViewScroll()
@@ -50,9 +51,8 @@ class SearchFragment : Fragment(), View.OnClickListener,
         return rootView
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setObserver()
     }
 
@@ -102,7 +102,7 @@ class SearchFragment : Fragment(), View.OnClickListener,
     private fun setObserver() {
 
 
-        viewModel.loadingModel.observe(viewLifecycleOwner, Observer {
+        viewModel.loadingModel.observe(viewLifecycleOwner, {
             if (it.isListEmpty) {
                 if (it.loading == CommonViewModel2.Loading.LOADING) rootView.loading.visibility =
                     View.VISIBLE
@@ -195,10 +195,11 @@ class SearchFragment : Fragment(), View.OnClickListener,
 
     private fun showKeyBoard() {
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(activity?.currentFocus, 0)
+        imm.showSoftInput(rootView, 0)
     }
 
     override fun animeTitleClick(model: AnimeMetaModel) {
+        hideKeyBoard()
         findNavController().navigate(
             SearchFragmentDirections.actionSearchFragmentToAnimeInfoFragment(
                 categoryUrl = model.categoryUrl

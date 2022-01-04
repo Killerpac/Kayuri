@@ -214,9 +214,12 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
             Timber.e(videoUrl)
             while(matcher.find())
             {
-                links.add(buildMediaSource(Uri.parse(matcher.group(0)?.replace("|","%"))))
+                if (!matcher.group(0)!!.contains("gogo-cdn")){
+                links.add(buildMediaSource(Uri.parse(matcher.group(0)?.replace("|","%"))))}
+                else{
+                    links.add(buildMediaSource(Uri.parse(matcher.group(0))))
+                }
             }
-            Timber.e(links.toString())
             mediaSource = when(links.size){
                 1 -> MergingMediaSource(links[0])
                 2 -> MergingMediaSource(links[0],links[1])
@@ -228,11 +231,11 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         else{
             mediaSource = buildMediaSource(Uri.parse(videoUrl))
         }
+        player.setMediaSource(mediaSource)
+        player.prepare()
         seekTo?.let {
             player.seekTo(it)
         }
-        player.setMediaSource(mediaSource)
-        player.prepare()
         player.playWhenReady = playWhenReady
     }
 
@@ -614,7 +617,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.EventListen
         mediaSessionConnector.setPlayer(null)
     }
 
-     fun saveWatchedDuration() {
+    fun saveWatchedDuration() {
         if (::content.isInitialized) {
             val watchedDuration = player.currentPosition
             content.duration = player.duration

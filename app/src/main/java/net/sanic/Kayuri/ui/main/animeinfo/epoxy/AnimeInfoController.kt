@@ -121,7 +121,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                                 }
                             }
                             setPositiveButton("OK") { dialog, _ ->
-                                downloadmanager(urls[num]!!, episodeModel, clickedView)
+                                downloadmanager(urls[num]!!.replace("|","%"), episodeModel, clickedView)
                                 dialog.dismiss()
                             }
                             setNegativeButton("Cancel") { dialog, _ ->
@@ -155,13 +155,12 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                             load.dismiss()
                             Snackbar.make(clickedView.rootView,"No Download Links Found Sorry!!",3000).show()
                         }
-                        Timber.e(urls.toString())
 
                     }
                 }
 
                 override fun onError(e: Throwable) {
-                    TODO("Not yet implemented")
+                    Snackbar.make(clickedView.rootView,"An Unexpected Error Occurred.Please Try Again Later",3000).show()
                 }
 
             }
@@ -179,7 +178,8 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
     }
 
     fun downloadmanager(link:String,episodeModel: EpisodeModel,clickedView: View){
-        val download:DownloadManager.Request = DownloadManager.Request(Uri.parse(link.replace("|","%")))
+        Timber.e(link)
+        val download:DownloadManager.Request = DownloadManager.Request(Uri.parse(link))
             .setTitle("$animeName:${episodeModel.episodeNumber}")
             .setDescription("Downloading..")
             .addRequestHeader("Referer",C.REFERER)

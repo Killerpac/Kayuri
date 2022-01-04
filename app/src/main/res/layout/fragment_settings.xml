@@ -233,35 +233,35 @@
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
                 app:layout_constraintTop_toBottomOf="@id/pictureInPictureContainer">
 
-<!--                <TextView-->
-<!--                    android:id="@+id/googelservertext"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/Google_Server"-->
-<!--                    android:textColor="@color/favourite_header"-->
-<!--                    android:textSize="20sp"-->
-<!--                    app:layout_constraintEnd_toStartOf="@id/googletoogle"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+                <TextView
+                    android:id="@+id/googelservertext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Google_Server"
+                    android:textColor="@color/favourite_header"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toStartOf="@id/googletoogle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-<!--                <TextView-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:text="@string/Toogle_Google_Server"-->
-<!--                    android:textSize="12sp"-->
-<!--                    app:layout_constraintEnd_toStartOf="@id/googletoogle"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/googelservertext" />-->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Toogle_Google_Server"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/googletoogle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/googelservertext" />
 
-<!--                <androidx.appcompat.widget.SwitchCompat-->
-<!--                    android:id="@+id/googletoogle"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toEndOf="@id/googelservertext"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    tools:ignore="TouchTargetSizeCheck" />-->
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/googletoogle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/googelservertext"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="TouchTargetSizeCheck" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -272,7 +272,7 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@id/pictureInPictureContainer">
+                app:layout_constraintTop_toBottomOf="@id/google_server">
 
                 <TextView
                     android:id="@+id/controlstext"

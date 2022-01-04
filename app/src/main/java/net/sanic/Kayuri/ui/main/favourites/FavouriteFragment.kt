@@ -31,19 +31,18 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
          rootView = inflater.inflate(R.layout.fragment_favourite, container, false)
+        viewModel = ViewModelProvider(this).get(FavouriteViewModel::class.java)
         setAdapters()
         transitionListener()
         setClickListeners()
         return rootView
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(FavouriteViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setObserver()
-
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -59,16 +58,16 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
     }
 
     private fun setObserver(){
-        viewModel.favouriteList.observe(viewLifecycleOwner, Observer {
+        viewModel.favouriteList.observe(viewLifecycleOwner, {
             favouriteController.setData(it)
         })
     }
 
 
     private fun setAdapters(){
-        favouriteController.spanCount = Utils.calculateNoOfColumns(context!!, 150f)
+        favouriteController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
         rootView.recyclerView.apply {
-            layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(context!!, 150f))
+            layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))
             adapter = favouriteController.adapter
             (layoutManager as GridLayoutManager).spanSizeLookup = favouriteController.spanSizeLookup
         }

@@ -5,10 +5,13 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven {
+            url "https://jitpack.io"
+        }
         
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'com.android.tools.build:gradle:7.0.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31"
         classpath "io.realm:realm-gradle-plugin:6.0.2"
         def nav_version = "2.3.0-alpha04"
@@ -22,7 +25,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
+        maven {
+            url "https://jitpack.io"
+        }
+
     }
 }
 

@@ -3,10 +3,7 @@ package net.sanic.Kayuri.utils.rertofit
 import io.reactivex.Observable
 import net.sanic.Kayuri.utils.constants.C
 import okhttp3.ResponseBody
-import retrofit2.http.GET
-import retrofit2.http.HeaderMap
-import retrofit2.http.Query
-import retrofit2.http.Url
+import retrofit2.http.*
 
 class NetworkInterface {
 
@@ -73,6 +70,16 @@ class NetworkInterface {
             @Url url: String
         ): Observable<ResponseBody>
     }
+
+    interface  Fetch3u8preprocessor {
+        @GET
+        @Headers("X-Requested-With:XMLHttpRequest")
+        fun get(
+            @HeaderMap header: Map<String, String>,
+            @Url url: String
+        ): Observable<ResponseBody>
+    }
+
     interface FetchGoogleUrl {
         @GET
         fun get(
