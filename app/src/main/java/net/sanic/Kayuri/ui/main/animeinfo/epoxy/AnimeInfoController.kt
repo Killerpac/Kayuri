@@ -16,22 +16,21 @@ import com.airbnb.epoxy.TypedEpoxyController
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
+import io.realm.RealmList
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.ui.main.player.EpisodeRepository
 import net.sanic.Kayuri.ui.main.player.VideoPlayerActivity
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.EpisodeModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
+import net.sanic.Kayuri.utils.preference.PreferenceHelper
 import okhttp3.ResponseBody
 import timber.log.Timber
 
 
 class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
     var animeName: String = ""
-    val q4 = arrayOf("360p","480p","720p","1080p")
-    val q3 = arrayOf("360p","480p","720p")
-    val q2 = arrayOf("360p","480p")
-    val q1 = arrayOf("360p")
+    var quality:RealmList<String> = RealmList()
     private var compositeDisposable = CompositeDisposable()
     private val episodeRepository = EpisodeRepository()
     private val READ_STORAGE_PERMISSION_REQUEST_CODE = 41
@@ -93,35 +92,19 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
 
         fun getEpisodeUrlObserver(type: Int): DisposableObserver<ResponseBody> {
             return object : DisposableObserver<ResponseBody>() {
-                var urls:ArrayList<String?> = ArrayList()
+                var urls:RealmList<String> = RealmList()
                 override fun onComplete() {
-                    val items = 0
                     var num = 0
-                    var quality:Array<String> = arrayOf()
-                    // updateErrorModel(show = false, e = null, isListEmpty = false)
                     if (!urls.isNullOrEmpty()) {
-                        when(urls.size){
-                            1-> quality = q1
-                            2 -> quality = q2
-                            3 -> quality = q3
-                            4 -> quality = q4
-                            else -> arrayOf("Highest quality")
-                        }
                         load.dismiss()
                        val dialog = AlertDialog.Builder(clickedView.context,R.style.RoundedCornersDialog)
                         dialog.apply {
                             setTitle("Choose Quality")
-                            setSingleChoiceItems(quality, items) { _, which ->
-                                num = when (which) {
-                                    0 -> 0
-                                    1 -> 1
-                                    2 -> 2
-                                    3 -> 3
-                                    else -> 0
-                                }
+                            setSingleChoiceItems(quality.toTypedArray(), 0) { _, which ->
+                                num = which
                             }
                             setPositiveButton("OK") { dialog, _ ->
-                                downloadmanager(urls[num]!!.replace("|","%"), episodeModel, clickedView)
+                                urls[num]?.let { downloadmanager(it, episodeModel, clickedView) }
                                 dialog.dismiss()
                             }
                             setNegativeButton("Cancel") { dialog, _ ->
@@ -133,29 +116,33 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                     }
                 }
                 override fun onNext(response: ResponseBody) {
-                    if (type == C.TYPE_MEDIA_URL) {
-                        val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
-                        episodeInfo.vidcdnUrl?.let {
-                                compositeDisposable.add(
-                                    episodeRepository.fetchGoogleUrl(
-                                        episodeInfo.vidcdnUrl!!.replace(
-                                            "embedplus",
-                                            "download"
-                                        )
+                    when(type) {
+                        C.TYPE_MEDIA_URL -> {
+                            val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
+                            episodeInfo.vidcdnUrl?.let {
+                                    compositeDisposable.add(
+                                        episodeRepository.fetchM3u8Url(episodeInfo.vidcdnUrl!!)
+                                            .subscribeWith(
+                                                getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
+                                            )
                                     )
-                                        .subscribeWith(
-                                            getEpisodeUrlObserver(C.TYPE_M3U8_URL)
-                                        )
-                                )
+                            }
                         }
-                    } else if (type == C.TYPE_M3U8_URL) {
-                        urls = HtmlParser.parsegoogleurl(response = response.string())
-                        if(urls.isNullOrEmpty())
-                        {
-                            load.dismiss()
-                            Snackbar.make(clickedView.rootView,"No Download Links Found Sorry!!",3000).show()
-                        }
+                        C.TYPE_M3U8_URL -> {
+                            val m3u8Url: Pair<RealmList<String>,RealmList<String>> = HtmlParser.parseencrypturls(response = response.string())
+                            urls = m3u8Url.first
+                            quality = m3u8Url.second
 
+                        }
+                        C.TYPE_M3U8_PREP -> {
+                            val m3u8Pre = HtmlParser.parseencryptajax(response = response.string())
+                            compositeDisposable.add(
+                                episodeRepository.m3u8preprocessor("${C.REFERER}encrypt-ajax.php?${m3u8Pre}")
+                                    .subscribeWith(
+                                        getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                                    )
+                            )
+                        }
                     }
                 }
 
@@ -185,7 +172,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
             .addRequestHeader("Referer",C.REFERER)
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setAllowedOverMetered(true)
-            .setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES,"$animeName/$animeName:${episodeModel.episodeNumber}.mp4")
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES,"$animeName/${episodeModel.episodeNumber}.mp4")
         val manager = clickedView.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         manager.enqueue(download)
         Snackbar.make(clickedView.rootView,"Started Downloading ${episodeModel.episodeNumber} of $animeName",4000).show()

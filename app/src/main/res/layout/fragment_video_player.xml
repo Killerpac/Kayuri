@@ -36,9 +36,7 @@
                 app:played_color="#ff8080"
                 app:scrubber_dragged_size="25dp"
                 app:scrubber_enabled_size="15dp"
-                app:controller_layout_id="@layout/exo_player_custom_controls"
-                app:rewind_increment="10000"
-                app:fastforward_increment="10000"/>
+                app:controller_layout_id="@layout/exo_player_custom_controls" />
 
         </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 

@@ -1,9 +1,12 @@
 package net.sanic.Kayuri.utils.parser
 
 import android.os.Build
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.realm.RealmList
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.*
+import okhttp3.internal.http2.Http2Reader
 import org.apache.commons.lang3.RandomStringUtils
 import org.json.JSONObject
 import org.jsoup.Jsoup
@@ -18,6 +21,7 @@ import javax.crypto.spec.SecretKeySpec
 import kotlin.collections.ArrayList
 
 class HtmlParser {
+
 
     companion object {
 
@@ -214,27 +218,26 @@ class HtmlParser {
             return "id="+encrypted+"&time="+"00"+value2+"00"+value3.substring(value3.indexOf("&"))
         }
 
-        fun parseM3U8Url(response: String): String?{
-            var m3u8Url: String?= ""
-            val jsonapi = JSONObject(response).getString("source_bk")
-            val pattern = Pattern.compile(C.M3U8_REGEX_PATTERN)
-            val matcher = pattern.matcher(jsonapi.replace("""\""",""))
-            return try{
-                while (matcher.find()){
-                     if (matcher.group(0)!!.contains("m3u8") ||matcher.group(0)!!.contains("mp4")) {
-                         m3u8Url = matcher.group(0)
-                     }
-                    break
+        fun parseencrypturls(response: String): Pair<RealmList<String>,RealmList<String>>{
+            val urls:RealmList<String> = RealmList()
+            val qualities: RealmList<String> = RealmList()
+            var i = 0
+            val res =  JSONObject(response).getJSONArray("source")
+            return try {
+                while(i != res.length() && res.getJSONObject(i).getString("label") != "Auto") {
+                    urls.add(res.getJSONObject(i).getString("file"))
+                    qualities.add(
+                        res.getJSONObject(i).getString("label").lowercase(Locale.getDefault()).filterNot { it.isWhitespace() })
+                    i++
                 }
-                m3u8Url
-            } catch (npe:NullPointerException){
-                m3u8Url
+                Pair(urls,qualities)
+            }catch (exp:java.lang.NullPointerException) {
+                Pair(urls,qualities)
             }
-
         }
 
-        fun parsegoogleurl(response: String): ArrayList<String?>{
-            val m3u8Url:ArrayList<String?> = ArrayList()
+        fun parsegoogleurl(response: String): RealmList<String>{
+            val m3u8Url:RealmList<String> = RealmList()
             val document = Jsoup.parse(response)
             var flag = false
             val info = document?.getElementsByClass("mirror_link")
@@ -248,7 +251,7 @@ class HtmlParser {
                       }
                     else if(!flag && matcher.group(0)!!.contains("gogo-cdn"))
                   {
-                        m3u8Url.add(matcher.group(0))
+                        m3u8Url.add(matcher.group(0)!!.toString())
                   }
 
                 }

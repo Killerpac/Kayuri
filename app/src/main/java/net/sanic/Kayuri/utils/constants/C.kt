@@ -11,7 +11,7 @@ class C {
         const val NO_INTERNET_CONNECTION = 1001
 
         //Base URLS
-        var BASE_URL = "https://gogoanime.wiki/"
+        var BASE_URL = "https://gogoanime.film/"
         const val EPISODE_LOAD_URL = "https://ajax.gogocdn.net/ajax/load-list-episode"
         const val SEARCH_URL = "/search.html"
 
@@ -53,11 +53,11 @@ class C {
 
         //Network Requests Header
         const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36"
-        const val ORIGIN = "https://gogoplay1.com/"
-        const val  REFERER = "https://gogoplay1.com/"
+        const val ORIGIN = "https://gogoplay.io/"
+        const val  REFERER = "https://gogoplay.io/"
 
         //Realm
-        const val MAX_TIME_M3U8_URL = 2 * 60 * 60 *1000
+        const val MAX_TIME_M3U8_URL =  25 * 60 *1000
         const val MAX_TIME_FOR_ANIME = 2 * 24 * 60 *60 * 1000
     }
 }

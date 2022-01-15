@@ -1,12 +1,17 @@
 package net.sanic.Kayuri.utils.model
 
+import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 open class Content(
-    var url: String?="",
+    var url: RealmList<String> = RealmList(),
+    var quality: RealmList<String> = RealmList(),
+    var index:Int = 0,
     @Ignore
     var animeName: String = "",
     var episodeName: String?="",

@@ -14,6 +14,7 @@ import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_video_player.*
 import kotlinx.android.synthetic.main.fragment_video_player.*
 import net.sanic.Kayuri.R
@@ -73,7 +74,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
                 animeName = animeName ?: "",
                 episodeUrl = url,
                 episodeName = animeName!! + " (" + episodeNumber!! + ")",
-                url = ""
+                url = RealmList()
             )
         )
         viewModel.fetchEpisodeMediaUrl()
@@ -140,7 +141,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
                     this.enterPictureInPictureMode()
                 }
             } catch (ex: Exception) {
-                Timber.e(ex.message)
+                Timber.e(ex)
             }
 
         } else {
@@ -230,8 +231,10 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
             Content(
                 episodeUrl = content.nextEpisodeUrl,
                 episodeName = "$animeName (EP ${incrimentEpisodeNumber(content.episodeName!!)})",
-                url = "",
-                animeName = content.animeName
+                url = content.url,
+                animeName = content.animeName,
+                index = content.index,
+                quality = content.quality
             )
         )
         viewModel.fetchEpisodeMediaUrl()
@@ -244,8 +247,10 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
             Content(
                 episodeUrl = content.previousEpisodeUrl,
                 episodeName = "$animeName (EP ${decrimentEpisodeNumber(content.episodeName!!)})",
-                url = "",
-                animeName = content.animeName
+                url = content.url,
+                animeName = content.animeName,
+                index = content.index,
+                quality = content.quality
             )
         )
         viewModel.fetchEpisodeMediaUrl()
@@ -282,7 +287,6 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     }
 
     fun refreshM3u8Url() {
-
         viewModel.fetchEpisodeMediaUrl(fetchFromDb = false)
     }
 
