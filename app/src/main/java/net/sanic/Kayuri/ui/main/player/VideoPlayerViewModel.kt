@@ -75,7 +75,7 @@ class VideoPlayerViewModel : CommonViewModel() {
                                         episodeInfo.vidcdnUrl!!
                                     )
                                         .subscribeWith(
-                                            getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                                            getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
                                         )
                                 )
                             } else {
@@ -96,7 +96,7 @@ class VideoPlayerViewModel : CommonViewModel() {
                     C.TYPE_M3U8_URL -> {
                         val m3u8Url: Pair<RealmList<String>,RealmList<String>> =
                             if (PreferenceHelper.sharedPreference.getGoogleServer()) {
-                                HtmlParser.parseencrypturls(response = response.string())
+                                HtmlParser.parsegoogleurl(response = response.string())
                             } else {
                                 HtmlParser.parseencrypturls(response = response.string())
                             }

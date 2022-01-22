@@ -20,13 +20,14 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.MergingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
-import com.google.android.exoplayer2.trackselection.*
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.ExoTrackSelection
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
@@ -62,7 +63,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
 
-    private var mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? = null
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
     private lateinit var content: Content
@@ -71,11 +71,13 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     private lateinit var handler: Handler
     private var isFullScreen = false
     private var isVideoPlaying: Boolean = false
+    private var quality:RealmList<String> = RealmList()
 
     private val speeds = arrayOf(0.25f, 0.5f, 1f, 1.25f, 1.5f, 2f)
     private val showableSpeed = arrayOf("0.25x", "0.50x", "1x", "1.25x", "1.50x", "2x")
     private var checkedItem = 2
     private var selectedSpeed = 2
+    private var eandex = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -169,6 +171,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         Timber.e("Content Updated uRL: ${content.url}")
         this.content = content
         episodeName.text = content.episodeName
+        quality = content.quality
         exoPlayerView.videoSurfaceView?.visibility =View.GONE
 
         this.content.nextEpisodeUrl?.let {
@@ -194,15 +197,16 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         loadVideo(seekTo = content.watchedDuration, index = index )
     }
 
-    private fun loadVideo(seekTo: Long? = 0,index: Int = 0, playWhenReady: Boolean = true) {
+    private fun loadVideo(seekTo: Long? = 0,index: Int, playWhenReady: Boolean = true) {
         val links:ArrayList<MediaSource> = ArrayList()
         showLoading(true)
         showErrorLayout(false, 0, 0)
         videoUrl.forEach {
             links.add(buildMediaSource(Uri.parse(it)))
         }
-        player.setMediaSource(MergingMediaSource(*links.toTypedArray()))
+        player.setMediaSource(links[index])
         player.prepare()
+        eandex = index
         seekTo?.let {
             player.seekTo(it)
         }
@@ -278,17 +282,17 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
 
 
     private fun playNextEpisode() {
-        playOrPausePlayer(playWhenReady = false, loseAudioFocus = false)
         saveWatchedDuration()
+        playOrPausePlayer(playWhenReady = false, loseAudioFocus = false)
         showLoading(true)
         (activity as VideoPlayerListener).playNextEpisode()
 
     }
 
     private fun playPreviousEpisode() {
-        playOrPausePlayer(playWhenReady = false, loseAudioFocus = false)
-        showLoading(true)
         saveWatchedDuration()
+        playOrPausePlayer(playWhenReady =false, loseAudioFocus = false)
+        showLoading(true)
         (activity as VideoPlayerListener).playPreviousEpisode()
 
     }
@@ -345,25 +349,32 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     }
 
 
+
     private fun showDialog() {
-        mappedTrackInfo = trackSelector?.currentMappedTrackInfo
-        try {
-            TrackSelectionDialogBuilder(
-                requireContext(),
-                getString(R.string.video_quality),
-                trackSelector!!,
-                0,
-
-
-            ).setTheme(R.style.RoundedCornersDialog).build().show()
-        } catch (ignored: java.lang.NullPointerException) {
+        var i = 0
+        val build = AlertDialog.Builder(requireContext(),R.style.RoundedCornersDialog)
+        build.apply {
+            setTitle("Select Quality")
+            setSingleChoiceItems(quality.toTypedArray(),i) {_,which ->
+                    i = which
+                eandex = which
+            }
+            setPositiveButton("OK"){dialog,_ ->
+                loadVideo(player.currentPosition,i)
+                dialog.dismiss()
+            }
+            setNegativeButton("Cancel"){dialog,_ ->
+                dialog.dismiss()
+            }
         }
+        val dialog = build.create()
+        dialog.show()
     }
 
     // set playback speed for exoplayer
     private fun setPlaybackSpeed(speed: Float) {
         val params = PlaybackParameters(speed)
-        player.setPlaybackParameters(params)
+        player.playbackParameters = params
     }
 
     // set the speed, selectedItem and change the text
@@ -432,6 +443,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
                 Timber.e("Response Code $responseCode")
                 // message and headers.
             } else {
+                content.url = RealmList()
                 showErrorLayout(
                     show = true,
                     errorMsgId = R.string.no_internet,
@@ -587,6 +599,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
             val watchedDuration = player.currentPosition
             content.duration = player.duration
             content.watchedDuration = watchedDuration
+            content.index = eandex
             if (watchedDuration > 0) {
                 (activity as VideoPlayerListener).updateWatchedValue(content)
             }

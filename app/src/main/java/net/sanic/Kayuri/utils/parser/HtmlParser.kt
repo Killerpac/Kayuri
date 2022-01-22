@@ -13,6 +13,7 @@ import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import timber.log.Timber
 import java.net.URLDecoder
+import java.net.URLEncoder
 import java.util.*
 import java.util.regex.Pattern
 import javax.crypto.Cipher
@@ -236,28 +237,23 @@ class HtmlParser {
             }
         }
 
-        fun parsegoogleurl(response: String): RealmList<String>{
-            val m3u8Url:RealmList<String> = RealmList()
-            val document = Jsoup.parse(response)
-            var flag = false
-            val info = document?.getElementsByClass("mirror_link")
-            val pattern = Pattern.compile(C.M3U8_REGEX_PATTERN)
-            val matcher = pattern.matcher(info.toString())
-            return try{
-                while (matcher.find()){
-                  if (matcher.group(0)!!.contains("vidstreamingcdn")) {
-                       m3u8Url.add(matcher.group(0)!!.replace(";","&").replace("%","|"))
-                      flag = true
-                      }
-                    else if(!flag && matcher.group(0)!!.contains("gogo-cdn"))
-                  {
-                        m3u8Url.add(matcher.group(0)!!.toString())
-                  }
-
+        fun parsegoogleurl(response: String): Pair<RealmList<String>,RealmList<String>>{
+            val urls:RealmList<String> = RealmList()
+            val qualities: RealmList<String> = RealmList()
+            var i = 0
+            val res =  JSONObject(response).getJSONArray("source_bk")
+            return try {
+                while(i != res.length() && res.getJSONObject(i).getString("label") != "Auto") {
+                    urls.add(URLDecoder.decode(res.getJSONObject(i).getString("file"),Charsets.UTF_8.name()))
+                    Timber.e(res.getJSONObject(i).getString("file"))
+                    qualities.add(
+                        res.getJSONObject(i).getString("label").lowercase(Locale.getDefault()).filterNot { it.isWhitespace() })
+                    if(res.getJSONObject(i).getString("type") == "hls") break
+                    i++
                 }
-                m3u8Url
-            } catch (npe:NullPointerException){
-                m3u8Url
+                Pair(urls,qualities)
+            }catch (exp:java.lang.NullPointerException) {
+                Pair(urls,qualities)
             }
 
         }

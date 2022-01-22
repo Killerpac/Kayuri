@@ -33,9 +33,12 @@
                 app:show_buffering="when_playing"
                 app:resize_mode="fit"
                 app:show_timeout="3000"
-                app:played_color="#ff8080"
-                app:scrubber_dragged_size="25dp"
+                app:played_color="#19fbff"
+                app:scrubber_dragged_size="18dp"
                 app:scrubber_enabled_size="15dp"
+                app:auto_show="true"
+                app:hide_on_touch="true"
+                app:bar_height="5px"
                 app:controller_layout_id="@layout/exo_player_custom_controls" />
 
         </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>

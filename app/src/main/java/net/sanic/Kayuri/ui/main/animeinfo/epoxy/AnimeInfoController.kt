@@ -147,6 +147,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                 }
 
                 override fun onError(e: Throwable) {
+                    load.dismiss()
                     Snackbar.make(clickedView.rootView,"An Unexpected Error Occurred.Please Try Again Later",3000).show()
                 }
 
@@ -190,7 +191,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
     fun requestPermissionForReadExtertalStorage(clickedView: View) {
         try {
             ActivityCompat.requestPermissions(
-                (clickedView.context as Activity?)!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                (clickedView.context as Activity?)!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 READ_STORAGE_PERMISSION_REQUEST_CODE
             )
         } catch (e: Exception) {

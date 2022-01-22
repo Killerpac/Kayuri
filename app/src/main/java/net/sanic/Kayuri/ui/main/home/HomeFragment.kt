@@ -17,9 +17,9 @@ import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.Display
 import com.github.javiersantos.appupdater.enums.Duration
 import com.github.javiersantos.appupdater.enums.UpdateFrom
-import kotlinx.android.synthetic.main.fragment_home.view.*
 import net.sanic.Kayuri.BuildConfig
 import net.sanic.Kayuri.R
+import net.sanic.Kayuri.databinding.FragmentHomeBinding
 import net.sanic.Kayuri.ui.main.home.epoxy.HomeController
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
@@ -28,18 +28,20 @@ import timber.log.Timber
 class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapterCallbacks {
 
 
-    private lateinit var rootView: View
-    private lateinit var homeController: HomeController
+    private val homeController by lazy {
+        HomeController(this)
+    }
     private var doubleClickLastTime = 0L
+    private lateinit var homebind: FragmentHomeBinding
     private lateinit var viewModel: HomeViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        rootView = inflater.inflate(R.layout.fragment_home, container, false)
+        homebind = FragmentHomeBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        return rootView
+        return homebind.root
     }
 
 
@@ -53,10 +55,8 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
     
 
     private fun setAdapter() {
-        homeController = HomeController(this)
-
-        homeController.isDebugLoggingEnabled = true
-        val homeRecyclerView = rootView.recyclerView
+       // homeController.isDebugLoggingEnabled = true
+        val homeRecyclerView = homebind.recyclerView
         homeRecyclerView.layoutManager = LinearLayoutManager(context)
         homeRecyclerView.adapter = homeController.adapter
     }
@@ -66,12 +66,12 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
             homeController.setData(it)
         })
 
-        viewModel.updateModel.observe(viewLifecycleOwner, {
-            Timber.e(it.whatsNew)
-            if (it.versionCode > BuildConfig.VERSION_CODE) {
-                showDialog(it.whatsNew)
-            }
-        })
+//        viewModel.updateModel.observe(viewLifecycleOwner, {
+//            Timber.e(it.whatsNew)
+//            if (it.versionCode > BuildConfig.VERSION_CODE) {
+//                showDialog(it.whatsNew)
+//            }
+//        })
     }
 
     private fun setTransitionListener() {
@@ -79,17 +79,17 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
     }
 
         private fun setClickListeners() {
-        rootView.header.setOnClickListener(this)
-        rootView.search.setOnClickListener(this)
-        rootView.favorite.setOnClickListener(this)
-        rootView.settings.setOnClickListener(this)
+        homebind.header.setOnClickListener(this)
+        homebind.search.setOnClickListener(this)
+        homebind.favorite.setOnClickListener(this)
+        homebind.settings.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.header -> {
                 doubleClickLastTime = if (System.currentTimeMillis() - doubleClickLastTime < 300) {
-                    rootView.recyclerView.smoothScrollToPosition(0)
+                    homebind.recyclerView.smoothScrollToPosition(0)
                     0L
                 } else {
                     System.currentTimeMillis()
@@ -130,7 +130,8 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
     }
     private fun checkUpdate() {
-        AppUpdater(activity)
+        AppUpdater(context)
+            .setDisplay(Display.DIALOG)
             .setGitHubUserAndRepo("Killerpac","Kayuri")
             .setUpdateFrom(UpdateFrom.GITHUB)
             .setDisplay(Display.DIALOG)
@@ -139,18 +140,18 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
             .setDuration(Duration.NORMAL)
             .start()
     }
-    private fun showDialog(whatsNew: String) {
-        AlertDialog.Builder(requireContext()).setTitle("New Update Available")
-            .setMessage("What's New ! \n$whatsNew")
-            .setCancelable(false)
-            .setPositiveButton("Update") { _, _ ->
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(C.GIT_DOWNLOAD_URL)
-                startActivity(i)
-            }
-            .setNegativeButton("Not now") { dialog, _ ->
-                dialog.cancel()
-            }.show()
-    }
+//    private fun showDialog(whatsNew: String) {
+//        AlertDialog.Builder(requireContext()).setTitle("New Update Available")
+//            .setMessage("What's New ! \n$whatsNew")
+//            .setCancelable(false)
+//            .setPositiveButton("Update") { _, _ ->
+//                val i = Intent(Intent.ACTION_VIEW)
+//                i.data = Uri.parse(C.GIT_DOWNLOAD_URL)
+//                startActivity(i)
+//            }
+//            .setNegativeButton("Not now") { dialog, _ ->
+//                dialog.cancel()
+//            }.show()
+//    }
 
 }

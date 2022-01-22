@@ -10,8 +10,8 @@ import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
-import kotlinx.android.synthetic.main.recycler_episode_item.view.*
 import net.sanic.Kayuri.R
+import net.sanic.Kayuri.databinding.RecyclerEpisodeItemBinding
 
 @EpoxyModelClass(layout = R.layout.recycler_episode_item)
 abstract class EpisodeModel : EpoxyModelWithHolder<EpisodeModel.HomeHeaderHolder>(){
@@ -22,6 +22,8 @@ abstract class EpisodeModel : EpoxyModelWithHolder<EpisodeModel.HomeHeaderHolder
     lateinit var clickListener: View.OnClickListener
     @EpoxyAttribute
     var watchedProgress: Long = 0
+
+
 
 
     override fun bind(holder: HomeHeaderHolder) {
@@ -35,16 +37,18 @@ abstract class EpisodeModel : EpoxyModelWithHolder<EpisodeModel.HomeHeaderHolder
     }
 
     class HomeHeaderHolder : EpoxyHolder(){
+        private lateinit var episodeItemBinding: RecyclerEpisodeItemBinding
         lateinit var episodeText: TextView
         lateinit var cardView: CardView
         lateinit var progressBar: ProgressBar
         lateinit var downloadbuton:ImageView
 
         override fun bindView(itemView: View) {
-            episodeText = itemView.episodeNumber
-            cardView = itemView.cardView
-            progressBar = itemView.watchedProgress
-            downloadbuton = itemView.downloadbutton
+            episodeItemBinding = RecyclerEpisodeItemBinding.bind(itemView)
+            episodeText =   episodeItemBinding.episodeNumber
+            cardView = episodeItemBinding.cardView
+            progressBar = episodeItemBinding.watchedProgress
+            downloadbuton = episodeItemBinding.downloadbutton
         }
     }
 
