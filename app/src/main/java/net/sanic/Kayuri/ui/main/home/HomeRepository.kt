@@ -45,13 +45,6 @@ class HomeRepository {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun fetchGenres(): Observable<ResponseBody> {
-        val fetchGenresService =
-            retrofit.create(NetworkInterface.FetchGenres::class.java)
-        return fetchGenresService.get(Utils.getHeader()).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-    }
-
     fun addDataInRealm(animeList: ArrayList<AnimeMetaModel>) {
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
 
@@ -88,33 +81,6 @@ class HomeRepository {
         } catch (ignored: Exception) {
         }
         return list
-    }
-
-    fun fetchGenreFromRealm(typeValue: Int): ArrayList<GenreModel> {
-        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
-        val list: ArrayList<GenreModel> = ArrayList()
-        try {
-            val results =
-                realm.where(GenreModel::class.java)?.equalTo("typeValue", typeValue)?.sort("insertionOrder", Sort.ASCENDING)?.findAll()
-            results?.let {
-                list.addAll(it)
-            }
-
-
-        } catch (ignored: Exception) {
-        }
-        return list
-    }
-
-    fun addGenreInRealm(genreList: ArrayList<GenreModel>) {
-        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
-
-        try {
-            realm.executeTransaction { realm1: Realm ->
-                realm1.insertOrUpdate(genreList)
-            }
-        } catch (ignored: Exception) {
-        }
     }
 
 }
