@@ -121,7 +121,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
     }
 
     override fun tagClick(model: AnimeMetaModel, genreName: String) {
-        if (model.genreList.isNullOrEmpty()) {
+        if (!model.genreList.isNullOrEmpty()) {
             var genre = model.genreList!!.find { it.genreName == genreName }
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToGenreFragment(
