@@ -3,7 +3,6 @@
 
     <item
         android:drawable="@color/app_background"/>
-
     <item>
         <bitmap
             android:gravity="center"

@@ -1,14 +1,28 @@
 package net.sanic.Kayuri.utils.parser
 
+import android.os.Build
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.realm.RealmList
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.*
+import okhttp3.internal.http2.Http2Reader
+import org.apache.commons.lang3.RandomStringUtils
+import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import timber.log.Timber
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.util.*
 import java.util.regex.Pattern
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
+import kotlin.collections.ArrayList
 
 class HtmlParser {
+
 
     companion object {
 
@@ -88,7 +102,6 @@ class HtmlParser {
         fun parseMovie(response: String, typeValue: Int) : ArrayList<AnimeMetaModel>{
             val animeMetaModelList: ArrayList<AnimeMetaModel> = ArrayList()
             val document = Jsoup.parse(response)
-            Timber.e("LOGCAT "+ response)
             val lists = document?.getElementsByClass("items")?.first()?.select("li")
             var i = 0
             lists?.forEach {
@@ -156,7 +169,7 @@ class HtmlParser {
         }
 
         fun parseMediaUrl(response: String): EpisodeInfo{
-            var mediaUrl: String?
+            val mediaUrl: String?
             val document = Jsoup.parse(response)
             val info = document?.getElementsByClass("vidcdn")?.first()?.select("a")
             mediaUrl = info?.attr("data-video").toString()
@@ -170,50 +183,77 @@ class HtmlParser {
             )
         }
 
-        fun parseM3U8Url(response: String): String?{
-            var m3u8Url: String?= ""
-            val document = Jsoup.parse(response)
-            val info = document?.getElementsByClass("videocontent")
-            val pattern = Pattern.compile(C.M3U8_REGEX_PATTERN)
-            val matcher = pattern.matcher(info.toString())
-            return try{
-                while (matcher.find()){
-                     if (matcher.group(0)!!.contains("m3u8") || matcher.group(0)!!.contains("mp4")) {
-                         m3u8Url = matcher.group(0)
-//                        if( matcher.group(0)!!.contains("storage.googleapis.com"))
-//                        {
-//                            m3u8Url = matcher.group(0)?.replace("storage.googleapis.com","")
-//                        }
-                     }
-                        break
-                }
-                m3u8Url
-            } catch (npe:NullPointerException){
-                m3u8Url
+        private fun decryptAES(encrypted: String, key: String, iv: String): String {
+            val ix = IvParameterSpec(iv.toByteArray())
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            val secretKey = SecretKeySpec(key.toByteArray(Charsets.UTF_8), "AES")
+            cipher.init(Cipher.DECRYPT_MODE, secretKey,ix)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                String(cipher.doFinal(Base64.getDecoder().decode(encrypted)))
+            } else {
+                String(cipher.doFinal(android.util.Base64.decode(encrypted,android.util.Base64.DEFAULT)))
             }
-
         }
 
-        fun parsegoogleurl(response: String): String?{
-            var m3u8Url: String?= ""
-            val document = Jsoup.parse(response)
-            val info = document?.getElementsByClass("mirror_link")
-            val pattern = Pattern.compile(C.M3U8_REGEX_PATTERN)
-            val matcher = pattern.matcher(info.toString())
-            return try{
-                while (matcher.find()){
-                  if (matcher.group(0)!!.contains("mp4")) {
-                       m3u8Url = matcher.group(0)
-//                        if( matcher.group(0)!!.contains("storage.googleapis.com"))
-//                        {
-//                            m3u8Url = matcher.group(0)?.replace("storage.googleapis.com","")
-                      }
+        private fun encryptAes(text: String, key: String,iv: String): String {
+            val ix = IvParameterSpec(iv.toByteArray())
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            val secretKey = SecretKeySpec(key.toByteArray(), "AES")
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey,ix)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Base64.getEncoder().encodeToString(cipher.doFinal(text.toByteArray()))
+            } else {
+                android.util.Base64.encodeToString(cipher.doFinal(text.toByteArray()), android.util.Base64.DEFAULT)
+            }
+        }
 
-                    break
+        fun parseencryptajax(response: String):String{
+            val document=Jsoup.parse(response)
+            val value6 = document.getElementsByAttributeValue("data-name","ts").attr("data-value")
+            val value5 = document.getElementsByAttributeValue("name","crypto").attr("content")
+            val value1 = decryptAES(document.getElementsByAttributeValue("data-name","crypto").attr("data-value"),URLDecoder.decode(value6+value6,Charsets.UTF_8.name()),URLDecoder.decode(value6,Charsets.UTF_8.name()))
+            val value4 = decryptAES(value5,URLDecoder.decode(value1,Charsets.UTF_8.name()),URLDecoder.decode(value6,Charsets.UTF_8.name()))
+            val value2 = RandomStringUtils.randomAlphanumeric(16)
+            val value3 = URLDecoder.decode(value4,Charsets.UTF_8.name()).toString()
+            val encrypted = encryptAes(value4.removeRange(value4.indexOf("&"),value4.length),URLDecoder.decode(value1,Charsets.UTF_8.name()),URLDecoder.decode(value2,Charsets.UTF_8.name()))
+            return "id="+encrypted+"&time="+"00"+value2+"00"+value3.substring(value3.indexOf("&"))
+        }
+
+        fun parseencrypturls(response: String): Pair<RealmList<String>,RealmList<String>>{
+            val urls:RealmList<String> = RealmList()
+            val qualities: RealmList<String> = RealmList()
+            var i = 0
+            val res =  JSONObject(response).getJSONArray("source")
+            return try {
+                while(i != res.length() && res.getJSONObject(i).getString("label") != "Auto") {
+                    urls.add(res.getJSONObject(i).getString("file"))
+                    qualities.add(
+                        res.getJSONObject(i).getString("label").lowercase(Locale.getDefault()).filterNot { it.isWhitespace() })
+                    i++
                 }
-                m3u8Url
-            } catch (npe:NullPointerException){
-                m3u8Url
+                Pair(urls,qualities)
+            }catch (exp:java.lang.NullPointerException) {
+                Pair(urls,qualities)
+            }
+        }
+
+        fun parsegoogleurl(response: String): Pair<RealmList<String>,RealmList<String>>{
+            val urls:RealmList<String> = RealmList()
+            val qualities: RealmList<String> = RealmList()
+            var i = 0
+            val res =  JSONObject(response).getJSONArray("source_bk")
+            return try {
+                while(i != res.length() && res.getJSONObject(i).getString("label") != "Auto") {
+                    urls.add(URLDecoder.decode(res.getJSONObject(i).getString("file"),Charsets.UTF_8.name()))
+                    Timber.e(res.getJSONObject(i).getString("file"))
+                    qualities.add(
+                        res.getJSONObject(i).getString("label").lowercase(Locale.getDefault()).filterNot { it.isWhitespace() })
+                    if(res.getJSONObject(i).getString("type") == "hls") break
+                    i++
+                }
+                Pair(urls,qualities)
+            }catch (exp:java.lang.NullPointerException) {
+                Pair(urls,qualities)
             }
 
         }

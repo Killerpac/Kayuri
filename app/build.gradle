@@ -9,20 +9,14 @@ apply plugin: 'realm-android'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-
-//    signingConfigs {
-//        release {
-//            storeFile file('E:\\Projects\\animexstream.jks')
-//            storePassword 'labrador1'
-//            keyAlias = 'xblacky'
-//            keyPassword 'labrador1'
-//        }
-//    }
-    compileSdkVersion 30
+    compileSdkVersion 32
     buildToolsVersion "29.0.2"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
@@ -30,9 +24,9 @@ android {
     defaultConfig {
         applicationId "net.sanic.Kayuri"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 8
-        versionName "1.2.0"
+        versionName "1.3.0"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "Kayuri-v$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -76,7 +70,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     testImplementation 'junit:junit:4.12'
@@ -88,7 +82,7 @@ dependencies {
 
     //Card View
     implementation "androidx.cardview:cardview:1.0.0"
-    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
 
     //For HTML Parsing
     implementation 'org.jsoup:jsoup:1.11.3'
@@ -118,16 +112,19 @@ dependencies {
     implementation 'org.apmem.tools:layouts:1.10@aar'
 
     //Exo Player
-    implementation 'com.google.android.exoplayer:exoplayer:2.10.8'
-    implementation 'com.google.android.exoplayer:extension-mediasession:2.10.8'
+    implementation 'com.google.android.exoplayer:exoplayer:2.16.1'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.16.1'
 
     //Expandable TextView
     implementation 'com.ms-square:expandableTextView:0.1.4'
 
     //Navigation Library
-    def nav_version = "2.3.0"
+    def nav_version = "2.3.5"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    //updater library
+    implementation 'com.github.javiersantos:AppUpdater:2.7'
 
     //Apache Commons
     implementation 'org.apache.commons:commons-lang3:3.11'

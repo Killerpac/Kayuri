@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.realm.Realm
 import io.realm.RealmResults
-import io.realm.Sort
 import net.sanic.Kayuri.utils.model.FavouriteModel
 import net.sanic.Kayuri.utils.realm.InitalizeRealm
 
@@ -21,7 +20,7 @@ class FavouriteViewModel : ViewModel() {
     }
 
     private fun favouriteListListener() {
-        result = realm.where(FavouriteModel::class.java).sort("insertionTime", Sort.DESCENDING).findAll()
+        result = realm.where(FavouriteModel::class.java).findAll()
         _favouriteLists.value = realm.copyFromRealm(result) as ArrayList<FavouriteModel>?
         result.addChangeListener { newList ->
             _favouriteLists.value = realm.copyFromRealm(newList) as ArrayList<FavouriteModel>?

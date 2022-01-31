@@ -10,7 +10,7 @@ class InitalizeRealm{
         private lateinit var config: RealmConfiguration
         fun initializeRealm(context: Context){
             Realm.init(context)
-            config = RealmConfiguration.Builder().name("kayuri.realm").schemaVersion(0).build()
+            config = RealmConfiguration.Builder().name("kayuri.realm").schemaVersion(1).migration(Migrate()).build()
         }
 
         fun getConfig(): RealmConfiguration{

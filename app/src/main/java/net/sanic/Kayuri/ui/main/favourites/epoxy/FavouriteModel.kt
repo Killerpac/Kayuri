@@ -10,8 +10,8 @@ import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import kotlinx.android.synthetic.main.recycler_anime_common.view.*
 import net.sanic.Kayuri.R
+import net.sanic.Kayuri.databinding.RecyclerAnimeCommonBinding
 
 @EpoxyModelClass(layout = R.layout.recycler_anime_common)
 abstract class FavouriteModel : EpoxyModelWithHolder<FavouriteModel.MovieHolder>(){
@@ -33,17 +33,18 @@ abstract class FavouriteModel : EpoxyModelWithHolder<FavouriteModel.MovieHolder>
 
     }
     class MovieHolder : EpoxyHolder(){
-
+        lateinit var recyclerAnimeCommonBinding: RecyclerAnimeCommonBinding
         lateinit var animeImageView: AppCompatImageView
         lateinit var animeTitle: TextView
         lateinit var releasedDate: TextView
         lateinit var root: ConstraintLayout
 
         override fun bindView(itemView: View) {
-            animeImageView = itemView.animeImage
-            animeTitle = itemView.animeTitle
-            releasedDate = itemView.releasedDate
-            root = itemView.root
+            recyclerAnimeCommonBinding = RecyclerAnimeCommonBinding.bind(itemView)
+            animeImageView = recyclerAnimeCommonBinding.animeImage
+            animeTitle = recyclerAnimeCommonBinding.animeTitle
+            releasedDate = recyclerAnimeCommonBinding.releasedDate
+            root = recyclerAnimeCommonBinding.getRoot()
         }
 
     }

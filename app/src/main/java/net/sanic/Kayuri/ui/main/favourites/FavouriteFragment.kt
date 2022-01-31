@@ -7,23 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import kotlinx.android.synthetic.main.fragment_favourite.view.*
-import kotlinx.android.synthetic.main.fragment_favourite.view.toolbarText
-import kotlinx.android.synthetic.main.fragment_favourite.view.topView
-import kotlinx.android.synthetic.main.fragment_search.view.*
 import net.sanic.Kayuri.R
+import net.sanic.Kayuri.databinding.FragmentFavouriteBinding
+import net.sanic.Kayuri.databinding.FragmentSearchBinding
 import net.sanic.Kayuri.ui.main.favourites.epoxy.FavouriteController
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.FavouriteModel
 
 class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallbacks,View.OnClickListener {
-    private lateinit var rootView: View
     private lateinit var viewModel: FavouriteViewModel
+    private lateinit var favouriteBinding: FragmentFavouriteBinding
+    private lateinit var searchBinding: FragmentSearchBinding
     private val favouriteController by lazy {
         FavouriteController(this)
     }
@@ -31,62 +29,62 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-         rootView = inflater.inflate(R.layout.fragment_favourite, container, false)
+    ): View {
+        favouriteBinding = FragmentFavouriteBinding.inflate(inflater, container, false)
+        searchBinding = FragmentSearchBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this).get(FavouriteViewModel::class.java)
         setAdapters()
         transitionListener()
         setClickListeners()
-        return rootView
+        return favouriteBinding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(FavouriteViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setObserver()
-
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             favouriteController.spanCount =5
-            (rootView.searchRecyclerView.layoutManager as GridLayoutManager).spanCount = 5
+            (searchBinding.searchRecyclerView.layoutManager as GridLayoutManager).spanCount = 5
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
             favouriteController.spanCount = 3
-            (rootView.searchRecyclerView.layoutManager as GridLayoutManager).spanCount = 3
+            (searchBinding.searchRecyclerView.layoutManager as GridLayoutManager).spanCount = 3
         }
 
     }
 
     private fun setObserver(){
-        viewModel.favouriteList.observe(viewLifecycleOwner, Observer {
+        viewModel.favouriteList.observe(viewLifecycleOwner, {
             favouriteController.setData(it)
         })
     }
 
 
     private fun setAdapters(){
-        favouriteController.spanCount = Utils.calculateNoOfColumns(context!!, 150f)
-        rootView.recyclerView.apply {
-            layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(context!!, 150f))
+        favouriteController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
+        favouriteBinding.recyclerView.apply {
+            layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))
             adapter = favouriteController.adapter
             (layoutManager as GridLayoutManager).spanSizeLookup = favouriteController.spanSizeLookup
         }
-        rootView.recyclerView.addItemDecoration(ItemOffsetDecoration(context,R.dimen.episode_offset_left))
+        favouriteBinding.recyclerView.addItemDecoration(ItemOffsetDecoration(context,R.dimen.episode_offset_left))
 
     }
 
-    private fun getSpanCount(): Int {
-        val orientation = resources.configuration.orientation
-        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            5
-        } else {
-            3
-        }
-    }
+//    private fun getSpanCount(): Int {
+//        val orientation = resources.configuration.orientation
+//        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            5
+//        } else {
+//            3
+//        }
+//    }
 
     private fun transitionListener(){
-        rootView.motionLayout.setTransitionListener(
+        favouriteBinding.motionLayout.setTransitionListener(
             object: MotionLayout.TransitionListener{
                 override fun onTransitionTrigger(
                     p0: MotionLayout?,
@@ -98,17 +96,17 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
                 }
 
                 override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-                    rootView.topView.cardElevation = 0F
+                    favouriteBinding.topView.cardElevation = 0F
                 }
 
                 override fun onTransitionChange(p0: MotionLayout?, startId: Int, endId: Int, progress: Float) {
                     if(startId == R.id.start){
-                        rootView.topView.cardElevation = 20F * progress
-                        rootView.toolbarText.alpha = progress
+                        favouriteBinding.topView.cardElevation = 20F * progress
+                        favouriteBinding.toolbarText.alpha = progress
                     }
                     else{
-                        rootView.topView.cardElevation = 10F * (1 - progress)
-                        rootView.toolbarText.alpha = (1-progress)
+                        favouriteBinding.topView.cardElevation = 10F * (1 - progress)
+                        favouriteBinding.toolbarText.alpha = (1-progress)
                     }
                 }
 
@@ -119,7 +117,7 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
         )
     }
     private fun setClickListeners(){
-        rootView.back.setOnClickListener(this)
+        favouriteBinding.back.setOnClickListener(this)
     }
 
     override fun animeTitleClick(model: FavouriteModel) {

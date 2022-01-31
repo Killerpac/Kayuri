@@ -10,8 +10,8 @@ import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import kotlinx.android.synthetic.main.recycler_anime_common.view.*
 import net.sanic.Kayuri.R
+import net.sanic.Kayuri.databinding.RecyclerAnimeCommonBinding
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
 
 @EpoxyModelClass(layout = R.layout.recycler_anime_common)
@@ -24,7 +24,10 @@ abstract class AnimeCommonModel : EpoxyModelWithHolder<AnimeCommonModel.MovieHol
 
     override fun bind(holder: MovieHolder) {
         Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl).transition(
-            DrawableTransitionOptions.withCrossFade()).into(holder.animeImageView)
+            DrawableTransitionOptions.withCrossFade(100)).into(holder.animeImageView)
+        holder.animeImageView.scaleX = 0.9f
+        holder.animeImageView.scaleY = 0.9f
+        holder.animeImageView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start()
         holder.animeTitle.text = animeMetaModel.title
         animeMetaModel.releasedDate?.let {
             holder.releasedDate.text = it
@@ -33,17 +36,18 @@ abstract class AnimeCommonModel : EpoxyModelWithHolder<AnimeCommonModel.MovieHol
 
     }
     class MovieHolder : EpoxyHolder(){
-
+        lateinit var commonBinding: RecyclerAnimeCommonBinding
         lateinit var animeImageView: AppCompatImageView
         lateinit var animeTitle: TextView
         lateinit var releasedDate: TextView
         lateinit var root: ConstraintLayout
 
         override fun bindView(itemView: View) {
-            animeImageView = itemView.animeImage
-            animeTitle = itemView.animeTitle
-            releasedDate = itemView.releasedDate
-            root = itemView.root
+            commonBinding = RecyclerAnimeCommonBinding.bind(itemView)
+            animeImageView = commonBinding.animeImage
+            animeTitle = commonBinding.animeTitle
+            releasedDate = commonBinding.releasedDate
+            root = commonBinding.root
         }
 
     }

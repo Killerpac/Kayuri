@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
+import io.realm.RealmList
 import net.sanic.Kayuri.utils.CommonViewModel
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.Content
@@ -16,7 +17,7 @@ class VideoPlayerViewModel : CommonViewModel() {
 
     private val episodeRepository = EpisodeRepository()
     private var compositeDisposable = CompositeDisposable()
-    private var _content = MutableLiveData<Content>(Content())
+    private var _content = MutableLiveData(Content())
     var liveContent: LiveData<Content> = _content
 
     init {
@@ -64,49 +65,57 @@ class VideoPlayerViewModel : CommonViewModel() {
             }
 
             override fun onNext(response: ResponseBody) {
-                if (type == C.TYPE_MEDIA_URL) {
-                    val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
+                when(type) {
+                    C.TYPE_MEDIA_URL -> {
+                        val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
                         episodeInfo.vidcdnUrl?.let {
-                            if (PreferenceHelper.sharedPreference.getGoogleServer())
-                            {
+                            if (PreferenceHelper.sharedPreference.getGoogleServer()) {
                                 compositeDisposable.add(
-                                    episodeRepository.fetchGoogleUrl(episodeInfo.vidcdnUrl!!.replace("embedplus","download"))
+                                    episodeRepository.fetchGoogleUrl(
+                                        episodeInfo.vidcdnUrl!!
+                                    )
                                         .subscribeWith(
-                                            getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                                            getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
                                         )
                                 )
-                            }
-                            else {
+                            } else {
                                 compositeDisposable.add(
                                     episodeRepository.fetchM3u8Url(episodeInfo.vidcdnUrl!!)
                                         .subscribeWith(
-                                            getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                                            getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
                                         )
                                 )
                             }
                         }
-                    val watchedEpisode =
-                        episodeRepository.fetchWatchedDuration(_content.value?.episodeUrl.hashCode())
-                    _content.value?.watchedDuration = watchedEpisode?.watchedDuration ?: 0
-                    _content.value?.previousEpisodeUrl = episodeInfo.previousEpisodeUrl
-                    _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
-                } else if (type == C.TYPE_M3U8_URL) {
-                    var m3u8Url:String? = ""
-                    if (PreferenceHelper.sharedPreference.getGoogleServer())
-                    {
-                        m3u8Url = HtmlParser.parsegoogleurl(response = response.string())
-                        Timber.e(m3u8Url)
+                        val watchedEpisode =
+                            episodeRepository.fetchWatchedDuration(_content.value?.episodeUrl.hashCode())
+                        _content.value?.watchedDuration = watchedEpisode?.watchedDuration ?: 0
+                        _content.value?.previousEpisodeUrl = episodeInfo.previousEpisodeUrl
+                        _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
                     }
-                    else
-                    {
-                        m3u8Url = HtmlParser.parseM3U8Url(response = response.string())
-                        Timber.e(m3u8Url)
+                    C.TYPE_M3U8_URL -> {
+                        val m3u8Url: Pair<RealmList<String>,RealmList<String>> =
+                            if (PreferenceHelper.sharedPreference.getGoogleServer()) {
+                                HtmlParser.parsegoogleurl(response = response.string())
+                            } else {
+                                HtmlParser.parseencrypturls(response = response.string())
+                            }
+                        val content = _content.value
+                        content?.url = m3u8Url.first
+                        content?.quality = m3u8Url.second
+                        _content.value = content
+                        saveContent(content!!)
+                        updateLoading(false)
                     }
-                    val content = _content.value
-                    content?.url = m3u8Url
-                    _content.value = content
-                    saveContent(content!!)
-                    updateLoading(false)
+                    C.TYPE_M3U8_PREP -> {
+                        val m3u8Pre = HtmlParser.parseencryptajax(response = response.string())
+                        compositeDisposable.add(
+                            episodeRepository.m3u8preprocessor("${C.REFERER}encrypt-ajax.php?${m3u8Pre}")
+                                .subscribeWith(
+                                    getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                                )
+                        )
+                    }
                 }
 
             }
