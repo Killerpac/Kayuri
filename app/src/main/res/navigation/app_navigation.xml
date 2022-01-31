@@ -45,6 +45,13 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_homeFragment_to_genreFragment"
+            app:destination="@id/genreFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/animeInfoFragment"
@@ -62,6 +69,13 @@
             android:name="categoryUrl"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_animeInfoFragment_to_genreFragment"
+            app:destination="@id/genreFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <activity
         android:id="@+id/videoPlayerActivity"
@@ -109,4 +123,20 @@
         android:id="@+id/settings"
         android:name="net.sanic.Kayuri.ui.main.settings.Settings"
         android:label="Settings" />
+    <fragment
+        android:id="@+id/genreFragment"
+        android:name="net.sanic.Kayuri.ui.main.genre.GenreFragment"
+        android:label="GenreFragment"
+        tools:layout="@layout/fragment_genre">
+        <action
+            android:id="@+id/action_genreFragment_to_animeInfoFragment"
+            app:destination="@id/animeInfoFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <argument
+            android:name="genreUrl"
+            app:argType="string" />
+    </fragment>
 </navigation>
