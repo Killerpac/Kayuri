@@ -34,4 +34,6 @@
     <string name="Toogle_Google_Server">¡Solo 1080p! Velocidades más rápidas</string>
     <string name="controlsname">Controles del jugador</string>
     <string name="controlstext">Controles deslizantes para volumen y brillo en el reproductor</string>
+    <string name="category">Categoría</string>
+    <string name="genre">Género %s</string>
 </resources>
