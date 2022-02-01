@@ -11,6 +11,7 @@ import io.realm.Sort
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import net.sanic.Kayuri.utils.model.GenreModel
 import net.sanic.Kayuri.utils.model.HomeScreenModel
 import net.sanic.Kayuri.utils.model.UpdateModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
@@ -27,6 +28,7 @@ class HomeViewModel : ViewModel(){
     var updateModel : LiveData<UpdateModel> = _updateModel
     private val compositeDisposable = CompositeDisposable()
     private val realmListenerList = ArrayList<RealmResults<AnimeMetaModel>>()
+    private val genreRealmListenerList = ArrayList<RealmResults<GenreModel>>()
 
     init {
         fetchHomeList()
