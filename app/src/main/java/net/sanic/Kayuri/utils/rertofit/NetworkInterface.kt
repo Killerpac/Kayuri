@@ -87,7 +87,6 @@ class NetworkInterface {
             @Url url: String
         ): Observable<ResponseBody>
     }
-
     interface FetchEpisodeList {
 
         @GET(C.EPISODE_LOAD_URL)
@@ -108,22 +107,6 @@ class NetworkInterface {
             @HeaderMap header: Map<String, String>,
             @Query("keyword") keyword: String,
             @Query("page") page: Int
-        ): Observable<ResponseBody>
-    }
-
-    interface FetchGenre {
-        @GET
-        fun get(
-            @HeaderMap header: Map<String, String>,
-            @Url url: String,
-            @Query("page") page: Int
-        ): Observable<ResponseBody>
-    }
-
-    interface FetchGenres {
-        @GET(C.BASE_URL)
-        fun get(
-            @HeaderMap header: Map<String, String>
         ): Observable<ResponseBody>
     }
 

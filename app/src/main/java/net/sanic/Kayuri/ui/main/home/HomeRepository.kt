@@ -8,7 +8,6 @@ import io.realm.Sort
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
-import net.sanic.Kayuri.utils.model.GenreModel
 import net.sanic.Kayuri.utils.realm.InitalizeRealm
 import net.sanic.Kayuri.utils.rertofit.NetworkInterface
 import net.sanic.Kayuri.utils.rertofit.RetrofitHelper
@@ -82,5 +81,7 @@ class HomeRepository {
         }
         return list
     }
+
+
 
 }

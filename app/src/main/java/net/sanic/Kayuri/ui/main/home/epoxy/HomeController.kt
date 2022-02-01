@@ -5,7 +5,6 @@ import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.Carousel.setDefaultGlobalSnapHelperFactory
 import com.airbnb.epoxy.CarouselModel_
 import com.airbnb.epoxy.TypedEpoxyController
-import kotlinx.android.synthetic.main.tags_genre.view.*
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.epoxy.AnimeCommonModel_
@@ -63,9 +62,6 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
                             .clickListener { model, _, _, _ ->
                                 adapterCallbacks.animeTitleClick(model = model.animeMetaModel())
                             }
-                            .tagClickListener { model, _, view, _ ->
-                                adapterCallbacks.tagClick(model = model.animeMetaModel(), genreName = view.genre.text.toString())
-                            }
                             .animeMetaModel(animeMetaModel)
                             .addTo(this)
                     }
@@ -99,7 +95,7 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
     private fun recentSubDubClick(model: AnimeMetaModel, clickedView: View){
         when(clickedView.id){
             R.id.backgroundImage->{
-                adapterCallbacks.recentSubDubEpisodeClick(model = model)
+                adapterCallbacks.recentSubDubEpisodeClick(model = model )
             }
             R.id.animeTitle->{
                 adapterCallbacks.animeTitleClick(model = model)
@@ -112,7 +108,6 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
     interface EpoxyAdapterCallbacks{
         fun recentSubDubEpisodeClick(model: AnimeMetaModel)
         fun animeTitleClick(model: AnimeMetaModel)
-        fun tagClick(model: AnimeMetaModel, genreName: String)
     }
 
 }

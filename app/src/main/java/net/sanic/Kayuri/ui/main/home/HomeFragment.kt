@@ -1,9 +1,14 @@
 package net.sanic.Kayuri.ui.main.home
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -12,10 +17,13 @@ import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.Display
 import com.github.javiersantos.appupdater.enums.Duration
 import com.github.javiersantos.appupdater.enums.UpdateFrom
+import net.sanic.Kayuri.BuildConfig
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentHomeBinding
 import net.sanic.Kayuri.ui.main.home.epoxy.HomeController
+import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import timber.log.Timber
 
 class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapterCallbacks {
 
@@ -70,7 +78,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
     }
 
-    private fun setClickListeners() {
+        private fun setClickListeners() {
         homebind.header.setOnClickListener(this)
         homebind.search.setOnClickListener(this)
         homebind.favorite.setOnClickListener(this)
@@ -96,6 +104,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
             }
             R.id.settings -> {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettings())
+
             }
         }
     }
@@ -118,17 +127,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
                 )
             )
         }
-    }
 
-    override fun tagClick(model: AnimeMetaModel, genreName: String) {
-        if (!model.genreList.isNullOrEmpty()) {
-            var genre = model.genreList!!.find { it.genreName == genreName }
-            findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToGenreFragment(
-                    genreUrl = genre!!.genreUrl
-                )
-            )
-        }
     }
     private fun checkUpdate() {
         AppUpdater(context)
