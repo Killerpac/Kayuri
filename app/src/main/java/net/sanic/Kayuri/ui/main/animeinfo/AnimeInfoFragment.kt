@@ -5,6 +5,7 @@ import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
@@ -15,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.tags_genre.view.*
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.ui.main.animeinfo.epoxy.AnimeInfoController
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
@@ -99,7 +101,8 @@ class AnimeInfoFragment : Fragment() {
         animeInfoBinding.flowLayout.removeAllViews()
         animeInfoModel.genre.forEach {
             var genreUrl = it.genreUrl
-            var genreView = GenreTags(requireContext()).getGenreTag(genreName = it.genreName, genreUrl = genreUrl){
+            var genreView = GenreTags(requireContext()).getGenreTag(genreName = it.genreName, genreUrl = genreUrl)
+            genreView.genre.setOnClickListener {
                 findNavController().navigate(
                     AnimeInfoFragmentDirections.actionAnimeInfoFragmentToGenreFragment(
                         genreUrl = genreUrl
