@@ -56,35 +56,47 @@ class AnimeInfoFragment : Fragment() {
 
 
     private fun setObserver() {
-        viewModel.animeInfoModel.observe(viewLifecycleOwner, {
+        viewModel.animeInfoModel.observe(viewLifecycleOwner) {
             it?.let {
                 updateViews(it)
             }
-        })
+        }
 
-        viewModel.episodeList.observe(viewLifecycleOwner, {
+        viewModel.episodeList.observe(viewLifecycleOwner) {
             it?.let {
                 animeInfoBinding.animeInfoRoot.visibility = View.VISIBLE
                 episodeController.setData(it)
             }
-        })
+        }
 
-        viewModel.isLoading.observe(viewLifecycleOwner, {
+        viewModel.isLoading.observe(viewLifecycleOwner) {
 
-            if(it.isLoading){
+            if (it.isLoading) {
                 loadingBinding.loading.visibility = View.VISIBLE
-            }else{
+            } else {
                 loadingBinding.loading.visibility = View.GONE
             }
-        })
+        }
 
-        viewModel.isFavourite.observe(viewLifecycleOwner, {
-            if(it){
-                animeInfoBinding.favourite.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_favorite , null))
-            }else{
-                animeInfoBinding.favourite.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_unfavorite , null))
+        viewModel.isFavourite.observe(viewLifecycleOwner) {
+            if (it) {
+                animeInfoBinding.favourite.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_favorite,
+                        null
+                    )
+                )
+            } else {
+                animeInfoBinding.favourite.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_unfavorite,
+                        null
+                    )
+                )
             }
-        })
+        }
     }
 
     private fun updateViews(animeInfoModel: AnimeInfoModel) {
