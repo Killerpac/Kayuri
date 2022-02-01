@@ -35,11 +35,12 @@ class C {
         const val MAX_LIMIT_FOR_SUB_DUB = 10
 
 
-        const val NEWEST_SEASON_POSITION = 2
-        const val RECENT_SUB_POSITION = 0
-        const val RECENT_DUB_POSITION = 1
-        const val POPULAR_POSITION = 4
-        const val MOVIE_POSITION = 3
+        const val GENRE_POSITION = 0
+        const val NEWEST_SEASON_POSITION = 3
+        const val RECENT_SUB_POSITION = 1
+        const val RECENT_DUB_POSITION = 2
+        const val POPULAR_POSITION = 5
+        const val MOVIE_POSITION = 4
 
         //Episode URL Type
         const val TYPE_MEDIA_URL = 100

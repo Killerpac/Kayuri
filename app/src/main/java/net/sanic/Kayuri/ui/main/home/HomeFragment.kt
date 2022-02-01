@@ -16,6 +16,7 @@ import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentHomeBinding
 import net.sanic.Kayuri.ui.main.home.epoxy.HomeController
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import net.sanic.Kayuri.utils.model.GenreModel
 
 class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapterCallbacks {
 
@@ -122,7 +123,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
     override fun tagClick(model: AnimeMetaModel, genreName: String) {
         if (!model.genreList.isNullOrEmpty()) {
-            var genre = model.genreList!!.find { it.genreName == genreName }
+            val genre = model.genreList!!.find { it.genreName == genreName }
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToGenreFragment(
                     genreUrl = genre!!.genreUrl
@@ -130,6 +131,17 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
             )
         }
     }
+
+    override fun genreClick(model: GenreModel) {
+        if (model.genreUrl.isNotEmpty()) {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToGenreFragment(
+                    genreUrl = model.genreUrl
+                )
+            )
+        }
+    }
+
     private fun checkUpdate() {
         AppUpdater(context)
             .setDisplay(Display.DIALOG)

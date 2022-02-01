@@ -18,6 +18,11 @@ import retrofit2.Retrofit
 class HomeRepository {
     private var retrofit: Retrofit = RetrofitHelper.getRetrofitInstance()!!
 
+    fun fetchGenres(): Observable<ResponseBody> {
+        val fetchGenresService = retrofit.create(NetworkInterface.FetchGenres::class.java)
+        return fetchGenresService.get(Utils.getHeader()).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
 
     fun fetchRecentSubOrDub(page: Int, type: Int): Observable<ResponseBody> {
         val fetchHomeListService = retrofit.create(NetworkInterface.FetchRecentSubOrDub::class.java)
@@ -56,6 +61,17 @@ class HomeRepository {
         }
     }
 
+    fun addGenreDataInRealm(genreList: ArrayList<GenreModel>) {
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
+
+        try {
+            realm.executeTransaction { realm1: Realm ->
+                realm1.insertOrUpdate(genreList)
+            }
+        } catch (ignored: Exception) {
+        }
+    }
+
     fun removeFromRealm(){
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
 
@@ -68,7 +84,6 @@ class HomeRepository {
     fun fetchFromRealm(typeValue: Int): ArrayList<AnimeMetaModel> {
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
 
-
         val list: ArrayList<AnimeMetaModel> = ArrayList()
         try {
             val results =
@@ -76,8 +91,20 @@ class HomeRepository {
             results?.let {
                 list.addAll(it)
             }
+        } catch (ignored: Exception) {
+        }
+        return list
+    }
 
+    fun fetchGenresFromRealm(): ArrayList<GenreModel> {
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
 
+        val list: ArrayList<GenreModel> = ArrayList()
+        try {
+            val results = realm.where(GenreModel::class.java).sort("genreName", Sort.ASCENDING)?.findAll()
+            results?.let {
+                list.addAll(it)
+            }
         } catch (ignored: Exception) {
         }
         return list

@@ -1,35 +1,23 @@
 package net.sanic.Kayuri.ui.main.home.epoxy
 
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.navigation.fragment.findNavController
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import kotlinx.android.synthetic.main.recycler_anime_mini_header.view.*
-import kotlinx.android.synthetic.main.recycler_anime_popular.view.*
-import kotlinx.android.synthetic.main.recycler_anime_recent_sub_dub_2.view.*
-import kotlinx.android.synthetic.main.tags_genre.view.*
 import net.sanic.Kayuri.R
-import net.sanic.Kayuri.databinding.RecyclerAnimeMiniHeaderBinding
-import net.sanic.Kayuri.databinding.RecyclerAnimePopularBinding
-import net.sanic.Kayuri.databinding.RecyclerAnimeRecentSubDub2Binding
+import net.sanic.Kayuri.databinding.*
 import net.sanic.Kayuri.utils.Tags.GenreTags
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
 import net.sanic.Kayuri.utils.model.GenreModel
 import org.apmem.tools.layouts.FlowLayout
-import kotlinx.android.synthetic.main.recycler_anime_popular.view.animeCardView as animeCardViewSubDub
-import kotlinx.android.synthetic.main.recycler_anime_popular.view.animeTitle as animeTitleSubDub
-import kotlinx.android.synthetic.main.recycler_anime_recent_sub_dub_2.view.animeImage as animeImageSubDub
-import kotlinx.android.synthetic.main.recycler_anime_recent_sub_dub_2.view.episodeNumber as episodeNumberSubDub
 
 
 @EpoxyModelClass(layout = R.layout.recycler_anime_recent_sub_dub_2)
@@ -50,8 +38,8 @@ abstract class AnimeSubDubModel2 : EpoxyModelWithHolder<AnimeSubDubModel2.SubDub
         holder.animeEpisode.text = animeMetaModel.episodeNumber
         holder.background.setOnClickListener(clickListener)
         holder.animeTitle.setOnClickListener(clickListener)
-
     }
+
     class SubDubHolder : EpoxyHolder(){
         lateinit var subDub2Binding: RecyclerAnimeRecentSubDub2Binding
         lateinit var animeImageView: AppCompatImageView
@@ -90,7 +78,7 @@ abstract class AnimePopularModel : EpoxyModelWithHolder<AnimePopularModel.Popula
         holder.flowLayout.removeAllViews()
 
         animeMetaModel.genreList?.forEach {
-            var genreView = GenreTags(holder.flowLayout.context).getGenreTag(genreName = it.genreName, genreUrl = it.genreUrl, onClickListener = tagClickListener)
+            val genreView = GenreTags(holder.flowLayout.context).getGenreTag(genreName = it.genreName, genreUrl = it.genreUrl, onClickListener = tagClickListener)
             holder.flowLayout.addView(genreView)
         }
         holder.rootView.setOnClickListener(clickListener)
@@ -115,8 +103,6 @@ abstract class AnimePopularModel : EpoxyModelWithHolder<AnimePopularModel.Popula
 
     }
 }
-
-
 
 @EpoxyModelClass(layout = R.layout.recycler_anime_mini_header)
 abstract class AnimeMiniHeaderModel : EpoxyModelWithHolder<AnimeMiniHeaderModel.AnimeMiniHeaderHolder>(){
@@ -143,4 +129,31 @@ abstract class AnimeMiniHeaderModel : EpoxyModelWithHolder<AnimeMiniHeaderModel.
 
 }
 
+@EpoxyModelClass(layout = R.layout.tags_genre)
+abstract class HomeGenresModel : EpoxyModelWithHolder<HomeGenresModel.HomeGenresHolder>(){
 
+    @EpoxyAttribute
+    lateinit var genreModel: GenreModel
+    @EpoxyAttribute
+    lateinit var clickListener: View.OnClickListener
+
+
+    override fun bind(holder: HomeGenresHolder) {
+        super.bind(holder)
+        holder.genre.text = genreModel.genreName
+        holder.genre.setOnClickListener(clickListener)
+    }
+
+    class HomeGenresHolder : EpoxyHolder(){
+
+        lateinit var genre: TextView
+        lateinit var homeGenresBinding: TagsGenreBinding
+
+        override fun bindView(itemView: View) {
+            homeGenresBinding = TagsGenreBinding.bind(itemView)
+            genre = homeGenresBinding.genre
+        }
+
+    }
+
+}

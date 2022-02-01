@@ -11,6 +11,7 @@ import io.realm.Sort
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import net.sanic.Kayuri.utils.model.GenreModel
 import net.sanic.Kayuri.utils.model.HomeScreenModel
 import net.sanic.Kayuri.utils.model.UpdateModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
@@ -27,12 +28,14 @@ class HomeViewModel : ViewModel(){
     var updateModel : LiveData<UpdateModel> = _updateModel
     private val compositeDisposable = CompositeDisposable()
     private val realmListenerList = ArrayList<RealmResults<AnimeMetaModel>>()
+    private val realmListenerGenreList = ArrayList<RealmResults<GenreModel>>()
 
     init {
         fetchHomeList()
     }
 
     private fun fetchHomeList(){
+        fetchGenres()
         fetchRecentSub()
         fetchRecentDub()
         fetchPopular()
@@ -48,8 +51,16 @@ class HomeViewModel : ViewModel(){
             }
 
             override fun onNext(response: ResponseBody) {
-                val list =parseList(response = response.string(), typeValue = typeValue)
-                homeRepository.addDataInRealm(list)
+                when (typeValue) {
+                    C.TYPE_GENRE -> {
+                        val list = parseGenreList(response = response.string(), typeValue = typeValue)
+                        homeRepository.addGenreDataInRealm(list)
+                    }
+                    else -> {
+                        val list = parseList(response = response.string(), typeValue = typeValue)
+                        homeRepository.addDataInRealm(list)
+                    }
+                }
             }
 
             override fun onError(e: Throwable) {
@@ -81,6 +92,13 @@ class HomeViewModel : ViewModel(){
         }
     }
 
+    private fun parseGenreList(response: String, typeValue: Int): ArrayList<GenreModel>{
+        return when(typeValue){
+            C.TYPE_GENRE -> HtmlParser.parseGenres(response)
+            else -> ArrayList()
+        }
+    }
+
     private fun updateList(list: ArrayList<AnimeMetaModel>, typeValue: Int){
         val homeScreenModel = HomeScreenModel(
             typeValue = typeValue,
@@ -108,6 +126,20 @@ class HomeViewModel : ViewModel(){
         _animeList.value = newList
     }
 
+    private fun updateGenreList(list: ArrayList<GenreModel>, typeValue: Int){
+        val homeScreenModel = HomeScreenModel(
+            typeValue = typeValue,
+            type = Utils.getTypeName(typeValue),
+            genreList = list
+        )
+
+        val newList = animeList.value!!
+        try {
+            newList[getPositionByType(typeValue)] = homeScreenModel
+        } catch (iobe: IndexOutOfBoundsException){}
+        _animeList.value = newList
+    }
+
     private fun addRealmListener(typeValue: Int){
         val realm = Realm.getInstance(InitalizeRealm.getConfig())
         realm.use {
@@ -122,14 +154,28 @@ class HomeViewModel : ViewModel(){
         }
     }
 
+    private fun addGenreRealmListener(typeValue: Int){
+        val realm = Realm.getInstance(InitalizeRealm.getConfig())
+        realm.use {
+            val results = it.where(GenreModel::class.java).sort("genreName", Sort.ASCENDING).findAll()
+
+            results.addChangeListener { newResult :RealmResults<GenreModel> , _ ->
+                val newGenreList = (it.copyFromRealm(newResult) as ArrayList<GenreModel>)
+                updateGenreList(newGenreList, typeValue)
+            }
+            realmListenerGenreList.add(results)
+        }
+    }
+
     private fun getPositionByType(typeValue: Int): Int{
         val size = animeList.value!!.size
         return when(typeValue){
-            C.TYPE_RECENT_SUB-> if(size >= C.RECENT_SUB_POSITION) C.RECENT_SUB_POSITION else size
-            C.TYPE_RECENT_DUB-> if(size >= C.RECENT_DUB_POSITION) C.RECENT_DUB_POSITION else size
+            C.TYPE_GENRE -> if(size >= C.GENRE_POSITION) C.GENRE_POSITION else size
+            C.TYPE_RECENT_SUB -> if(size >= C.RECENT_SUB_POSITION) C.RECENT_SUB_POSITION else size
+            C.TYPE_RECENT_DUB -> if(size >= C.RECENT_DUB_POSITION) C.RECENT_DUB_POSITION else size
             C.TYPE_POPULAR_ANIME -> if(size >= C.POPULAR_POSITION) C.POPULAR_POSITION else size
-            C.TYPE_MOVIE ->if(size >= C.MOVIE_POSITION) C.MOVIE_POSITION else size
-            C.TYPE_NEW_SEASON ->if(size >= C.NEWEST_SEASON_POSITION) C.NEWEST_SEASON_POSITION else size
+            C.TYPE_MOVIE -> if(size >= C.MOVIE_POSITION) C.MOVIE_POSITION else size
+            C.TYPE_NEW_SEASON -> if(size >= C.NEWEST_SEASON_POSITION) C.NEWEST_SEASON_POSITION else size
             else->size
         }
     }
@@ -148,8 +194,16 @@ class HomeViewModel : ViewModel(){
         return arrayList
     }
 
-    private fun fetchRecentSub(){
+    private fun fetchGenres(){
+        val list = homeRepository.fetchGenresFromRealm()
+        if(list.size >0){
+            updateGenreList(list,C.TYPE_GENRE)
+        }
+        compositeDisposable.add(homeRepository.fetchGenres().subscribeWith(getHomeListObserver(C.TYPE_GENRE)))
+        addGenreRealmListener(C.TYPE_GENRE)
+    }
 
+    private fun fetchRecentSub(){
         val list = homeRepository.fetchFromRealm(C.TYPE_RECENT_SUB)
         if(list.size >0){
             updateList(list,C.TYPE_RECENT_SUB)
@@ -193,6 +247,7 @@ class HomeViewModel : ViewModel(){
         compositeDisposable.add(homeRepository.fetchNewestAnime(1).subscribeWith(getHomeListObserver(C.TYPE_NEW_SEASON)))
         addRealmListener(C.TYPE_NEW_SEASON)
     }
+
     override fun onCleared() {
         homeRepository.removeFromRealm()
         if(!compositeDisposable.isDisposed){

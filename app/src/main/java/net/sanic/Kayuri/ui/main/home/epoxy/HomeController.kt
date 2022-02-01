@@ -10,6 +10,7 @@ import net.sanic.Kayuri.R
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.epoxy.AnimeCommonModel_
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import net.sanic.Kayuri.utils.model.GenreModel
 import net.sanic.Kayuri.utils.model.HomeScreenModel
 
 
@@ -24,8 +25,7 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
             AnimeMiniHeaderModel_()
                 .id(homeScreenModel.typeValue)
                 .typeName(homeScreenModel.type)
-                .addIf(!homeScreenModel.animeList.isNullOrEmpty(),this)
-
+                .addIf(!homeScreenModel.animeList.isNullOrEmpty() or !homeScreenModel.genreList.isNullOrEmpty(),this)
 
 
             when (homeScreenModel.typeValue) {
@@ -71,6 +71,28 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
                     }
 
                 }
+                C.TYPE_GENRE -> {
+
+                    val genreModelList: ArrayList<HomeGenresModel_> = ArrayList()
+
+                    homeScreenModel.genreList?.forEach {
+                        val genreModel = it
+                        genreModelList.add(
+                            HomeGenresModel_()
+                                .id(genreModel.genreName)
+                                .clickListener { model, _, _, _ ->
+                                    adapterCallbacks.genreClick(model = model.genreModel())
+                                }
+                                .genreModel(genreModel)
+                        )
+                    }
+
+                    CarouselModel_()
+                        .id(homeScreenModel.hashCode())
+                        .models(genreModelList)
+                        .padding(Carousel.Padding.dp(20,0,20,0,0))
+                        .addTo(this)
+                }
                 else ->{
                     val recentModelList: ArrayList<AnimeSubDubModel2_> = ArrayList()
                     homeScreenModel.animeList?.forEach {
@@ -113,6 +135,7 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
         fun recentSubDubEpisodeClick(model: AnimeMetaModel)
         fun animeTitleClick(model: AnimeMetaModel)
         fun tagClick(model: AnimeMetaModel, genreName: String)
+        fun genreClick(model: GenreModel)
     }
 
 }

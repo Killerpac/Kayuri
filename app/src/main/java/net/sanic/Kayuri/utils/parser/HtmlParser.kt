@@ -129,6 +129,15 @@ class HtmlParser {
             return animeMetaModelList
         }
 
+        fun parseGenres(response: String) : ArrayList<GenreModel>{
+            val genreList: ArrayList<GenreModel> = ArrayList()
+            val document = Jsoup.parse(response)
+            val genres = document.getElementsByClass("menu_series genre right").first()
+            val genreHtmlList = genres.select("a")
+            genreList.addAll(getGenreList(genreHtmlList))
+            return genreList
+        }
+
         fun parseAnimeInfo(response: String): AnimeInfoModel{
             val document = Jsoup.parse(response)
             val animeInfo = document.getElementsByClass("anime_info_body_bg")
@@ -257,15 +266,6 @@ class HtmlParser {
                 Pair(urls,qualities)
             }
 
-        }
-
-        fun fetchGenreList(response: String) : ArrayList<GenreModel>{
-            val genreList: ArrayList<GenreModel> = ArrayList()
-            val document = Jsoup.parse(response)
-            val genres = document.getElementsByClass("menu_series genre right").first()
-            val genreHtmlList = genres.select("a")
-            genreList.addAll(getGenreList(genreHtmlList))
-            return genreList
         }
 
         fun fetchEpisodeList(response: String): ArrayList<EpisodeModel>{
