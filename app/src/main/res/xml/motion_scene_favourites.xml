@@ -43,8 +43,22 @@
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/topView"/>
-
+            app:layout_constraintTop_toBottomOf="@id/topView"
+            app:layout_constraintHorizontal_bias="1.0" />
+        <Constraint
+            app:layout_constraintVertical_bias="1.0"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toBottomOf="@id/header"
+            android:id="@+id/recyclerView" />
+        <Constraint
+            app:layout_editor_absoluteY="39dp"
+            app:layout_editor_absoluteX="0dp"
+            android:id="@+id/editTextTextPersonName" />
 
 
     </ConstraintSet>

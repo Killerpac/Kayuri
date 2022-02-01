@@ -38,5 +38,6 @@
     <string name="Toogle_Google_Server">Enable This If You Need Backup</string>
     <string name="controlsname">Player Controls</string>
     <string name="controlstext">Slide Contols For Volume And Brightness in Player</string>
+    <string name="genre">Genre %s</string>
 
 </resources>

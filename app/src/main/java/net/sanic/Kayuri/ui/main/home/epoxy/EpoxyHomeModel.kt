@@ -1,10 +1,13 @@
 package net.sanic.Kayuri.ui.main.home.epoxy
 
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.navigation.fragment.findNavController
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
@@ -14,12 +17,14 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlinx.android.synthetic.main.recycler_anime_mini_header.view.*
 import kotlinx.android.synthetic.main.recycler_anime_popular.view.*
 import kotlinx.android.synthetic.main.recycler_anime_recent_sub_dub_2.view.*
+import kotlinx.android.synthetic.main.tags_genre.view.*
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.RecyclerAnimeMiniHeaderBinding
 import net.sanic.Kayuri.databinding.RecyclerAnimePopularBinding
 import net.sanic.Kayuri.databinding.RecyclerAnimeRecentSubDub2Binding
 import net.sanic.Kayuri.utils.Tags.GenreTags
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import net.sanic.Kayuri.utils.model.GenreModel
 import org.apmem.tools.layouts.FlowLayout
 import kotlinx.android.synthetic.main.recycler_anime_popular.view.animeCardView as animeCardViewSubDub
 import kotlinx.android.synthetic.main.recycler_anime_popular.view.animeTitle as animeTitleSubDub
@@ -74,6 +79,8 @@ abstract class AnimePopularModel : EpoxyModelWithHolder<AnimePopularModel.Popula
     lateinit var animeMetaModel: AnimeMetaModel
     @EpoxyAttribute
     lateinit var clickListener: View.OnClickListener
+    @EpoxyAttribute
+    lateinit var tagClickListener: View.OnClickListener
 
     override fun bind(holder: PopularHolder) {
         Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl).into(holder.animeImageView)
@@ -83,7 +90,8 @@ abstract class AnimePopularModel : EpoxyModelWithHolder<AnimePopularModel.Popula
         holder.flowLayout.removeAllViews()
 
         animeMetaModel.genreList?.forEach {
-            holder.flowLayout.addView(GenreTags(holder.flowLayout.context).getGenreTag(it.genreName,it.genreUrl))
+            var genreView = GenreTags(holder.flowLayout.context).getGenreTag(genreName = it.genreName, genreUrl = it.genreUrl, onClickListener = tagClickListener)
+            holder.flowLayout.addView(genreView)
         }
         holder.rootView.setOnClickListener(clickListener)
 

@@ -21,6 +21,7 @@ import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Tags.GenreTags
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.AnimeInfoModel
+
 class AnimeInfoFragment : Fragment() {
 
     private lateinit var viewModelFactory: AnimeInfoViewModelFactory
@@ -31,6 +32,7 @@ class AnimeInfoFragment : Fragment() {
 
     private lateinit var animeInfoBinding: FragmentAnimeinfoBinding
     private lateinit var loadingBinding: LoadingBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -76,8 +78,6 @@ class AnimeInfoFragment : Fragment() {
             }
         })
 
-
-
         viewModel.isFavourite.observe(viewLifecycleOwner, {
             if(it){
                 animeInfoBinding.favourite.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_favorite , null))
@@ -98,12 +98,15 @@ class AnimeInfoFragment : Fragment() {
 
         animeInfoBinding.flowLayout.removeAllViews()
         animeInfoModel.genre.forEach {
-            animeInfoBinding.flowLayout.addView(
-                GenreTags(requireContext()).getGenreTag(
-                    genreName = it.genreName,
-                    genreUrl = it.genreUrl
+            var genreUrl = it.genreUrl
+            var genreView = GenreTags(requireContext()).getGenreTag(genreName = it.genreName, genreUrl = genreUrl){
+                findNavController().navigate(
+                    AnimeInfoFragmentDirections.actionAnimeInfoFragmentToGenreFragment(
+                        genreUrl = genreUrl
+                    )
                 )
-            )
+            }
+            animeInfoBinding.flowLayout.addView(genreView)
         }
         episodeController.setAnime(animeInfoModel.animeTitle)
         animeInfoBinding.animeInfoSummary.text = animeInfoModel.plotSummary
@@ -157,10 +160,12 @@ class AnimeInfoFragment : Fragment() {
             }
         )
     }
+
     private fun setOnClickListeners(){
         animeInfoBinding.favourite.setOnClickListener {
             onFavouriteClick()
         }
+
         animeInfoBinding.animeInfoSummary.setOnClickListener{
                 animeInfoBinding.animeInfoSummary.maxLines = 10
                 animeInfoBinding.animeInfoSummary.movementMethod = ScrollingMovementMethod()

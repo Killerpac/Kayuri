@@ -39,6 +39,7 @@ class HomeViewModel : ViewModel(){
         fetchNewSeason()
         fetchMovies()
     }
+
     private fun getHomeListObserver(typeValue: Int): DisposableObserver<ResponseBody> {
         return  object : DisposableObserver<ResponseBody>(){
             override fun onComplete() {
@@ -68,8 +69,6 @@ class HomeViewModel : ViewModel(){
 //        super.updateErrorModel(true , e , isListEmpty)
 
     }
-
-
 
     private fun parseList(response: String, typeValue: Int): ArrayList<AnimeMetaModel>{
         return when(typeValue){
@@ -123,8 +122,6 @@ class HomeViewModel : ViewModel(){
         }
     }
 
-
-
     private fun getPositionByType(typeValue: Int): Int{
         val size = animeList.value!!.size
         return when(typeValue){
@@ -136,7 +133,6 @@ class HomeViewModel : ViewModel(){
             else->size
         }
     }
-
 
     private fun makeEmptyArrayList(): ArrayList<HomeScreenModel>{
         var i = 1
@@ -197,7 +193,6 @@ class HomeViewModel : ViewModel(){
         compositeDisposable.add(homeRepository.fetchNewestAnime(1).subscribeWith(getHomeListObserver(C.TYPE_NEW_SEASON)))
         addRealmListener(C.TYPE_NEW_SEASON)
     }
-
     override fun onCleared() {
         homeRepository.removeFromRealm()
         if(!compositeDisposable.isDisposed){
