@@ -8,7 +8,6 @@ import io.realm.Sort
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
-import net.sanic.Kayuri.utils.model.GenreModel
 import net.sanic.Kayuri.utils.realm.InitalizeRealm
 import net.sanic.Kayuri.utils.rertofit.NetworkInterface
 import net.sanic.Kayuri.utils.rertofit.RetrofitHelper
@@ -42,13 +41,6 @@ class HomeRepository {
         val fetchNewestSeasonService =
             retrofit.create(NetworkInterface.FetchNewestSeason::class.java)
         return fetchNewestSeasonService.get(Utils.getHeader(),page).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-    }
-
-    fun fetchGenres(): Observable<ResponseBody> {
-        val fetchGenresService =
-            retrofit.create(NetworkInterface.FetchGenres::class.java)
-        return fetchGenresService.get(Utils.getHeader()).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
@@ -90,31 +82,6 @@ class HomeRepository {
         return list
     }
 
-    fun fetchGenreFromRealm(typeValue: Int): ArrayList<GenreModel> {
-        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
-        val list: ArrayList<GenreModel> = ArrayList()
-        try {
-            val results =
-                realm.where(GenreModel::class.java)?.equalTo("typeValue", typeValue)?.sort("insertionOrder", Sort.ASCENDING)?.findAll()
-            results?.let {
-                list.addAll(it)
-            }
 
-
-        } catch (ignored: Exception) {
-        }
-        return list
-    }
-
-    fun addGenreInRealm(genreList: ArrayList<GenreModel>) {
-        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
-
-        try {
-            realm.executeTransaction { realm1: Realm ->
-                realm1.insertOrUpdate(genreList)
-            }
-        } catch (ignored: Exception) {
-        }
-    }
 
 }

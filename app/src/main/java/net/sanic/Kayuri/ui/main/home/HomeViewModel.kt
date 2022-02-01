@@ -11,7 +11,6 @@ import io.realm.Sort
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
-import net.sanic.Kayuri.utils.model.GenreModel
 import net.sanic.Kayuri.utils.model.HomeScreenModel
 import net.sanic.Kayuri.utils.model.UpdateModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
@@ -28,7 +27,6 @@ class HomeViewModel : ViewModel(){
     var updateModel : LiveData<UpdateModel> = _updateModel
     private val compositeDisposable = CompositeDisposable()
     private val realmListenerList = ArrayList<RealmResults<AnimeMetaModel>>()
-    private val genreRealmListenerList = ArrayList<RealmResults<GenreModel>>()
 
     init {
         fetchHomeList()
@@ -41,7 +39,6 @@ class HomeViewModel : ViewModel(){
         fetchNewSeason()
         fetchMovies()
     }
-
     private fun getHomeListObserver(typeValue: Int): DisposableObserver<ResponseBody> {
         return  object : DisposableObserver<ResponseBody>(){
             override fun onComplete() {
@@ -71,6 +68,8 @@ class HomeViewModel : ViewModel(){
 //        super.updateErrorModel(true , e , isListEmpty)
 
     }
+
+
 
     private fun parseList(response: String, typeValue: Int): ArrayList<AnimeMetaModel>{
         return when(typeValue){
@@ -124,6 +123,8 @@ class HomeViewModel : ViewModel(){
         }
     }
 
+
+
     private fun getPositionByType(typeValue: Int): Int{
         val size = animeList.value!!.size
         return when(typeValue){
@@ -135,6 +136,7 @@ class HomeViewModel : ViewModel(){
             else->size
         }
     }
+
 
     private fun makeEmptyArrayList(): ArrayList<HomeScreenModel>{
         var i = 1
@@ -195,6 +197,7 @@ class HomeViewModel : ViewModel(){
         compositeDisposable.add(homeRepository.fetchNewestAnime(1).subscribeWith(getHomeListObserver(C.TYPE_NEW_SEASON)))
         addRealmListener(C.TYPE_NEW_SEASON)
     }
+
     override fun onCleared() {
         homeRepository.removeFromRealm()
         if(!compositeDisposable.isDisposed){

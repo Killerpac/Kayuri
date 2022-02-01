@@ -17,14 +17,12 @@ import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.Display
 import com.github.javiersantos.appupdater.enums.Duration
 import com.github.javiersantos.appupdater.enums.UpdateFrom
-import kotlinx.android.synthetic.main.tags_genre.view.*
 import net.sanic.Kayuri.BuildConfig
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentHomeBinding
 import net.sanic.Kayuri.ui.main.home.epoxy.HomeController
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
-import net.sanic.Kayuri.utils.model.GenreModel
 import timber.log.Timber
 
 class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapterCallbacks {
@@ -106,6 +104,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
             }
             R.id.settings -> {
                 findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettings())
+
             }
         }
     }
@@ -128,21 +127,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
                 )
             )
         }
-    }
 
-    override fun tagClick(model: AnimeMetaModel, view: View) {
-        val genreButton = view.genre
-
-        var genre = model.genreList!!.find {
-            it.genreName == genreButton.text
-        }
-        if (!genre!!.genreUrl.isNullOrBlank()) {
-            findNavController().navigate(
-                HomeFragmentDirections.actionHomeFragmentToGenreFragment(
-                    genreUrl = genre.genreUrl
-                )
-            )
-        }
     }
     private fun checkUpdate() {
         AppUpdater(context)

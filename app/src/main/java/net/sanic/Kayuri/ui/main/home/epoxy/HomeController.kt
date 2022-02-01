@@ -62,9 +62,6 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
                             .clickListener { model, _, _, _ ->
                                 adapterCallbacks.animeTitleClick(model = model.animeMetaModel())
                             }
-                            .tagClickListener { model, _, view, _ ->
-                                adapterCallbacks.tagClick(model = model.animeMetaModel(), view = view)
-                            }
                             .animeMetaModel(animeMetaModel)
                             .addTo(this)
                     }
@@ -98,7 +95,7 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
     private fun recentSubDubClick(model: AnimeMetaModel, clickedView: View){
         when(clickedView.id){
             R.id.backgroundImage->{
-                adapterCallbacks.recentSubDubEpisodeClick(model = model)
+                adapterCallbacks.recentSubDubEpisodeClick(model = model )
             }
             R.id.animeTitle->{
                 adapterCallbacks.animeTitleClick(model = model)
@@ -111,7 +108,6 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
     interface EpoxyAdapterCallbacks{
         fun recentSubDubEpisodeClick(model: AnimeMetaModel)
         fun animeTitleClick(model: AnimeMetaModel)
-        fun tagClick(model: AnimeMetaModel, view: View)
     }
 
 }

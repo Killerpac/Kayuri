@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import net.sanic.Kayuri.utils.constants.C
 
 class Preference(private val context: Context) {
-    private val PREF_NAME = "Kayuri"
+    private val PREF_NAME = "AnimeXStream"
     private val BASE_URL = "BASE_URL"
     private val ORIGIN = "ORIGIN"
     private val REFERER = "REFERER"

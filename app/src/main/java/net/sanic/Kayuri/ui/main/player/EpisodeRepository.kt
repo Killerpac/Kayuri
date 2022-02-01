@@ -20,6 +20,7 @@ class EpisodeRepository {
     private var retrofit: Retrofit = RetrofitHelper.getRetrofitInstance()!!
     private var realm = Realm.getInstance(InitalizeRealm.getConfig())
 
+
     fun fetchEpisodeMediaUrl(url: String): Observable<ResponseBody> {
         val mediaUrlService = retrofit.create(NetworkInterface.FetchEpisodeMediaUrl::class.java)
         return mediaUrlService.get(Utils.getHeader(),url).subscribeOn(Schedulers.io())
