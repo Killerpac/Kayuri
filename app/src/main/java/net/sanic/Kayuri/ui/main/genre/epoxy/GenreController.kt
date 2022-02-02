@@ -5,7 +5,7 @@ import net.sanic.Kayuri.utils.epoxy.AnimeCommonModel_
 import net.sanic.Kayuri.utils.epoxy.LoadingModel_
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
 
-class GenreController(var adapterCallbacks: EpoxySearchAdapterCallbacks) : Typed2EpoxyController<ArrayList<AnimeMetaModel>, Boolean>() {
+class GenreController(var adapterCallbacks: EpoxyGenreAdapterCallbacks) : Typed2EpoxyController<ArrayList<AnimeMetaModel>, Boolean>() {
 
     override fun buildModels(data: ArrayList<AnimeMetaModel>?, isLoading: Boolean) {
         data?.forEach { animeMetaModel ->
@@ -18,18 +18,16 @@ class GenreController(var adapterCallbacks: EpoxySearchAdapterCallbacks) : Typed
                 }
                 .addTo(this)
         }
-        if(!data.isNullOrEmpty()){
-            LoadingModel_()
-                .id("loading")
-                .spanSizeOverride { totalSpanCount, _, _ ->
-                    totalSpanCount
-                }
-                .addIf(isLoading,this)
-        }
+        LoadingModel_()
+            .id("loading")
+            .spanSizeOverride { totalSpanCount, _, _ ->
+                totalSpanCount
+            }
+            .addIf(isLoading,this)
     }
 
 
-    interface EpoxySearchAdapterCallbacks{
+    interface EpoxyGenreAdapterCallbacks{
         fun animeTitleClick(model: AnimeMetaModel)
     }
 }

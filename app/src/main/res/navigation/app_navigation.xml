@@ -138,5 +138,8 @@
         <argument
             android:name="genreUrl"
             app:argType="string" />
+        <argument
+            android:name="genreName"
+            app:argType="string" />
     </fragment>
 </navigation>

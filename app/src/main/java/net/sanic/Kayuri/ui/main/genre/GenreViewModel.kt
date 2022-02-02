@@ -36,7 +36,7 @@ class GenreViewModel(genreUrl: String) : CommonViewModel2() {
                     genreRepository.fetchGenreList(
                         it,
                         pageNumber
-                    ).subscribeWith(getGenreObserver(C.TYPE_SEARCH_NEW))
+                    ).subscribeWith(getGenreObserver(C.TYPE_GENRE_NEW))
                 )
                 updateLoadingState(loading = Loading.LOADING, e = null, isListEmpty = isListEmpty())
             }
@@ -50,7 +50,7 @@ class GenreViewModel(genreUrl: String) : CommonViewModel2() {
                     genreRepository.fetchGenreList(
                         it,
                         pageNumber
-                    ).subscribeWith(getGenreObserver(C.TYPE_SEARCH_UPDATE))
+                    ).subscribeWith(getGenreObserver(C.TYPE_GENRE_UPDATE))
                 )
                 updateLoadingState(loading = Loading.LOADING, e = null, isListEmpty = isListEmpty())
             }
@@ -60,21 +60,21 @@ class GenreViewModel(genreUrl: String) : CommonViewModel2() {
     private fun getGenreObserver(searchType: Int): DisposableObserver<ResponseBody> {
         return object : DisposableObserver<ResponseBody>() {
             override fun onComplete() {
-                updateLoadingState(loading = Loading.COMPLETED, e = null, isListEmpty = isListEmpty())
             }
 
             override fun onNext(response: ResponseBody) {
-                val list =
-                    HtmlParser.parseMovie(response = response.string(), typeValue = C.TYPE_DEFAULT)
+                val list = HtmlParser.parseMovie(response = response.string(), typeValue = C.TYPE_DEFAULT)
                 if (list.isNullOrEmpty() || list.size < 20) {
                     _canNextPageLoaded = false
                 }
-                if (searchType == C.TYPE_SEARCH_NEW) {
+                if (searchType == C.TYPE_GENRE_NEW) {
                     _genreList.value = list
-                } else if (searchType == C.TYPE_SEARCH_UPDATE) {
+                    updateLoadingState(loading = Loading.COMPLETED, e = null, isListEmpty = isListEmpty())
+                } else if (searchType == C.TYPE_GENRE_UPDATE) {
                     val updatedList = _genreList.value
                     updatedList?.addAll(list)
                     _genreList.value = updatedList
+                    updateLoadingState(loading = Loading.COMPLETED, e = null, isListEmpty = isListEmpty())
                 }
                 pageNumber++
             }

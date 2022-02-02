@@ -25,7 +25,7 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
             AnimeMiniHeaderModel_()
                 .id(homeScreenModel.typeValue)
                 .typeName(homeScreenModel.type)
-                .addIf(!homeScreenModel.animeList.isNullOrEmpty() or !homeScreenModel.genreList.isNullOrEmpty(),this)
+                .addIf(!homeScreenModel.animeList.isNullOrEmpty(),this)
 
 
             when (homeScreenModel.typeValue) {

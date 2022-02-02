@@ -6,7 +6,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,29 +15,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_animeinfo.*
-import kotlinx.android.synthetic.main.fragment_animeinfo.view.*
-import kotlinx.android.synthetic.main.fragment_animeinfo.view.back
-import kotlinx.android.synthetic.main.fragment_genre.view.*
-import kotlinx.android.synthetic.main.fragment_search.view.*
-import kotlinx.android.synthetic.main.loading.view.*
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentGenreBinding
-import net.sanic.Kayuri.databinding.FragmentSearchBinding
 import net.sanic.Kayuri.databinding.LoadingBinding
-import net.sanic.Kayuri.ui.main.animeinfo.AnimeInfoFragmentArgs
-import net.sanic.Kayuri.ui.main.animeinfo.AnimeInfoViewModel
-import net.sanic.Kayuri.ui.main.animeinfo.AnimeInfoViewModelFactory
-import net.sanic.Kayuri.ui.main.animeinfo.epoxy.AnimeInfoController
 import net.sanic.Kayuri.ui.main.genre.epoxy.GenreController
-import net.sanic.Kayuri.ui.main.search.SearchFragmentDirections
 import net.sanic.Kayuri.utils.CommonViewModel2
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
 
-class GenreFragment : Fragment(), View.OnClickListener,
-    GenreController.EpoxySearchAdapterCallbacks {
+class GenreFragment : Fragment(), View.OnClickListener, GenreController.EpoxyGenreAdapterCallbacks {
 
     private lateinit var genreBinding: FragmentGenreBinding
     private lateinit var loadingBinding: LoadingBinding
@@ -52,7 +38,7 @@ class GenreFragment : Fragment(), View.OnClickListener,
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         genreBinding = FragmentGenreBinding.inflate(inflater, container, false)
         loadingBinding = LoadingBinding.inflate(inflater, genreBinding.root)
         return genreBinding.root
@@ -60,12 +46,11 @@ class GenreFragment : Fragment(), View.OnClickListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var genreUrl = GenreFragmentArgs.fromBundle(requireArguments()).genreUrl!!
-        viewModelFactory = GenreViewModelFactory(genreUrl)
+        viewModelFactory = GenreViewModelFactory(GenreFragmentArgs.fromBundle(requireArguments()).genreUrl)
         viewModel = ViewModelProvider(this, viewModelFactory).get(GenreViewModel::class.java)
-        setObserver(genreUrl.substring(genreUrl.lastIndexOf('/') + 1))
-        setOnClickListeners()
         setAdapters()
+        setObserver(GenreFragmentArgs.fromBundle(requireArguments()).genreName)
+        setOnClickListeners()
         setRecyclerViewScroll()
     }
 
@@ -77,6 +62,7 @@ class GenreFragment : Fragment(), View.OnClickListener,
 
     private fun setAdapters() {
         genreController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
+        genreController.setData(viewModel.genreList.value,true)
         genreBinding.recyclerView.apply {
             layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))
             adapter = genreController.adapter
@@ -100,12 +86,14 @@ class GenreFragment : Fragment(), View.OnClickListener,
     }
 
     private fun setObserver(genreName: String) {
-        viewModel.loadingModel.observe(viewLifecycleOwner, {
+        viewModel.loadingModel.observe(viewLifecycleOwner) {
             if (it.isListEmpty) {
-                if (it.loading == CommonViewModel2.Loading.LOADING) loadingBinding.loading?.visibility = View.VISIBLE
-                else if (it.loading == CommonViewModel2.Loading.ERROR) loadingBinding.loading?.visibility = View.GONE
+                if (it.loading == CommonViewModel2.Loading.LOADING) loadingBinding.loading.visibility =
+                    View.VISIBLE
+                else if (it.loading == CommonViewModel2.Loading.ERROR) loadingBinding.loading.visibility =
+                    View.GONE
             } else {
-                genreBinding.header.text = getString(R.string.genre, genreName.capitalize())
+                genreBinding.header.text = getString(R.string.genre, genreName)
                 genreController.setData(
                     viewModel.genreList.value,
                     it.loading == CommonViewModel2.Loading.LOADING
@@ -117,9 +105,10 @@ class GenreFragment : Fragment(), View.OnClickListener,
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
-                else if (it.loading == CommonViewModel2.Loading.COMPLETED) loadingBinding.loading?.visibility = View.GONE
+                else if (it.loading == CommonViewModel2.Loading.COMPLETED) loadingBinding.loading.visibility =
+                    View.GONE
             }
-        })
+        }
     }
 
     private fun setRecyclerViewScroll() {

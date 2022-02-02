@@ -123,10 +123,10 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
     override fun tagClick(model: AnimeMetaModel, genreName: String) {
         if (!model.genreList.isNullOrEmpty()) {
-            val genre = model.genreList!!.find { it.genreName == genreName }
+            val genre = model.genreList!!.find { it.genreName == genreName }!!
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToGenreFragment(
-                    genreUrl = genre!!.genreUrl
+                    genreUrl = genre.genreUrl, genreName = genre.genreName
                 )
             )
         }
@@ -136,7 +136,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         if (model.genreUrl.isNotEmpty()) {
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToGenreFragment(
-                    genreUrl = model.genreUrl
+                    genreUrl = model.genreUrl, genreName = model.genreName
                 )
             )
         }

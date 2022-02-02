@@ -54,6 +54,9 @@ class C {
         //Anime Search Types
         const val TYPE_SEARCH_NEW = 2000
         const val TYPE_SEARCH_UPDATE = 2001
+        //Anime Genre Types
+        const val TYPE_GENRE_NEW = 3000
+        const val TYPE_GENRE_UPDATE = 3001
 
         //Network Requests Header
         const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36"
