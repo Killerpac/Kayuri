@@ -109,12 +109,11 @@ class AnimeInfoFragment : Fragment() {
 
         animeInfoBinding.flowLayout.removeAllViews()
         animeInfoModel.genre.forEach {
-            val genreUrl = it.genreUrl
-            val genreName = it.genreName
-            val genreView = GenreTags(requireContext()).getGenreTag(genreName = genreName, genreUrl = genreUrl){
+            var genreUrl = it.genreUrl
+            var genreView = GenreTags(requireContext()).getGenreTag(genreName = it.genreName, genreUrl = genreUrl){
                 findNavController().navigate(
                     AnimeInfoFragmentDirections.actionAnimeInfoFragmentToGenreFragment(
-                        genreUrl = genreUrl, genreName = genreName
+                        genreUrl = genreUrl
                     )
                 )
             }
