@@ -7,18 +7,18 @@
     app:layoutDescription="@xml/motion_scene">
 
     <TextView
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="10dp"
         android:id="@+id/header"
         android:layout_width="wrap_content"
         android:layout_height="80dp"
-        android:textSize="36sp"
+        android:fontFamily="@font/work_sans_medium"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="10dp"
+        android:text="@string/discover"
         android:textColor="@color/home_header"
-        android:fontFamily="sans-serif-medium"
-        android:text="@string/discover"/>
+        android:textSize="36sp" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="38dp"

@@ -7,7 +7,7 @@
     //Total Colors
     <color name="app_background">#FFFFFF</color>
     <color name="header">#212121</color>
-    <color name="text_default">#808080</color>
+    <color name="text_default">#263238</color>
     <color name="progress">#e5e5e5</color>
     <color name="secondary_background">#EAEAEB</color>
 

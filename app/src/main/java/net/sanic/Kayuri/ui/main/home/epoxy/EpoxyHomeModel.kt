@@ -31,9 +31,6 @@ abstract class AnimeSubDubModel2 : EpoxyModelWithHolder<AnimeSubDubModel2.SubDub
     override fun bind(holder: SubDubHolder) {
         Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl).transition(
             DrawableTransitionOptions.withCrossFade(100)).into(holder.animeImageView)
-        holder.animeImageView.scaleX = 0.9f
-        holder.animeImageView.scaleY = 0.9f
-        holder.animeImageView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start()
         holder.animeTitle.text = animeMetaModel.title
         holder.animeEpisode.text = animeMetaModel.episodeNumber
         holder.background.setOnClickListener(clickListener)

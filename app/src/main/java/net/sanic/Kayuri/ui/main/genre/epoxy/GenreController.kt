@@ -1,11 +1,12 @@
 package net.sanic.Kayuri.ui.main.genre.epoxy
 
 import com.airbnb.epoxy.Typed2EpoxyController
+import net.sanic.Kayuri.ui.main.genre.GenreFragment
 import net.sanic.Kayuri.utils.epoxy.AnimeCommonModel_
 import net.sanic.Kayuri.utils.epoxy.LoadingModel_
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
 
-class GenreController(var adapterCallbacks: EpoxyGenreAdapterCallbacks) : Typed2EpoxyController<ArrayList<AnimeMetaModel>, Boolean>() {
+class GenreController(var adapterCallbacks: GenreFragment) : Typed2EpoxyController<ArrayList<AnimeMetaModel>, Boolean>() {
 
     override fun buildModels(data: ArrayList<AnimeMetaModel>?, isLoading: Boolean) {
         data?.forEach { animeMetaModel ->
@@ -27,7 +28,8 @@ class GenreController(var adapterCallbacks: EpoxyGenreAdapterCallbacks) : Typed2
     }
 
 
-    interface EpoxyGenreAdapterCallbacks{
+    interface EpoxySearchAdapterCallbacks {
         fun animeTitleClick(model: AnimeMetaModel)
+
     }
 }

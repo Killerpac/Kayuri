@@ -27,7 +27,7 @@
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/work_sans_medium"
         android:orientation="vertical"
         android:paddingLeft="30dp"
         android:paddingTop="10dp"

@@ -1,5 +1,6 @@
 package net.sanic.Kayuri.ui.main.genre
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.net.ConnectivityManager
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -23,8 +25,10 @@ import net.sanic.Kayuri.utils.CommonViewModel2
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import java.util.*
 
-class GenreFragment : Fragment(), View.OnClickListener, GenreController.EpoxyGenreAdapterCallbacks {
+class GenreFragment : Fragment(), View.OnClickListener,
+    GenreController.EpoxySearchAdapterCallbacks {
 
     private lateinit var genreBinding: FragmentGenreBinding
     private lateinit var loadingBinding: LoadingBinding
@@ -46,11 +50,13 @@ class GenreFragment : Fragment(), View.OnClickListener, GenreController.EpoxyGen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModelFactory = GenreViewModelFactory(GenreFragmentArgs.fromBundle(requireArguments()).genreUrl)
+        val genreUrl = GenreFragmentArgs.fromBundle(requireArguments()).genreUrl
+        viewModelFactory = GenreViewModelFactory(genreUrl)
         viewModel = ViewModelProvider(this, viewModelFactory).get(GenreViewModel::class.java)
-        setAdapters()
-        setObserver(GenreFragmentArgs.fromBundle(requireArguments()).genreName)
+        setObserver(genreUrl.substring(genreUrl.lastIndexOf('/') + 1))
         setOnClickListeners()
+        transitionListener()
+        setAdapters()
         setRecyclerViewScroll()
     }
 
@@ -62,7 +68,6 @@ class GenreFragment : Fragment(), View.OnClickListener, GenreController.EpoxyGen
 
     private fun setAdapters() {
         genreController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
-        genreController.setData(viewModel.genreList.value,true)
         genreBinding.recyclerView.apply {
             layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))
             adapter = genreController.adapter
@@ -84,16 +89,20 @@ class GenreFragment : Fragment(), View.OnClickListener, GenreController.EpoxyGen
             3
         }
     }
-
+    @SuppressLint("StringFormatInvalid")
     private fun setObserver(genreName: String) {
-        viewModel.loadingModel.observe(viewLifecycleOwner) {
+
+        viewModel.loadingModel.observe(viewLifecycleOwner) { it ->
             if (it.isListEmpty) {
                 if (it.loading == CommonViewModel2.Loading.LOADING) loadingBinding.loading.visibility =
                     View.VISIBLE
                 else if (it.loading == CommonViewModel2.Loading.ERROR) loadingBinding.loading.visibility =
                     View.GONE
             } else {
-                genreBinding.header.text = getString(R.string.genre, genreName)
+                genreBinding.header.text = getString(R.string.genre,
+                    genreName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
+                genreBinding.toolbarText.text = getString(R.string.genre,
+                    genreName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
                 genreController.setData(
                     viewModel.genreList.value,
                     it.loading == CommonViewModel2.Loading.LOADING
@@ -135,6 +144,44 @@ class GenreFragment : Fragment(), View.OnClickListener, GenreController.EpoxyGen
                 }
             }
         })
+    }
+
+    private fun transitionListener() {
+        genreBinding.motionLayout.setTransitionListener(
+            object : MotionLayout.TransitionListener {
+                override fun onTransitionTrigger(
+                    p0: MotionLayout?,
+                    p1: Int,
+                    p2: Boolean,
+                    p3: Float
+                ) {
+
+                }
+
+                override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+                    genreBinding.topView.cardElevation = 0F
+                }
+
+                override fun onTransitionChange(
+                    p0: MotionLayout?,
+                    startId: Int,
+                    endId: Int,
+                    progress: Float
+                ) {
+                    if (startId == R.id.start) {
+                        genreBinding.topView.cardElevation = 20F * progress
+                        genreBinding.toolbarText.alpha = progress
+                    } else {
+                        genreBinding.topView.cardElevation = 10F * (1 - progress)
+                        genreBinding.toolbarText.alpha = (1 - progress)
+                    }
+                }
+
+                override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                }
+
+            }
+        )
     }
 
     override fun onClick(v: View?) {

@@ -12,6 +12,7 @@ import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import timber.log.Timber
+import java.lang.Byte.decode
 import java.lang.NullPointerException
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -205,7 +206,7 @@ class HtmlParser {
             }
         }
 
-        private fun encryptAes(text: String, key: String,iv: String): String {
+        private fun encryptAes(text: String, key: String,iv:String): String {
             val ix = IvParameterSpec(iv.toByteArray())
             val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
             val secretKey = SecretKeySpec(key.toByteArray(), "AES")
@@ -217,16 +218,26 @@ class HtmlParser {
             }
         }
 
-        fun parseencryptajax(response: String):String{
+//        fun parseencryptajax(response: String):String{
+//            val document=Jsoup.parse(response)
+//            val value6 = document.getElementsByAttributeValue("data-name","ts").attr("data-value")
+//            val value5 = document.getElementsByAttributeValue("name","crypto").attr("content")
+//            val value1 = decryptAES(document.getElementsByAttributeValue("data-name","crypto").attr("data-value"),URLDecoder.decode(value6+value6,Charsets.UTF_8.name()),URLDecoder.decode(value6,Charsets.UTF_8.name()))
+//            val value4 = decryptAES(value5,URLDecoder.decode(value1,Charsets.UTF_8.name()),URLDecoder.decode(value6,Charsets.UTF_8.name()))
+//            val value2 = RandomStringUtils.randomAlphanumeric(16)
+//            val value3 = URLDecoder.decode(value4,Charsets.UTF_8.name()).toString()
+//            val encrypted = encryptAes(value4.removeRange(value4.indexOf("&"),value4.length),URLDecoder.decode(value1,Charsets.UTF_8.name()),URLDecoder.decode(value2,Charsets.UTF_8.name()))
+//            return "id="+encrypted+"&time="+"00"+value2+"00"+value3.substring(value3.indexOf("&"))
+//        }
+
+        //should be faster
+        fun parseencryptajax(response: String,id:String):String{
             val document=Jsoup.parse(response)
-            val value6 = document.getElementsByAttributeValue("data-name","ts").attr("data-value")
-            val value5 = document.getElementsByAttributeValue("name","crypto").attr("content")
-            val value1 = decryptAES(document.getElementsByAttributeValue("data-name","crypto").attr("data-value"),URLDecoder.decode(value6+value6,Charsets.UTF_8.name()),URLDecoder.decode(value6,Charsets.UTF_8.name()))
-            val value4 = decryptAES(value5,URLDecoder.decode(value1,Charsets.UTF_8.name()),URLDecoder.decode(value6,Charsets.UTF_8.name()))
-            val value2 = RandomStringUtils.randomAlphanumeric(16)
-            val value3 = URLDecoder.decode(value4,Charsets.UTF_8.name()).toString()
-            val encrypted = encryptAes(value4.removeRange(value4.indexOf("&"),value4.length),URLDecoder.decode(value1,Charsets.UTF_8.name()),URLDecoder.decode(value2,Charsets.UTF_8.name()))
-            return "id="+encrypted+"&time="+"00"+value2+"00"+value3.substring(value3.indexOf("&"))
+            val value1 = document.select("script[data-name='ts']").attr("data-value")
+            val value2 = document.select("script[data-name='crypto']").attr("data-value")
+            val key = decryptAES(value2, value1+value1, value1)
+            val encrypted = encryptAes(id, key, "acknowledgements")
+            return "id=$encrypted&time=00acknowledgements00"
         }
 
         fun parseencrypturls(response: String): Pair<RealmList<String>,RealmList<String>>{

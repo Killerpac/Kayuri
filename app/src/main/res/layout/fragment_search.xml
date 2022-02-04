@@ -30,11 +30,11 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow"
                 android:id="@+id/backButton"
-                android:tint="@color/search_back"
                 android:scaleX="1.2"
                 android:scaleY="1.2"
                 android:padding="10dp"
-                android:contentDescription="@string/back_button" />
+                android:contentDescription="@string/back_button"
+                app:tint="@color/search_back" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -44,6 +44,7 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginStart="20dp"
                 android:textSize="22sp"
+                android:fontFamily="@font/work_sans"
                 android:hint="@string/search"
                 android:paddingStart="20dp"
                 android:paddingTop="8dp"

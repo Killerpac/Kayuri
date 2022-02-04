@@ -10,7 +10,6 @@
         <OnSwipe
             app:dragDirection="dragUp"
             app:moveWhenScrollAtTop="true"
-            app:touchAnchorId="@+id/recyclerView"
             app:touchAnchorSide="top"
             motion:onTouchUp="stop" />
     </Transition>
@@ -27,7 +26,6 @@
             app:layout_constraintTop_toTopOf="parent"
             android:background="@android:color/white"/>
 
-
         <Constraint
             android:id="@+id/header"
             android:layout_width="0dp"
@@ -38,20 +36,16 @@
             android:paddingTop="10dp"
             android:paddingRight="30dp"
             android:paddingBottom="10dp"
-            android:text="@string/favourite"
             android:textColor="@color/home_header"
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/topView"/>
-
-
+            app:layout_constraintTop_toBottomOf="@id/topView"
+            app:layout_constraintHorizontal_bias="1.0" />
 
     </ConstraintSet>
 
-
     <ConstraintSet android:id="@+id/end">
-
 
         <Constraint
             android:id="@+id/topView"
@@ -62,8 +56,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:background="@android:color/white">
-
-
         </Constraint>
 
         <Constraint
@@ -76,14 +68,18 @@
             android:paddingTop="10dp"
             android:paddingRight="30dp"
             android:paddingBottom="10dp"
-            android:text="@string/favourite"
             android:textColor="@color/home_header"
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/topView"/>
 
-
     </ConstraintSet>
+
+    <Constraint android:id="@+id/loading">
+        <PropertySet
+            app:applyMotionScene="false"
+            app:visibilityMode="ignore" />
+    </Constraint>
 
 </MotionScene>

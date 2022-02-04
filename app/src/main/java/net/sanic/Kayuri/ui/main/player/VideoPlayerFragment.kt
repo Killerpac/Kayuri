@@ -78,6 +78,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     private var checkedItem = 2
     private var selectedSpeed = 2
     private var eandex = 0
+    private var dtybit = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -170,7 +171,8 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     fun updateContent(content: Content) {
         Timber.e("Content Updated uRL: ${content.url}")
         this.content = content
-        episodeName.text = content.episodeName
+        episodeName.text = content.animeName
+        episodeNum.text = content.episodeName
         quality = content.quality
         exoPlayerView.videoSurfaceView?.visibility =View.GONE
 
@@ -204,7 +206,13 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         videoUrl.forEach {
             links.add(buildMediaSource(Uri.parse(it)))
         }
-        player.setMediaSource(links[index])
+        if(requests.QUALITY != "Auto" && quality.indexOf(requests.QUALITY) != -1 && !dtybit)
+        {
+            player.setMediaSource(links[quality.indexOf(requests.QUALITY)])
+        }
+        else{
+            player.setMediaSource(links[index])
+        }
         player.prepare()
         eandex = index
         seekTo?.let {
@@ -282,6 +290,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
 
 
     private fun playNextEpisode() {
+        dtybit = false
         saveWatchedDuration()
         playOrPausePlayer(playWhenReady = false, loseAudioFocus = false)
         showLoading(true)
@@ -290,6 +299,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     }
 
     private fun playPreviousEpisode() {
+        dtybit = false
         saveWatchedDuration()
         playOrPausePlayer(playWhenReady =false, loseAudioFocus = false)
         showLoading(true)
@@ -360,6 +370,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
                 eandex = which
             }
             setPositiveButton("OK"){dialog,_ ->
+                dtybit = true
                 loadVideo(player.currentPosition,i)
                 dialog.dismiss()
             }
@@ -427,6 +438,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     override fun onPlayerError(error: PlaybackException) {
         isVideoPlaying = false
         val cause = error.cause
+        dtybit = false
         if (cause is HttpDataSource.HttpDataSourceException) {
             // An HTTP error occurred.
             val httpError: HttpDataSource.HttpDataSourceException = cause

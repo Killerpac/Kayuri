@@ -73,7 +73,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
             Content(
                 animeName = animeName ?: "",
                 episodeUrl = url,
-                episodeName = animeName!! + " (" + episodeNumber!! + ")",
+                episodeName = "\"$episodeNumber\"",
                 url = RealmList()
             )
         )
@@ -181,24 +181,24 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     }
 
     private fun setObserver() {
-        viewModel.liveContent.observe(this, {
+        viewModel.liveContent.observe(this) {
             this.content = it
             it?.let {
                 if (!it.url.isNullOrEmpty()) {
                     (playerFragment as VideoPlayerFragment).updateContent(it)
                 }
             }
-        })
-        viewModel.isLoading.observe(this, {
+        }
+        viewModel.isLoading.observe(this) {
             (playerFragment as VideoPlayerFragment).showLoading(it.isLoading)
-        })
-        viewModel.errorModel.observe(this, {
+        }
+        viewModel.errorModel.observe(this) {
             (playerFragment as VideoPlayerFragment).showErrorLayout(
                 it.show,
                 it.errorMsgId,
                 it.errorCode
             )
-        })
+        }
     }
 
     override fun onBackPressed() {
@@ -230,7 +230,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         viewModel.updateEpisodeContent(
             Content(
                 episodeUrl = content.nextEpisodeUrl,
-                episodeName = "$animeName (EP ${incrimentEpisodeNumber(content.episodeName!!)})",
+                episodeName = "\"EP ${incrimentEpisodeNumber(content.episodeName!!)}\"",
                 url = content.url,
                 animeName = content.animeName,
                 index = content.index,
@@ -246,7 +246,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         viewModel.updateEpisodeContent(
             Content(
                 episodeUrl = content.previousEpisodeUrl,
-                episodeName = "$animeName (EP ${decrimentEpisodeNumber(content.episodeName!!)})",
+                episodeName =  "\"EP ${decrimentEpisodeNumber(content.episodeName!!)}\"",
                 url = content.url,
                 animeName = content.animeName,
                 index = content.index,
@@ -260,7 +260,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         return try {
             val episodeString = episodeName.substring(
                 episodeName.lastIndexOf(' ') + 1,
-                episodeName.lastIndexOf(')')
+                episodeName.lastIndex
             )
             var episodeNumber = Integer.parseInt(episodeString)
             episodeNumber++
@@ -270,12 +270,11 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
             ""
         }
     }
-
     private fun decrimentEpisodeNumber(episodeName: String): String {
         return try {
             val episodeString = episodeName.substring(
                 episodeName.lastIndexOf(' ') + 1,
-                episodeName.lastIndexOf(')')
+                episodeName.lastIndex
             )
             var episodeNumber = Integer.parseInt(episodeString)
             episodeNumber--

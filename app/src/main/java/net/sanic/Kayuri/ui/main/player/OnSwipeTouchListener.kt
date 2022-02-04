@@ -82,7 +82,8 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             return true}
 
         override fun onDoubleTap(e: MotionEvent?): Boolean {
-
+            if((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
+            else ((context as VideoPlayerActivity).exoPlayerView.showController())
             return super.onDoubleTap(e)
         }
 
@@ -176,25 +177,6 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             return true
 
         }
-
-//        try {
-//        val diffY = e2.y - e1.y
-//        val diffX = e2.x - e1.x
-//        if (Math.abs(diffX) > Math.abs(diffY)) {
-//        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-//        if (diffX > 0) {
-//        onSwipeRight()
-//        } else {
-//        onSwipeLeft()
-//        }
-//        }
-//        } else {
-//        // onTouch(e);
-//        }
-//        } catch (exception: Exception) {
-//        exception.printStackTrace()
-//        }
-
         //    return result
     }
 

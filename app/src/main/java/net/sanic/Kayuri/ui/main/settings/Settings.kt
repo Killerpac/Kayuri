@@ -1,5 +1,7 @@
 package net.sanic.Kayuri.ui.main.settings
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import net.sanic.Kayuri.MainActivity
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentSettingsBinding
+import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.preference.Preference
 import net.sanic.Kayuri.utils.preference.PreferenceHelper
 
@@ -30,11 +33,13 @@ class Settings : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sharesPreference = PreferenceHelper.sharedPreference
+        settingsBinding.button.text = C.QUALITY
         setRadioButtons()
         super.onViewCreated(view, savedInstanceState)
     }
     private fun setOnClickListeners() {
         settingsBinding.back.setOnClickListener(this)
+        settingsBinding.button.setOnClickListener(this)
     }
     private fun setRadioButtons() {
         settingsBinding.nightModeRadioButton.isChecked = sharesPreference.getNightMode()
@@ -56,11 +61,35 @@ class Settings : Fragment(), View.OnClickListener {
             sharesPreference.setadvancecontrols(isChecked)
         }
     }
+    
+    private fun qualitydialog(){
+        val qualities = arrayOf("360p","480p","720p","1080p")
+        var checkeditem = 0
+        val alertDialog = AlertDialog.Builder(requireContext(),R.style.RoundedCornersDialog)
+        alertDialog.apply { 
+            setTitle("Preferred Quality")
+            setSingleChoiceItems(qualities,checkeditem) {_,which ->
+                    checkeditem = which
+            }
+            setPositiveButton("OK") {dialog, _ ->
+                C.QUALITY = qualities[checkeditem]
+                settingsBinding.button.text = qualities[checkeditem]
+                dialog.dismiss()
+            }
+            setNegativeButton("Cancel") {dialog, _ ->
+                dialog.dismiss()
+            }
+            alertDialog.create().show()
+        }
+    }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.back -> {
                 findNavController().popBackStack()
+            }
+            R.id.button -> {
+                qualitydialog()
             }
         }
     }

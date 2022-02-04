@@ -138,31 +138,34 @@ class AnimeInfoFragment : Fragment() {
         }
     }
 
-    private fun transitionListener(){
+    private fun transitionListener() {
         animeInfoBinding.motionLayout.setTransitionListener(
-            object: MotionLayout.TransitionListener{
+            object : MotionLayout.TransitionListener {
                 override fun onTransitionTrigger(
                     p0: MotionLayout?,
                     p1: Int,
                     p2: Boolean,
                     p3: Float
-                ) {}
+                ) {
+
+                }
 
                 override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
                     animeInfoBinding.topView.cardElevation = 0F
-                    animeInfoBinding.animeInfoSummary.elevation = 0F
                 }
 
-                override fun onTransitionChange(p0: MotionLayout?, startId: Int, endId: Int, progress: Float) {
-                    if(startId == R.id.start){
+                override fun onTransitionChange(
+                    p0: MotionLayout?,
+                    startId: Int,
+                    endId: Int,
+                    progress: Float
+                ) {
+                    if (startId == R.id.start) {
                         animeInfoBinding.topView.cardElevation = 20F * progress
-                        animeInfoBinding.animeInfoSummary.elevation = 20F * progress
                         animeInfoBinding.toolbarText.alpha = progress
-                    }
-                    else{
+                    } else {
                         animeInfoBinding.topView.cardElevation = 10F * (1 - progress)
-                        animeInfoBinding.animeInfoSummary.elevation = 10F * (1 - progress)
-                        animeInfoBinding.toolbarText.alpha = (1-progress)
+                        animeInfoBinding.toolbarText.alpha = (1 - progress)
                     }
                 }
 

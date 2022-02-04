@@ -30,10 +30,16 @@
     <string name="switch_between_light_dark_theme"><![CDATA[Cambiar entre tema claro y oscuro]]></string>
     <string name="picture_in_picture">Imagen en imagen</string>
     <string name="toggle_pip_mode">Alternar modo PIP</string>
-    <string name="Google_Server">Servidor de Google</string>
+    <string name="Google_Server">Servidor predeterminado</string>
+    <string name="dllocation">La ubicación predeterminada para la descarga es la carpeta Películas en el almacenamiento interno</string>
     <string name="Toogle_Google_Server">¡Solo 1080p! Velocidades más rápidas</string>
     <string name="controlsname">Controles del jugador</string>
     <string name="controlstext">Controles deslizantes para volumen y brillo en el reproductor</string>
     <string name="genres">Géneros</string>
-    <string name="genre">Género %s</string>
+    <string name="genre">Género</string>
+    <string name="qualitychoose">Auto</string>
+    <string name="qualitytoogle">
+Calidad de video preferida</string>
+    <string name="qualitytext">
+Establecer la calidad de transmisión preferida</string>
 </resources>

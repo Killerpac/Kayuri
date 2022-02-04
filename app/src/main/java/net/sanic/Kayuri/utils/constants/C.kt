@@ -63,6 +63,9 @@ class C {
         const val ORIGIN = "https://gogoplay.io/"
         const val  REFERER = "https://gogoplay.io/"
 
+        //Preferred Quality
+        var QUALITY = "Auto"
+
         //Realm
         const val MAX_TIME_M3U8_URL =  25 * 60 *1000
         const val MAX_TIME_FOR_ANIME = 2 * 24 * 60 *60 * 1000

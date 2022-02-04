@@ -41,7 +41,7 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:paddingTop="12dp"
-
+            android:fontFamily="@font/work_sans"
             android:textColor="@color/episode_text"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -57,9 +57,9 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
     }
 
     private fun setObserver(){
-        viewModel.favouriteList.observe(viewLifecycleOwner, {
+        viewModel.favouriteList.observe(viewLifecycleOwner) {
             favouriteController.setData(it)
-        })
+        }
     }
 
 
@@ -83,9 +83,9 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
 //        }
 //    }
 
-    private fun transitionListener(){
+    private fun transitionListener() {
         favouriteBinding.motionLayout.setTransitionListener(
-            object: MotionLayout.TransitionListener{
+            object : MotionLayout.TransitionListener {
                 override fun onTransitionTrigger(
                     p0: MotionLayout?,
                     p1: Int,
@@ -99,14 +99,18 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
                     favouriteBinding.topView.cardElevation = 0F
                 }
 
-                override fun onTransitionChange(p0: MotionLayout?, startId: Int, endId: Int, progress: Float) {
-                    if(startId == R.id.start){
+                override fun onTransitionChange(
+                    p0: MotionLayout?,
+                    startId: Int,
+                    endId: Int,
+                    progress: Float
+                ) {
+                    if (startId == R.id.start) {
                         favouriteBinding.topView.cardElevation = 20F * progress
                         favouriteBinding.toolbarText.alpha = progress
-                    }
-                    else{
+                    } else {
                         favouriteBinding.topView.cardElevation = 10F * (1 - progress)
-                        favouriteBinding.toolbarText.alpha = (1-progress)
+                        favouriteBinding.toolbarText.alpha = (1 - progress)
                     }
                 }
 

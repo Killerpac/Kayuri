@@ -28,7 +28,6 @@ class Utils {
             return mapOf("referer" to pref.getReferrer(), "origin" to pref.getOrigin(), "user-agent" to C.USER_AGENT)
         }
         fun getGoogle():Map<String,String>{
-            val perf = PreferenceHelper.sharedPreference
             return mapOf("user-agent" to C.USER_AGENT)
         }
         fun calculateNoOfColumns(

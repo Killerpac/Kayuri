@@ -41,6 +41,10 @@
             android:theme="@style/VideoPlayer"
             tools:ignore="LockedOrientationActivity"
             tools:targetApi="n_mr1" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

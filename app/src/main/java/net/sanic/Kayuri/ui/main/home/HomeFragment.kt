@@ -55,9 +55,9 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
     }
 
     private fun viewModelObserver() {
-        viewModel.animeList.observe(viewLifecycleOwner, {
+        viewModel.animeList.observe(viewLifecycleOwner) {
             homeController.setData(it)
-        })
+        }
 
 //        viewModel.updateModel.observe(viewLifecycleOwner, {
 //            Timber.e(it.whatsNew)
@@ -106,7 +106,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
             HomeFragmentDirections.actionHomeFragmentToVideoPlayerActivity(
                 episodeUrl = model.episodeUrl,
                 animeName = model.title,
-                episodeNumber = model.episodeNumber
+                episodeNumber = model.episodeNumber?.replace("Episode","EP")
             )
         )
     }
@@ -150,7 +150,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
             .setDisplay(Display.DIALOG)
             .showAppUpdated(false)
             .setCancelable(false)
-            .setDuration(Duration.NORMAL)
+            .setButtonDoNotShowAgain("")
             .start()
     }
 //    private fun showDialog(whatsNew: String) {

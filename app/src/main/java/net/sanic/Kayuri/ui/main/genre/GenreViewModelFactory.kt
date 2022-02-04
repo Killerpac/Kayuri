@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import net.sanic.Kayuri.ui.main.animeinfo.AnimeInfoViewModel
 import java.lang.IllegalArgumentException
 
-class GenreViewModelFactory(private val genreUrl: String) : ViewModelProvider.Factory {
+ class GenreViewModelFactory(private val genreUrl: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if(modelClass.isAssignableFrom(GenreViewModel::class.java)){
             return GenreViewModel(genreUrl = genreUrl) as T

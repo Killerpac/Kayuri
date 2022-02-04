@@ -35,6 +35,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
     private val READ_STORAGE_PERMISSION_REQUEST_CODE = 41
     private lateinit var isWatchedHelper: net.sanic.Kayuri.utils.helper.WatchedEpisode
     private lateinit var load:AlertDialog
+    private lateinit var id:String
     override fun buildModels(data: ArrayList<EpisodeModel>?) {
         data?.forEach {
             EpisodeModel_()
@@ -118,6 +119,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                     when(type) {
                         C.TYPE_MEDIA_URL -> {
                             val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
+                            id = Regex("id=([^&]+)").find(episodeInfo.vidcdnUrl!!)!!.value.removePrefix("id=")
                             episodeInfo.vidcdnUrl?.let {
                                     compositeDisposable.add(
                                         episodeRepository.fetchM3u8Url(episodeInfo.vidcdnUrl!!)
@@ -134,7 +136,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
 
                         }
                         C.TYPE_M3U8_PREP -> {
-                            val m3u8Pre = HtmlParser.parseencryptajax(response = response.string())
+                            val m3u8Pre = HtmlParser.parseencryptajax(response = response.string(),id)
                             compositeDisposable.add(
                                 episodeRepository.m3u8preprocessor("${C.REFERER}encrypt-ajax.php?${m3u8Pre}")
                                     .subscribeWith(
