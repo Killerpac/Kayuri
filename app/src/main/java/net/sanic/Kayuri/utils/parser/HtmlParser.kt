@@ -12,6 +12,7 @@ import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import timber.log.Timber
+import java.lang.NullPointerException
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.*
@@ -128,6 +129,15 @@ class HtmlParser {
             return animeMetaModelList
         }
 
+        fun parseGenres(response: String) : ArrayList<GenreModel>{
+            val genreList: ArrayList<GenreModel> = ArrayList()
+            val document = Jsoup.parse(response)
+            val genres = document.getElementsByClass("menu_series genre right").first()
+            val genreHtmlList = genres.select("a")
+            genreList.addAll(getGenreList(genreHtmlList))
+            return genreList
+        }
+
         fun parseAnimeInfo(response: String): AnimeInfoModel{
             val document = Jsoup.parse(response)
             val animeInfo = document.getElementsByClass("anime_info_body_bg")
@@ -232,7 +242,7 @@ class HtmlParser {
                     i++
                 }
                 Pair(urls,qualities)
-            }catch (exp:java.lang.NullPointerException) {
+            }catch (exp: NullPointerException) {
                 Pair(urls,qualities)
             }
         }
@@ -252,7 +262,7 @@ class HtmlParser {
                     i++
                 }
                 Pair(urls,qualities)
-            }catch (exp:java.lang.NullPointerException) {
+            }catch (exp: NullPointerException) {
                 Pair(urls,qualities)
             }
 
@@ -289,7 +299,7 @@ class HtmlParser {
             val genreList = ArrayList<GenreModel>()
             genreHtmlList.forEach {
                 val genreUrl = it.attr("href")
-                val genreName = it.text()
+                val genreName = it.text().trim()
 
                 genreList.add(
                     GenreModel(

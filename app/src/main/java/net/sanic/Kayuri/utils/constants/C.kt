@@ -11,7 +11,7 @@ class C {
         const val NO_INTERNET_CONNECTION = 1001
 
         //Base URLS
-        var BASE_URL = "https://gogoanime.film/"
+        const val BASE_URL = "https://gogoanime.film/"
         const val EPISODE_LOAD_URL = "https://ajax.gogocdn.net/ajax/load-list-episode"
         const val SEARCH_URL = "/search.html"
 
@@ -35,11 +35,12 @@ class C {
         const val MAX_LIMIT_FOR_SUB_DUB = 10
 
 
-        const val NEWEST_SEASON_POSITION = 2
-        const val RECENT_SUB_POSITION = 0
-        const val RECENT_DUB_POSITION = 1
-        const val POPULAR_POSITION = 4
-        const val MOVIE_POSITION = 3
+        const val GENRE_POSITION = 0
+        const val NEWEST_SEASON_POSITION = 3
+        const val RECENT_SUB_POSITION = 1
+        const val RECENT_DUB_POSITION = 2
+        const val POPULAR_POSITION = 5
+        const val MOVIE_POSITION = 4
 
         //Episode URL Type
         const val TYPE_MEDIA_URL = 100
@@ -53,6 +54,9 @@ class C {
         //Anime Search Types
         const val TYPE_SEARCH_NEW = 2000
         const val TYPE_SEARCH_UPDATE = 2001
+        //Anime Genre Types
+        const val TYPE_GENRE_NEW = 3000
+        const val TYPE_GENRE_UPDATE = 3001
 
         //Network Requests Header
         const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36"

@@ -27,7 +27,6 @@
             app:layout_constraintTop_toTopOf="parent"
             android:background="@android:color/white"/>
 
-
         <Constraint
             android:id="@+id/header"
             android:layout_width="0dp"
@@ -38,13 +37,13 @@
             android:paddingTop="10dp"
             android:paddingRight="30dp"
             android:paddingBottom="10dp"
-            android:text="@string/favourite"
             android:textColor="@color/home_header"
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/topView"
             app:layout_constraintHorizontal_bias="1.0" />
+
         <Constraint
             app:layout_constraintVertical_bias="1.0"
             android:layout_height="0dp"
@@ -55,17 +54,10 @@
             android:layout_width="match_parent"
             app:layout_constraintTop_toBottomOf="@id/header"
             android:id="@+id/recyclerView" />
-        <Constraint
-            app:layout_editor_absoluteY="39dp"
-            app:layout_editor_absoluteX="0dp"
-            android:id="@+id/editTextTextPersonName" />
-
 
     </ConstraintSet>
 
-
     <ConstraintSet android:id="@+id/end">
-
 
         <Constraint
             android:id="@+id/topView"
@@ -76,8 +68,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:background="@android:color/white">
-
-
         </Constraint>
 
         <Constraint
@@ -90,14 +80,18 @@
             android:paddingTop="10dp"
             android:paddingRight="30dp"
             android:paddingBottom="10dp"
-            android:text="@string/favourite"
             android:textColor="@color/home_header"
             android:textSize="28sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/topView"/>
 
-
     </ConstraintSet>
+
+    <Constraint android:id="@+id/loading">
+        <PropertySet
+            app:applyMotionScene="false"
+            app:visibilityMode="ignore" />
+    </Constraint>
 
 </MotionScene>

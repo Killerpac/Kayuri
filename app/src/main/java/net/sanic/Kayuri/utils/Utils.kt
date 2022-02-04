@@ -17,7 +17,7 @@ class Utils {
                 C.TYPE_RECENT_SUB -> "Recent Sub"
                 C.TYPE_MOVIE -> "Movies"
                 C.TYPE_POPULAR_ANIME -> "Popular Anime"
-                C.TYPE_GENRE -> "Categories"
+                C.TYPE_GENRE -> "Genres"
                 C.TYPE_NEW_SEASON-> "New Season"
                 else -> "Default"
             }

@@ -23,7 +23,6 @@ import net.sanic.Kayuri.ui.main.player.VideoPlayerActivity
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.EpisodeModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
-import net.sanic.Kayuri.utils.preference.PreferenceHelper
 import okhttp3.ResponseBody
 import timber.log.Timber
 
@@ -92,10 +91,10 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
 
         fun getEpisodeUrlObserver(type: Int): DisposableObserver<ResponseBody> {
             return object : DisposableObserver<ResponseBody>() {
-                var urls:RealmList<String> = RealmList()
+                var urlList:RealmList<String> = RealmList()
                 override fun onComplete() {
                     var num = 0
-                    if (!urls.isNullOrEmpty()) {
+                    if (!urlList.isNullOrEmpty()) {
                         load.dismiss()
                        val dialog = AlertDialog.Builder(clickedView.context,R.style.RoundedCornersDialog)
                         dialog.apply {
@@ -104,7 +103,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                                 num = which
                             }
                             setPositiveButton("OK") { dialog, _ ->
-                                urls[num]?.let { downloadmanager(it, episodeModel, clickedView) }
+                                urlList[num]?.let { downloadmanager(it, episodeModel, clickedView) }
                                 dialog.dismiss()
                             }
                             setNegativeButton("Cancel") { dialog, _ ->
@@ -130,7 +129,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                         }
                         C.TYPE_M3U8_URL -> {
                             val m3u8Url: Pair<RealmList<String>,RealmList<String>> = HtmlParser.parseencrypturls(response = response.string())
-                            urls = m3u8Url.first
+                            urlList = m3u8Url.first
                             quality = m3u8Url.second
 
                         }
