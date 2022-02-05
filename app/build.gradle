@@ -125,6 +125,7 @@ dependencies {
     //updater library
     implementation 'com.github.javiersantos:AppUpdater:2.7'
 
+
     //Apache Commons
     implementation 'org.apache.commons:commons-lang3:3.11'
     implementation 'org.mozilla:rhino:1.7.13'

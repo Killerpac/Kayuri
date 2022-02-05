@@ -3,6 +3,7 @@ package net.sanic.Kayuri.ui.main.genre
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -11,20 +12,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFadeThrough
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentGenreBinding
 import net.sanic.Kayuri.databinding.LoadingBinding
+import net.sanic.Kayuri.ui.main.favourites.FavouriteFragmentDirections
+import net.sanic.Kayuri.ui.main.genre.GenreFragmentDirections.Companion.actionGenreFragmentToAnimeInfoFragment
 import net.sanic.Kayuri.ui.main.genre.epoxy.GenreController
 import net.sanic.Kayuri.utils.CommonViewModel2
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import net.sanic.Kayuri.utils.model.FavouriteModel
 import java.util.*
 
 class GenreFragment : Fragment(), View.OnClickListener,
@@ -192,11 +202,17 @@ class GenreFragment : Fragment(), View.OnClickListener,
         }
     }
 
-    override fun animeTitleClick(model: AnimeMetaModel) {
+    override fun animeTitleClick(model: AnimeMetaModel, sharedTitle: View, sharedImage: View) {
+        val extras = FragmentNavigatorExtras(
+            sharedTitle to resources.getString(R.string.shared_title),
+            sharedImage to resources.getString(R.string.shared_image)
+        )
         findNavController().navigate(
             GenreFragmentDirections.actionGenreFragmentToAnimeInfoFragment(
-                categoryUrl = model.categoryUrl
-            )
+                categoryUrl = model.categoryUrl,
+                animeName = model.title,
+                animeImageUrl = model.imageUrl
+            ), extras
         )
     }
 

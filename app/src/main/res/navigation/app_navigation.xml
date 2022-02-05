@@ -12,11 +12,7 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_animeInfoFragment"
-            app:destination="@id/animeInfoFragment"
-            app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:destination="@id/animeInfoFragment" />
         <action
             android:id="@+id/action_homeFragment_to_searchFragment"
             app:destination="@id/searchFragment"
@@ -68,7 +64,12 @@
         <argument
             android:name="categoryUrl"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"/>
+        <argument
+            android:name="animeName"
+            app:argType="string" />
+        <argument android:name="animeImageUrl"
+            app:argType="string"/>
         <action
             android:id="@+id/action_animeInfoFragment_to_genreFragment"
             app:destination="@id/genreFragment"
@@ -113,11 +114,7 @@
         tools:layout="@layout/fragment_favourite">
         <action
             android:id="@+id/action_favouriteFragment_to_animeInfoFragment"
-            app:destination="@id/animeInfoFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:destination="@id/animeInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/settings"

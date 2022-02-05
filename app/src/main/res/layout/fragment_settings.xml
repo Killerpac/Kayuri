@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     app:layoutDescription="@xml/motion_scene_settings"
     android:id="@+id/motionLayout"
+    android:transitionName="@string/settings_transition"
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.cardview.widget.CardView

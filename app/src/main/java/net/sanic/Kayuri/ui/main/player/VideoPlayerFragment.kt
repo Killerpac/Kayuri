@@ -201,14 +201,15 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
 
     private fun loadVideo(seekTo: Long? = 0,index: Int, playWhenReady: Boolean = true) {
         val links:ArrayList<MediaSource> = ArrayList()
+        val preferredquality = PreferenceHelper.sharedPreference.getpreferredquality()
         showLoading(true)
         showErrorLayout(false, 0, 0)
         videoUrl.forEach {
             links.add(buildMediaSource(Uri.parse(it)))
         }
-        if(requests.QUALITY != "Auto" && quality.indexOf(requests.QUALITY) != -1 && !dtybit)
+        if(preferredquality != "Auto" && quality.indexOf(preferredquality) != -1 && !dtybit)
         {
-            player.setMediaSource(links[quality.indexOf(requests.QUALITY)])
+            player.setMediaSource(links[quality.indexOf(preferredquality)])
         }
         else{
             player.setMediaSource(links[index])

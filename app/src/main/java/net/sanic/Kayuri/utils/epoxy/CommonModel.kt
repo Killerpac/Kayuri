@@ -31,6 +31,17 @@ abstract class AnimeCommonModel : EpoxyModelWithHolder<AnimeCommonModel.MovieHol
         }
         holder.root.setOnClickListener(clickListener)
 
+        var animeTitleTransition = holder.root.context.getString(R.string.shared_title)
+        animeTitleTransition =
+            "${animeTitleTransition}_${animeMetaModel.title}_${animeMetaModel.ID}"
+        holder.animeTitle.transitionName = animeTitleTransition
+
+        //Set Shared Element for Anime Image
+        var animeImageTransition = holder.root.context.getString(R.string.shared_image)
+        animeImageTransition =
+            "${animeImageTransition}_${animeMetaModel.imageUrl}_${animeMetaModel.ID}"
+        holder.animeImageView.transitionName = animeImageTransition
+
     }
     class MovieHolder : EpoxyHolder(){
         lateinit var commonBinding: RecyclerAnimeCommonBinding

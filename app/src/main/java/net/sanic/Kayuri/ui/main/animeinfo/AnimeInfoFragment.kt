@@ -13,6 +13,7 @@ import net.sanic.Kayuri.databinding.LoadingBinding
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import net.sanic.Kayuri.R
@@ -40,11 +41,13 @@ class AnimeInfoFragment : Fragment() {
     ): View {
         animeInfoBinding = FragmentAnimeinfoBinding.inflate(inflater, container, false)
         loadingBinding = LoadingBinding.inflate(inflater, animeInfoBinding.root)
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.shared_element)
         return animeInfoBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setPreviews()
         viewModelFactory = AnimeInfoViewModelFactory(AnimeInfoFragmentArgs.fromBundle(requireArguments()).categoryUrl!!)
         viewModel = ViewModelProvider(this, viewModelFactory).get(AnimeInfoViewModel::class.java)
         setupRecyclerView()
@@ -53,6 +56,15 @@ class AnimeInfoFragment : Fragment() {
         setOnClickListeners()
     }
 
+
+    private fun setPreviews() {
+        val imageUrl = AnimeInfoFragmentArgs.fromBundle(requireArguments()).animeImageUrl
+        val animeTitle = AnimeInfoFragmentArgs.fromBundle(requireArguments()).animeName
+        animeInfoBinding.animeInfoTitle.text = animeTitle
+        animeInfoBinding.animeInfoImage.apply {
+            Glide.with(this).load(imageUrl).into(this)
+        }
+    }
 
 
     private fun setObserver() {
@@ -100,7 +112,7 @@ class AnimeInfoFragment : Fragment() {
 
     private fun updateViews(animeInfoModel: AnimeInfoModel) {
 
-        Glide.with(this).load(animeInfoModel.imageUrl).into(animeInfoBinding.animeInfoImage)
+        //Glide.with(this).load(animeInfoModel.imageUrl).into(animeInfoBinding.animeInfoImage)
         animeInfoBinding.animeInfoReleased.text = animeInfoModel.releasedTime
         animeInfoBinding.animeInfoStatus.text = animeInfoModel.status
         animeInfoBinding.animeInfoType.text = animeInfoModel.type
@@ -124,6 +136,9 @@ class AnimeInfoFragment : Fragment() {
         animeInfoBinding.animeInfoSummary.text = animeInfoModel.plotSummary
         animeInfoBinding.favourite.visibility = View.VISIBLE
         animeInfoBinding.animeInfoRoot.visibility = View.VISIBLE
+        animeInfoBinding.releasedLayout.visibility = View.VISIBLE
+        animeInfoBinding.typeLayout.visibility = View.VISIBLE
+        animeInfoBinding.statusLayout.visibility = View.VISIBLE
     }
 
     private fun setupRecyclerView(){
@@ -188,7 +203,7 @@ class AnimeInfoFragment : Fragment() {
 
 
         animeInfoBinding.back.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigateUp()
         }
     }
 

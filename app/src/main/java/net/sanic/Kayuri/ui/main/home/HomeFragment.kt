@@ -4,14 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.Display
 import com.github.javiersantos.appupdater.enums.Duration
 import com.github.javiersantos.appupdater.enums.UpdateFrom
+import com.google.android.material.transition.MaterialFadeThrough
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentHomeBinding
 import net.sanic.Kayuri.ui.main.home.epoxy.HomeController
@@ -40,12 +44,12 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupTransitions(view)
         setAdapter()
         setClickListeners()
         viewModelObserver()
         checkUpdate()
     }
-    
 
     private fun setAdapter() {
        // homeController.isDebugLoggingEnabled = true
@@ -67,8 +71,15 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 //        })
     }
 
-    private fun setTransitionListener() {
-
+    private fun setupTransitions(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        exitTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
+        reenterTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
     }
 
     private fun setClickListeners() {
@@ -90,13 +101,32 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
             }
             R.id.search -> {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())
+                val extras =
+                    FragmentNavigatorExtras(homebind.search to resources.getString(R.string.search_transition))
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToSearchFragment(),
+                    extras
+                )
             }
             R.id.favorite -> {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFavouriteFragment())
+                val extras = FragmentNavigatorExtras(
+                    homebind.favorite to resources.getString(R.string.favourite_transition)
+
+                )
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToFavouriteFragment(),
+                    extras
+                )
             }
             R.id.settings -> {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettings())
+                val extras = FragmentNavigatorExtras(
+                    homebind.settings to resources.getString(R.string.settings_transition)
+
+                )
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToSettings(),
+                    extras
+                )
             }
         }
     }
@@ -111,12 +141,20 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         )
     }
 
-    override fun animeTitleClick(model: AnimeMetaModel) {
+    override fun animeTitleClick(model: AnimeMetaModel,sharedTitle: View, sharedImage: View) {
         if (!model.categoryUrl.isNullOrBlank()) {
+
+            val extras = FragmentNavigatorExtras(
+                sharedTitle to resources.getString(R.string.shared_title),
+                sharedImage to resources.getString(R.string.shared_image)
+            )
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToAnimeInfoFragment(
-                    categoryUrl = model.categoryUrl
-                )
+                    categoryUrl = model.categoryUrl,
+                    animeImageUrl = model.imageUrl,
+                    animeName = model.title
+                ),
+                extras
             )
         }
     }

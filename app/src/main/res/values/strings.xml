@@ -42,4 +42,10 @@
     <string name="qualitytoogle">Preferred Video Quality</string>
     <string name="qualitytext">Set The Preferred Streaming Quality</string>
     <string name="qualitychoose">Auto</string>
+    <string name="shared_image" translatable="false">HEHEBOIII</string>
+    <string name="shared_title" translatable="false">LOL</string>
+    <string name="favourite_transition">favourite_transition</string>
+    <string name="search_transition">search_transition</string>
+    <string name="settings_transition">settings_transition</string>
+
 </resources>

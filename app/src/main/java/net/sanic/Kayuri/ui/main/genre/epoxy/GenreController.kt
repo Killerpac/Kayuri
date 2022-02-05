@@ -1,5 +1,6 @@
 package net.sanic.Kayuri.ui.main.genre.epoxy
 
+import android.view.View
 import com.airbnb.epoxy.Typed2EpoxyController
 import net.sanic.Kayuri.ui.main.genre.GenreFragment
 import net.sanic.Kayuri.utils.epoxy.AnimeCommonModel_
@@ -14,8 +15,10 @@ class GenreController(var adapterCallbacks: GenreFragment) : Typed2EpoxyControll
                 .id(animeMetaModel.ID)
                 .animeMetaModel(animeMetaModel)
                 .spanSizeOverride { totalSpanCount, _, _ -> totalSpanCount / totalSpanCount }
-                .clickListener { model, _, _, _ ->
-                    adapterCallbacks.animeTitleClick(model = model.animeMetaModel())
+                .clickListener { model, holder, _, _ ->
+                    adapterCallbacks.animeTitleClick(model = model.animeMetaModel(),
+                        sharedTitle = holder.animeTitle,
+                        sharedImage = holder.animeImageView)
                 }
                 .addTo(this)
         }
@@ -29,7 +32,7 @@ class GenreController(var adapterCallbacks: GenreFragment) : Typed2EpoxyControll
 
 
     interface EpoxySearchAdapterCallbacks {
-        fun animeTitleClick(model: AnimeMetaModel)
+        fun animeTitleClick(model: AnimeMetaModel, sharedTitle: View, sharedImage: View)
 
     }
 }

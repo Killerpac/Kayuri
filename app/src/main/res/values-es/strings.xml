@@ -39,7 +39,10 @@
     <string name="genre">Género</string>
     <string name="qualitychoose">Auto</string>
     <string name="qualitytoogle">
+     <string name="settings_transition">settings_transition</string>
 Calidad de video preferida</string>
     <string name="qualitytext">
 Establecer la calidad de transmisión preferida</string>
+    <string name="favourite_transition">favourite_transition</string>
+    <string name="search_transition">search_transition</string>
 </resources>

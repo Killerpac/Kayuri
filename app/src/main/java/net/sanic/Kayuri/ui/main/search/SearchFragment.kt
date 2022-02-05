@@ -2,6 +2,7 @@ package net.sanic.Kayuri.ui.main.search
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -13,13 +14,18 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView.OnEditorActionListener
+import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFadeThrough
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentSearchBinding
 import net.sanic.Kayuri.databinding.LoadingBinding
@@ -47,16 +53,17 @@ class SearchFragment : Fragment(), View.OnClickListener,
         searchBinding = FragmentSearchBinding.inflate(inflater, container, false)
         loadingBinding = LoadingBinding.inflate(inflater, searchBinding.root)
         viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
-        setOnClickListeners()
-        setAdapters()
-        setRecyclerViewScroll()
-        setEditTextListener()
-        showKeyBoard()
         return searchBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupTransitions(view)
+        setOnClickListeners()
+        setAdapters()
+        setRecyclerViewScroll()
+        setEditTextListener()
+        showKeyBoard()
         setObserver()
     }
 
@@ -76,7 +83,24 @@ class SearchFragment : Fragment(), View.OnClickListener,
     private fun setOnClickListeners() {
         searchBinding.backButton.setOnClickListener(this)
     }
-
+    private fun setupTransitions(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        exitTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
+        reenterTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.navHostFragmentContainer
+            duration = 300
+            scrimColor = Color.TRANSPARENT
+            fadeMode = MaterialContainerTransform.FADE_MODE_THROUGH
+            startContainerColor = ContextCompat.getColor(view.context, android.R.color.transparent)
+            endContainerColor = ContextCompat.getColor(view.context, android.R.color.transparent)
+        }
+    }
     private fun setAdapters() {
         searchController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
         searchBinding.searchRecyclerView.apply {
@@ -105,14 +129,12 @@ class SearchFragment : Fragment(), View.OnClickListener,
     private fun setObserver() {
 
 
-        viewModel.loadingModel.observe(viewLifecycleOwner, {
+        viewModel.loadingModel.observe(viewLifecycleOwner) {
             if (it.isListEmpty) {
                 if (it.loading == CommonViewModel2.Loading.LOADING) loadingBinding.loading.visibility =
                     View.VISIBLE
-                //TODO Error Visibiity GONE
 
                 else if (it.loading == CommonViewModel2.Loading.ERROR
-                //Todo Error visisblity visible
                 ) loadingBinding.loading.visibility = View.GONE
             } else {
                 searchController.setData(
@@ -131,7 +153,7 @@ class SearchFragment : Fragment(), View.OnClickListener,
 
             }
 
-        })
+        }
 
 //        viewModel.searchList.observe(viewLifecycleOwner, Observer {
 //            searchController.setData(it ,viewModel.isLoading.value?.isLoading ?: false)
@@ -201,12 +223,18 @@ class SearchFragment : Fragment(), View.OnClickListener,
         imm.showSoftInput(searchBinding.root, 0)
     }
 
-    override fun animeTitleClick(model: AnimeMetaModel) {
+    override fun animeTitleClick(model: AnimeMetaModel, sharedTitle: View, sharedImage: View) {
         hideKeyBoard()
+        val extras = FragmentNavigatorExtras(
+            sharedTitle to resources.getString(R.string.shared_title),
+            sharedImage to resources.getString(R.string.shared_image)
+        )
         findNavController().navigate(
             SearchFragmentDirections.actionSearchFragmentToAnimeInfoFragment(
-                categoryUrl = model.categoryUrl
-            )
+                categoryUrl = model.categoryUrl,
+                animeName = model.title,
+                animeImageUrl = model.imageUrl
+            ),extras
         )
     }
 

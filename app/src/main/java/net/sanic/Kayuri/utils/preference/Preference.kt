@@ -2,11 +2,13 @@ package net.sanic.Kayuri.utils.preference
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.location.LocationRequestCompat
 import net.sanic.Kayuri.utils.constants.C
 
 class Preference(private val context: Context) {
     private val PREF_NAME = "Kayuri"
     private val BASE_URL = "BASE_URL"
+    private val QUALITY = "AUTO"
     private val ORIGIN = "ORIGIN"
     private val REFERER = "REFERER"
     private val NIGHT_MODE = "NIGHT_MODE"
@@ -14,11 +16,8 @@ class Preference(private val context: Context) {
     private val PRIVATE_MODE = 0
     private val GOOGLESERVER = "GOOGLESERVER"
     private val ADVANCECONTROLS = "ADVANCECONTROLS"
-    private var sharedPreferences: SharedPreferences
-
-    init {
-        sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
-    }
+    private var sharedPreferences: SharedPreferences =
+        context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
 
     fun setNightMode(nightMode: Boolean) {
         val editor = sharedPreferences.edit()
@@ -52,6 +51,16 @@ class Preference(private val context: Context) {
 
     fun getadvancecontrols():Boolean {
         return  sharedPreferences.getBoolean(ADVANCECONTROLS,false)
+    }
+
+    fun getpreferredquality():String {
+        return sharedPreferences.getString(QUALITY, C.QUALITY) ?: C.QUALITY
+    }
+
+    fun setpreferredquality(quality:String) {
+        val editor = sharedPreferences.edit()
+        editor.putString(QUALITY, quality)
+        editor.apply()
     }
 
     fun setadvancecontrols(controls:Boolean){

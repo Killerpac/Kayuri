@@ -2,12 +2,17 @@ package net.sanic.Kayuri.ui.main.settings
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFadeThrough
 import net.sanic.Kayuri.MainActivity
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentSettingsBinding
@@ -27,14 +32,15 @@ class Settings : Fragment(), View.OnClickListener {
     ): View {
         rootView = inflater.inflate(R.layout.fragment_settings, container, false)
         settingsBinding = FragmentSettingsBinding.bind(rootView)
-        setOnClickListeners()
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupTransitions(view)
         sharesPreference = PreferenceHelper.sharedPreference
-        settingsBinding.button.text = C.QUALITY
+        settingsBinding.button.text = sharesPreference.getpreferredquality()
         setRadioButtons()
+        setOnClickListeners()
         super.onViewCreated(view, savedInstanceState)
     }
     private fun setOnClickListeners() {
@@ -61,7 +67,24 @@ class Settings : Fragment(), View.OnClickListener {
             sharesPreference.setadvancecontrols(isChecked)
         }
     }
-    
+    private fun setupTransitions(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        exitTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
+        reenterTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.navHostFragmentContainer
+            duration = 300
+            scrimColor = Color.TRANSPARENT
+            fadeMode = MaterialContainerTransform.FADE_MODE_THROUGH
+            startContainerColor = ContextCompat.getColor(view.context, android.R.color.transparent)
+            endContainerColor = ContextCompat.getColor(view.context, android.R.color.transparent)
+        }
+    }
     private fun qualitydialog(){
         val qualities = arrayOf("360p","480p","720p","1080p")
         var checkeditem = 0
@@ -72,7 +95,7 @@ class Settings : Fragment(), View.OnClickListener {
                     checkeditem = which
             }
             setPositiveButton("OK") {dialog, _ ->
-                C.QUALITY = qualities[checkeditem]
+                sharesPreference.setpreferredquality(qualities[checkeditem])
                 settingsBinding.button.text = qualities[checkeditem]
                 dialog.dismiss()
             }

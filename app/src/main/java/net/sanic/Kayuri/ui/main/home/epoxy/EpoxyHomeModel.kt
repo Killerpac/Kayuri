@@ -29,12 +29,24 @@ abstract class AnimeSubDubModel2 : EpoxyModelWithHolder<AnimeSubDubModel2.SubDub
     lateinit var clickListener: View.OnClickListener
 
     override fun bind(holder: SubDubHolder) {
-        Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl).transition(
-            DrawableTransitionOptions.withCrossFade(100)).into(holder.animeImageView)
+        Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl)
+            .into(holder.animeImageView)
         holder.animeTitle.text = animeMetaModel.title
         holder.animeEpisode.text = animeMetaModel.episodeNumber
         holder.background.setOnClickListener(clickListener)
         holder.animeTitle.setOnClickListener(clickListener)
+
+        //Set Shared Element for Anime Title
+        var animeTitleTransition = holder.animeTitle.context.getString(R.string.shared_title)
+        animeTitleTransition =
+            "${animeTitleTransition}_${animeMetaModel.title}_${animeMetaModel.ID}"
+        holder.animeTitle.transitionName = animeTitleTransition
+
+        //Set Shared Element for Anime Image
+        var animeImageTransition = holder.animeImageView.context.getString(R.string.shared_image)
+        animeImageTransition =
+            "${animeImageTransition}_${animeMetaModel.imageUrl}_${animeMetaModel.ID}"
+        holder.animeImageView.transitionName = animeImageTransition
     }
 
     class SubDubHolder : EpoxyHolder(){
@@ -68,7 +80,8 @@ abstract class AnimePopularModel : EpoxyModelWithHolder<AnimePopularModel.Popula
     lateinit var tagClickListener: View.OnClickListener
 
     override fun bind(holder: PopularHolder) {
-        Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl).into(holder.animeImageView)
+        Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl)
+            .into(holder.animeImageView)
         holder.animeTitle.text = animeMetaModel.title
         holder.animeEpisode.text = animeMetaModel.episodeNumber
 
@@ -80,6 +93,17 @@ abstract class AnimePopularModel : EpoxyModelWithHolder<AnimePopularModel.Popula
         }
         holder.rootView.setOnClickListener(clickListener)
 
+        var animeTitleTransition = holder.animeTitle.context.getString(R.string.shared_title)
+        animeTitleTransition =
+            "${animeTitleTransition}_${animeMetaModel.title}_${animeMetaModel.ID}"
+        holder.animeTitle.transitionName = animeTitleTransition
+
+        //Set Shared Element for Anime Image
+        var animeImageTransition = holder.animeImageView.context.getString(R.string.shared_image)
+        animeImageTransition =
+            "${animeImageTransition}_${animeMetaModel.imageUrl}_${animeMetaModel.ID}"
+        holder.animeImageView.transitionName = animeImageTransition
+
     }
     class PopularHolder : EpoxyHolder(){
         lateinit var popularBinding: RecyclerAnimePopularBinding
@@ -88,6 +112,7 @@ abstract class AnimePopularModel : EpoxyModelWithHolder<AnimePopularModel.Popula
         lateinit var animeEpisode: TextView
         lateinit var flowLayout: FlowLayout
         lateinit var rootView: ConstraintLayout
+        lateinit var cardView: CardView
 
         override fun bindView(itemView: View) {
             popularBinding = RecyclerAnimePopularBinding.bind(itemView)
@@ -96,6 +121,7 @@ abstract class AnimePopularModel : EpoxyModelWithHolder<AnimePopularModel.Popula
             animeEpisode = popularBinding.episodeNumber
             flowLayout = popularBinding.flowLayout
             rootView = popularBinding.rootLayout
+            cardView = popularBinding.animeCardView
         }
 
     }

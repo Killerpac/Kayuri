@@ -1,15 +1,20 @@
 package net.sanic.Kayuri.ui.main.favourites
 
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.transition.MaterialContainerTransform
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentFavouriteBinding
 import net.sanic.Kayuri.databinding.FragmentSearchBinding
@@ -41,6 +46,7 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setTransitions(view = requireView())
         setObserver()
     }
 
@@ -54,6 +60,21 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
             (searchBinding.searchRecyclerView.layoutManager as GridLayoutManager).spanCount = 3
         }
 
+    }
+
+    private fun setTransitions(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.navHostFragmentContainer
+            duration = 300
+            scrimColor = Color.TRANSPARENT
+            fadeMode = MaterialContainerTransform.FADE_MODE_THROUGH
+            startContainerColor =
+                ContextCompat.getColor(view.context, android.R.color.transparent)
+            endContainerColor =
+                ContextCompat.getColor(view.context, android.R.color.transparent)
+        }
     }
 
     private fun setObserver(){
@@ -124,14 +145,24 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
         favouriteBinding.back.setOnClickListener(this)
     }
 
-    override fun animeTitleClick(model: FavouriteModel) {
-        findNavController().navigate(FavouriteFragmentDirections.actionFavouriteFragmentToAnimeInfoFragment(categoryUrl = model.categoryUrl))
+    override fun animeTitleClick(model: FavouriteModel, sharedTitle: View, sharedImage: View) {
+        val extras = FragmentNavigatorExtras(
+            sharedTitle to resources.getString(R.string.shared_title),
+            sharedImage to resources.getString(R.string.shared_image)
+        )
+        findNavController().navigate(
+            FavouriteFragmentDirections.actionFavouriteFragmentToAnimeInfoFragment(
+                categoryUrl = model.categoryUrl,
+                animeName = model.animeName!!,
+                animeImageUrl = model.imageUrl!!
+            ), extras
+        )
     }
 
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.back ->{
-                findNavController().popBackStack()
+                findNavController().navigateUp()
             }
         }
     }
