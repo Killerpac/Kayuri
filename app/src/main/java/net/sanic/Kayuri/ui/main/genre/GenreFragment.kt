@@ -44,9 +44,7 @@ class GenreFragment : Fragment(), View.OnClickListener,
     private lateinit var loadingBinding: LoadingBinding
     private lateinit var viewModelFactory: GenreViewModelFactory
     private lateinit var viewModel: GenreViewModel
-    private val genreController by lazy {
-        GenreController(this)
-    }
+    private lateinit var genreController:GenreController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +58,7 @@ class GenreFragment : Fragment(), View.OnClickListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setTransitions(view)
         val genreUrl = GenreFragmentArgs.fromBundle(requireArguments()).genreUrl
         viewModelFactory = GenreViewModelFactory(genreUrl)
         viewModel = ViewModelProvider(this, viewModelFactory).get(GenreViewModel::class.java)
@@ -70,6 +69,11 @@ class GenreFragment : Fragment(), View.OnClickListener,
         setRecyclerViewScroll()
     }
 
+    private fun setTransitions(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+    }
+
     private fun setOnClickListeners(){
         genreBinding.back.setOnClickListener {
             findNavController().popBackStack()
@@ -77,6 +81,7 @@ class GenreFragment : Fragment(), View.OnClickListener,
     }
 
     private fun setAdapters() {
+        genreController = GenreController(this)
         genreController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
         genreBinding.recyclerView.apply {
             layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))

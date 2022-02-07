@@ -30,7 +30,7 @@
     <TextView
         android:id="@+id/animeTitle"
         android:layout_width="0dp"
-        android:fontFamily="sans-serif"
+        android:fontFamily="sans-serif-medium"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:minLines="2"
@@ -39,7 +39,7 @@
         android:textColor="@color/recycler_anime_title"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        android:gravity="center"
+        android:gravity="center_vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/animeCardView"
         tools:text="One Piece" />
@@ -50,7 +50,7 @@
         android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:fontFamily="@font/work_sans"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:maxLines="2"
         android:textSize="12sp"
         android:textColor="@color/recycler_releases_date"

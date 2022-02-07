@@ -13,7 +13,7 @@
         android:id="@+id/typeName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/work_sans_medium"
+        android:fontFamily="@font/work_sans_bold"
         android:paddingTop="20dp"
         android:paddingBottom="26dp"
         android:textSize="18sp"

@@ -125,7 +125,7 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
 
     private fun recentSubDubClick(model: AnimeMetaModel, clickedView: View,sharedTitle: View, sharedImage: View){
         when(clickedView.id){
-            R.id.backgroundImage->{
+            R.id.animeImage->{
                 adapterCallbacks.recentSubDubEpisodeClick(model = model)
             }
             R.id.animeTitle->{

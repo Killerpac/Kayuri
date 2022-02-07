@@ -90,12 +90,14 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="@string/type"
+                android:textColor="@color/text_default"
                 android:theme="@style/type_title" />
 
             <TextView
                 android:id="@+id/animeInfoType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/text_default"
                 android:theme="@style/type_value"
                 tools:text="TV Series" />
         </LinearLayout>
@@ -121,6 +123,7 @@
                 android:maxLines="1"
 
                 android:text="@string/released"
+                android:textColor="@color/text_default"
                 android:theme="@style/type_title" />
 
             <TextView
@@ -128,6 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:textColor="@color/text_default"
                 android:theme="@style/type_value"
                 tools:text="TV Series" />
         </LinearLayout>
@@ -151,12 +155,14 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:text="@string/status"
+                android:textColor="@color/text_default"
                 android:theme="@style/type_title" />
 
             <TextView
                 android:id="@+id/animeInfoStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/text_default"
                 android:theme="@style/type_value"
                 tools:text="Completed" />
         </LinearLayout>

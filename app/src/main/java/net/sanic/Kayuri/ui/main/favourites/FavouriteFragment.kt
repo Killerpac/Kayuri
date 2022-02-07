@@ -27,9 +27,7 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
     private lateinit var viewModel: FavouriteViewModel
     private lateinit var favouriteBinding: FragmentFavouriteBinding
     private lateinit var searchBinding: FragmentSearchBinding
-    private val favouriteController by lazy {
-        FavouriteController(this)
-    }
+    private lateinit var favouriteController:FavouriteController
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -85,6 +83,7 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
 
 
     private fun setAdapters(){
+        favouriteController = FavouriteController(this)
         favouriteController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
         favouriteBinding.recyclerView.apply {
             layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))

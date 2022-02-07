@@ -59,12 +59,12 @@ class C {
         const val TYPE_GENRE_UPDATE = 3001
 
         //Network Requests Header
-        const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36"
-        const val ORIGIN = "https://gogoplay.io/"
+        const val USER_AGENT = "Mozilla/5.0 (Linux; U; Android 10; en; SM-M105F Build/QP1A.190711.020) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 UCBrowser/12.10.0.1163 UCTurbo/1.10.9.900 Mobile Safari/537.3"
+        const val ORIGIN = "https://goganime.film/"
         const val  REFERER = "https://gogoplay.io/"
 
         //Preferred Quality
-        var QUALITY = "Auto"
+        const val QUALITY = "Auto"
 
         //Realm
         const val MAX_TIME_M3U8_URL =  25 * 60 *1000

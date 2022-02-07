@@ -42,9 +42,7 @@ class SearchFragment : Fragment(), View.OnClickListener,
     private lateinit var searchBinding: FragmentSearchBinding
     private lateinit var loadingBinding: LoadingBinding
     private lateinit var viewModel: SearchViewModel
-    private val searchController by lazy {
-        SearchController(this)
-    }
+    private lateinit var searchController:SearchController
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -102,6 +100,7 @@ class SearchFragment : Fragment(), View.OnClickListener,
         }
     }
     private fun setAdapters() {
+        searchController = SearchController(this)
         searchController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
         searchBinding.searchRecyclerView.apply {
             layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))

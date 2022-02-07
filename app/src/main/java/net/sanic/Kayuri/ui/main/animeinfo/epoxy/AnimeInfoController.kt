@@ -188,8 +188,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
         return false
     }
 
-    @Throws(Exception::class)
-    fun requestPermissionForReadExtertalStorage(clickedView: View) {
+    private fun requestPermissionForReadExtertalStorage(clickedView: View) {
         try {
             ActivityCompat.requestPermissions(
                 (clickedView.context as Activity?)!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE),

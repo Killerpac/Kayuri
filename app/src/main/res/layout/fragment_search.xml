@@ -47,6 +47,7 @@
                 android:layout_marginStart="16dp"
                 android:textSize="22sp"
                 android:hint="@string/search"
+                android:textColor="@color/colorAccent"
                 android:paddingStart="20dp"
                 android:paddingTop="6dp"
                 android:paddingBottom="6dp"

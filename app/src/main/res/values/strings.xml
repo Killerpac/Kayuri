@@ -47,5 +47,6 @@
     <string name="favourite_transition">favourite_transition</string>
     <string name="search_transition">search_transition</string>
     <string name="settings_transition">settings_transition</string>
+    <string name="genre_transition">nente</string>
 
 </resources>

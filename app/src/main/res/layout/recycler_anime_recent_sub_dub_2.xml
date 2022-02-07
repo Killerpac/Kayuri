@@ -14,6 +14,7 @@
         android:layout_height="180dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="0dp"
+        app:cardBackgroundColor="@android:color/transparent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -25,14 +26,6 @@
             android:background="?selectableItemBackgroundBorderless"
             android:scaleType="centerCrop" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/backgroundImage"
-            android:src="@color/transparent_background"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="30dp"
@@ -47,8 +40,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:ellipsize="end"
-        android:fontFamily="sans-serif"
-        android:gravity="center"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_vertical"
         android:maxLines="2"
         android:minLines="2"
         android:textColor="@color/recycler_anime_title"
@@ -67,14 +60,14 @@
         android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:fontFamily="@font/work_sans"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:maxLines="2"
         android:textSize="12sp"
         android:textColor="@color/recycler_anime_type"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/animeTitle"
-        tools:text="Episode 7" />
+        tools:text="EP 7" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

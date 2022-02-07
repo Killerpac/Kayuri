@@ -6,10 +6,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.airbnb.epoxy.EpoxyAttribute
-import com.airbnb.epoxy.EpoxyHolder
-import com.airbnb.epoxy.EpoxyModelClass
-import com.airbnb.epoxy.EpoxyModelWithHolder
+import com.airbnb.epoxy.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import net.sanic.Kayuri.R
@@ -33,7 +30,7 @@ abstract class AnimeSubDubModel2 : EpoxyModelWithHolder<AnimeSubDubModel2.SubDub
             .into(holder.animeImageView)
         holder.animeTitle.text = animeMetaModel.title
         holder.animeEpisode.text = animeMetaModel.episodeNumber
-        holder.background.setOnClickListener(clickListener)
+        holder.animeImageView.setOnClickListener(clickListener)
         holder.animeTitle.setOnClickListener(clickListener)
 
         //Set Shared Element for Anime Title
@@ -55,7 +52,6 @@ abstract class AnimeSubDubModel2 : EpoxyModelWithHolder<AnimeSubDubModel2.SubDub
         lateinit var animeCardView: CardView
         lateinit var animeTitle: TextView
         lateinit var animeEpisode: TextView
-        lateinit var background: AppCompatImageView
 
         override fun bindView(itemView: View) {
             subDub2Binding = RecyclerAnimeRecentSubDub2Binding.bind(itemView)
@@ -63,7 +59,6 @@ abstract class AnimeSubDubModel2 : EpoxyModelWithHolder<AnimeSubDubModel2.SubDub
             animeCardView = subDub2Binding.animeCardView
             animeTitle = subDub2Binding.animeTitle
             animeEpisode = subDub2Binding.episodeNumber
-            background = subDub2Binding.backgroundImage
         }
 
     }

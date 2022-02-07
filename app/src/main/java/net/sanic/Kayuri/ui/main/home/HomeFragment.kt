@@ -10,10 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.Display
-import com.github.javiersantos.appupdater.enums.Duration
 import com.github.javiersantos.appupdater.enums.UpdateFrom
 import com.google.android.material.transition.MaterialFadeThrough
 import net.sanic.Kayuri.R
@@ -25,9 +23,7 @@ import net.sanic.Kayuri.utils.model.GenreModel
 class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapterCallbacks {
 
 
-    private val homeController by lazy {
-        HomeController(this)
-    }
+    private lateinit var homeController:HomeController
     private var doubleClickLastTime = 0L
     private lateinit var homebind: FragmentHomeBinding
     private lateinit var viewModel: HomeViewModel
@@ -53,6 +49,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
     private fun setAdapter() {
        // homeController.isDebugLoggingEnabled = true
+        homeController = HomeController(this)
         val homeRecyclerView = homebind.recyclerView
         homeRecyclerView.layoutManager = LinearLayoutManager(context)
         homeRecyclerView.adapter = homeController.adapter
@@ -62,7 +59,6 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         viewModel.animeList.observe(viewLifecycleOwner) {
             homeController.setData(it)
         }
-
 //        viewModel.updateModel.observe(viewLifecycleOwner, {
 //            Timber.e(it.whatsNew)
 //            if (it.versionCode > BuildConfig.VERSION_CODE) {
@@ -70,6 +66,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 //            }
 //        })
     }
+
 
     private fun setupTransitions(view: View) {
         postponeEnterTransition()
