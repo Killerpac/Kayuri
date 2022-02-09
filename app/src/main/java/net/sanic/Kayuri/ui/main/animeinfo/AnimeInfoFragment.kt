@@ -1,5 +1,6 @@
 package net.sanic.Kayuri.ui.main.animeinfo
 
+import android.animation.TimeInterpolator
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater

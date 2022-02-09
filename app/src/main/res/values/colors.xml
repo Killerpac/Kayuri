@@ -9,7 +9,7 @@
     <color name="header">#212121</color>
     <color name="text_default">#263238</color>
     <color name="progress">#b1bfca</color>
-    <color name="secondary_background">#EAEAEB</color>
+    <color name="secondary_background">#e7f4fd</color>
 
     //Home Fragment
     <color name="home_header">@color/header</color>

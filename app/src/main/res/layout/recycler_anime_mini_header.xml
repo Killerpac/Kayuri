@@ -13,18 +13,17 @@
         android:id="@+id/typeName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/work_sans_bold"
+        android:fontFamily="@font/raleway_semibold"
         android:paddingTop="20dp"
         android:paddingBottom="26dp"
-        android:textSize="18sp"
         android:textColor="@color/recycler_mini_header_title"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Recent Sub" />
 
     <TextView
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
@@ -33,6 +32,7 @@
         android:paddingBottom="25dp"
         android:text="@string/see_more"
         android:textSize="14sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

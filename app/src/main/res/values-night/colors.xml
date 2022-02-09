@@ -5,10 +5,10 @@
     <color name="colorAccent">@color/header</color>
 
     //Total Colors
-    <color name="app_background">#0f0f0f</color>
+    <color name="app_background">#0d0d0d</color>
     <color name="header">#FFFFFF</color>
     <color name="text_default">#FFFFFF</color>
-    <color name="progress">#4b4b4b</color>
+    <color name="progress">#333333</color>
     <color name="secondary_background">#212121</color>
 
     //Home Fragment
@@ -22,7 +22,7 @@
     <color name="recycler_anime_type">@color/text_default</color>
     <color name="recycler_releases_date">@color/recycler_anime_type</color>
     <color name="recycler_episode_number">@color/recycler_anime_type</color>
-    <color name="recycler_tags">#2d2d2d</color>
+    <color name="recycler_tags">#212121</color>
 
 
     //Recycler mini Header
@@ -48,7 +48,7 @@
     <color name="types_value">#595959</color>
 
     //AnimeInfo Episodes
-    <color name="episode_background">#2d2d2d</color>
+    <color name="episode_background">#1a1a1a</color>
     <color name="episode_watched_progress">@color/progress</color>
     <color name="episode_text">#ffffff</color>
 
