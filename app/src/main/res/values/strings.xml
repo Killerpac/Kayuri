@@ -48,5 +48,6 @@
     <string name="search_transition">search_transition</string>
     <string name="settings_transition">settings_transition</string>
     <string name="genre_transition">nente</string>
+    <string name="skipop" translatable="false">Skip OP</string>
 
 </resources>

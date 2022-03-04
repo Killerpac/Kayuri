@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import net.sanic.Kayuri.databinding.FragmentAnimeinfoBinding
 import net.sanic.Kayuri.databinding.LoadingBinding
@@ -115,7 +116,6 @@ class AnimeInfoFragment : Fragment() {
     }
 
     private fun updateViews(animeInfoModel: AnimeInfoModel) {
-        //Glide.with(this).load(animeInfoModel.imageUrl).into(animeInfoBinding.animeInfoImage)
         animeInfoBinding.animeInfoReleased.text = animeInfoModel.releasedTime
         animeInfoBinding.animeInfoStatus.text = animeInfoModel.status
         animeInfoBinding.animeInfoType.text = animeInfoModel.type

@@ -140,6 +140,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         rootView.back.setOnClickListener(this)
         rootView.nextEpisode.setOnClickListener(this)
         rootView.previousEpisode.setOnClickListener(this)
+        rootView.skipop.setOnClickListener(this)
     }
 
     private fun setOnTouchListeners(){
@@ -160,7 +161,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
                 .setDefaultRequestProperties(hashMapOf("Referer" to requests.REFERER))
             dataSource.createDataSource()
         }
-        return if(lastPath!!.contains("m3u8")){
+        return if(lastPath.contains("m3u8")){
             HlsMediaSource.Factory(defaultDataSourceFactory)
                 .setAllowChunklessPreparation(true)
                 .createMediaSource(MediaItem.fromUri(uri))
@@ -225,6 +226,10 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         player.playWhenReady = playWhenReady
     }
 
+    private fun skipop(){
+        player.seekTo(player.currentPosition + 82500L )
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.exo_track_selection_view -> {
@@ -247,6 +252,9 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
             }
             R.id.previousEpisode -> {
                 playPreviousEpisode()
+            }
+            R.id.skipop ->{
+                skipop()
             }
         }
     }

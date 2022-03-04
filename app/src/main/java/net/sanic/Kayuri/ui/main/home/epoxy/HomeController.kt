@@ -21,7 +21,6 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
 
 
         data.forEach { homeScreenModel ->
-
             AnimeMiniHeaderModel_()
                 .id(homeScreenModel.typeValue)
                 .typeName(homeScreenModel.type)
