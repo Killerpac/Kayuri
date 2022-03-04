@@ -1,7 +1,9 @@
 package net.sanic.Kayuri.ui.main.animeinfo
 
 import android.animation.TimeInterpolator
+import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +25,7 @@ import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Tags.GenreTags
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.AnimeInfoModel
+import timber.log.Timber
 
 class AnimeInfoFragment : Fragment() {
 
@@ -112,7 +115,6 @@ class AnimeInfoFragment : Fragment() {
     }
 
     private fun updateViews(animeInfoModel: AnimeInfoModel) {
-
         //Glide.with(this).load(animeInfoModel.imageUrl).into(animeInfoBinding.animeInfoImage)
         animeInfoBinding.animeInfoReleased.text = animeInfoModel.releasedTime
         animeInfoBinding.animeInfoStatus.text = animeInfoModel.status
@@ -148,7 +150,7 @@ class AnimeInfoFragment : Fragment() {
         val itemOffsetDecoration = ItemOffsetDecoration(context, R.dimen.episode_offset_left)
         animeInfoBinding.animeInfoRecyclerView.addItemDecoration(itemOffsetDecoration)
         animeInfoBinding.animeInfoRecyclerView.apply {
-            layoutManager = GridLayoutManager(context,Utils.calculateNoOfColumns(requireContext(), 160f))
+            layoutManager = GridLayoutManager(context,Utils.calculateNoOfColumns(requireContext(), 165f))
             (layoutManager as GridLayoutManager).spanSizeLookup = episodeController.spanSizeLookup
 
         }

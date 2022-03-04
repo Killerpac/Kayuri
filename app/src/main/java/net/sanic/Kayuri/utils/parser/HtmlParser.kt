@@ -1,6 +1,8 @@
 package net.sanic.Kayuri.utils.parser
 
+import android.net.Uri.decode
 import android.os.Build
+import androidx.appcompat.app.WindowDecorActionBar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.realm.RealmList
@@ -182,7 +184,7 @@ class HtmlParser {
         fun parseMediaUrl(response: String): EpisodeInfo{
             val mediaUrl: String?
             val document = Jsoup.parse(response)
-            val info = document?.getElementsByClass("vidcdn")?.first()?.select("a")
+            val info = document?.getElementsByClass("anime")?.first()?.select("a")
             mediaUrl = info?.attr("data-video").toString()
             val nextEpisodeUrl = document.getElementsByClass("anime_video_body_episodes_r")?.select("a")?.first()?.attr("href")
             val previousEpisodeUrl = document.getElementsByClass("anime_video_body_episodes_l")?.select("a")?.first()?.attr("href")
@@ -196,7 +198,7 @@ class HtmlParser {
 
         private fun decryptAES(encrypted: String, key: String, iv: String): String {
             val ix = IvParameterSpec(iv.toByteArray())
-            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            val cipher = Cipher.getInstance("AES/CBC/NoPadding")
             val secretKey = SecretKeySpec(key.toByteArray(Charsets.UTF_8), "AES")
             cipher.init(Cipher.DECRYPT_MODE, secretKey,ix)
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -208,13 +210,13 @@ class HtmlParser {
 
         private fun encryptAes(text: String, key: String,iv:String): String {
             val ix = IvParameterSpec(iv.toByteArray())
-            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+            val cipher = Cipher.getInstance("AES/CBC/NoPadding")
             val secretKey = SecretKeySpec(key.toByteArray(), "AES")
             cipher.init(Cipher.ENCRYPT_MODE, secretKey,ix)
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Base64.getEncoder().encodeToString(cipher.doFinal(text.toByteArray()))
+                Base64.getEncoder().encodeToString(cipher.doFinal(text.toByteArray()+C.GogoPadding))
             } else {
-                android.util.Base64.encodeToString(cipher.doFinal(text.toByteArray()), android.util.Base64.DEFAULT)
+                android.util.Base64.encodeToString(cipher.doFinal(text.toByteArray()+C.GogoPadding), android.util.Base64.DEFAULT)
             }
         }
 
@@ -231,20 +233,22 @@ class HtmlParser {
 //        }
 
         //should be faster
-        fun parseencryptajax(response: String,id:String):String{
+        fun parseencryptajax(response: String):String{
             val document=Jsoup.parse(response)
-            val value1 = document.select("script[data-name='ts']").attr("data-value")
             val value2 = document.select("script[data-name='crypto']").attr("data-value")
-            val key = decryptAES(value2, value1+value1, value1)
-            val encrypted = encryptAes(id, key, "acknowledgements")
-            return "id=$encrypted&time=00acknowledgements00"
+            val decryptkey = decryptAES(value2,C.GogoSecretkey,C.GogoSecretIV).replaceAfter("&","").removeSuffix("&")
+            val encrypted = encryptAes(decryptkey, C.GogoSecretkey, C.GogoSecretIV)
+            return "id=$encrypted"
         }
 
         fun parseencrypturls(response: String): Pair<RealmList<String>,RealmList<String>>{
+            Timber.e(response)
+            var crackit = JSONObject(response).getString("data")
+            crackit = decryptAES(crackit,C.GogoSecretkey,C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
             val urls:RealmList<String> = RealmList()
             val qualities: RealmList<String> = RealmList()
             var i = 0
-            val res =  JSONObject(response).getJSONArray("source")
+            val res =  JSONObject(crackit).getJSONArray("source")
             return try {
                 while(i != res.length() && res.getJSONObject(i).getString("label") != "Auto") {
                     urls.add(res.getJSONObject(i).getString("file"))
@@ -259,10 +263,13 @@ class HtmlParser {
         }
 
         fun parsegoogleurl(response: String): Pair<RealmList<String>,RealmList<String>>{
+            var crackit = JSONObject(response).getString("data")
+            crackit = decryptAES(crackit,C.GogoSecretkey,C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
             val urls:RealmList<String> = RealmList()
             val qualities: RealmList<String> = RealmList()
             var i = 0
-            val res =  JSONObject(response).getJSONArray("source_bk")
+            Timber.e(Jsoup.parse(crackit).toString())
+            val res =  JSONObject(crackit).getJSONArray("source_bk")
             return try {
                 while(i != res.length() && res.getJSONObject(i).getString("label") != "Auto") {
                     urls.add(URLDecoder.decode(res.getJSONObject(i).getString("file"),Charsets.UTF_8.name()))

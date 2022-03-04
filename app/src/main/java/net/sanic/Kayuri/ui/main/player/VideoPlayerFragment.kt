@@ -28,6 +28,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.ExoTrackSelection
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
@@ -79,6 +80,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     private var selectedSpeed = 2
     private var eandex = 0
     private var dtybit = false
+    private var tempbit = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -151,6 +153,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     private fun buildMediaSource(uri: Uri): MediaSource {
 
         val lastPath = uri.lastPathSegment
+        if(lastPath!!.contains("m3u8")) tempbit=true
         val defaultDataSourceFactory =  {
             val dataSource:DataSource.Factory = DefaultHttpDataSource.Factory()
                 .setUserAgent(requests.USER_AGENT)
@@ -362,25 +365,43 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
 
 
     private fun showDialog() {
-        var i = 0
-        val build = AlertDialog.Builder(requireContext(),R.style.RoundedCornersDialog)
-        build.apply {
-            setTitle("Select Quality")
-            setSingleChoiceItems(quality.toTypedArray(),i) {_,which ->
-                    i = which
-                eandex = which
-            }
-            setPositiveButton("OK"){dialog,_ ->
-                dtybit = true
-                loadVideo(player.currentPosition,i)
-                dialog.dismiss()
-            }
-            setNegativeButton("Cancel"){dialog,_ ->
-                dialog.dismiss()
+        if(tempbit){
+            var mappedTrackInfo = trackSelector?.currentMappedTrackInfo
+
+            try {
+                trackSelector?.let {
+                    TrackSelectionDialogBuilder(
+                        requireContext(),
+                        getString(R.string.video_quality),
+                        it,
+                        0
+                    ).setTheme(R.style.RoundedCornersDialog).build().show()
+                }
+            } catch (ignored: java.lang.NullPointerException) {
+
             }
         }
-        val dialog = build.create()
-        dialog.show()
+        else {
+            var i = 0
+            val build = AlertDialog.Builder(requireContext(), R.style.RoundedCornersDialog)
+            build.apply {
+                setTitle("Select Quality")
+                setSingleChoiceItems(quality.toTypedArray(), i) { _, which ->
+                    i = which
+                    eandex = which
+                }
+                setPositiveButton("OK") { dialog, _ ->
+                    dtybit = true
+                    loadVideo(player.currentPosition, i)
+                    dialog.dismiss()
+                }
+                setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }
+            }
+            val dialog = build.create()
+            dialog.show()
+        }
     }
 
     // set playback speed for exoplayer

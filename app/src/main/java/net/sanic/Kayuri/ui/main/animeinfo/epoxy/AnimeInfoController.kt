@@ -97,6 +97,10 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                     var num = 0
                     if (!urlList.isNullOrEmpty()) {
                         load.dismiss()
+                        if(quality.first()!!.contains("autop")){
+                            Snackbar.make(clickedView.rootView,"No Download Links Found!!",3000).show()
+                            return
+                        }
                        val dialog = AlertDialog.Builder(clickedView.context,R.style.RoundedCornersDialog)
                         dialog.apply {
                             setTitle("Choose Quality")
@@ -110,7 +114,6 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                             setNegativeButton("Cancel") { dialog, _ ->
                                 dialog.dismiss()
                             }
-
                         }
                         dialog.show()
                     }
@@ -131,12 +134,12 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                         }
                         C.TYPE_M3U8_URL -> {
                             val m3u8Url: Pair<RealmList<String>,RealmList<String>> = HtmlParser.parseencrypturls(response = response.string())
+                            Timber.e(m3u8Url.toString())
                             urlList = m3u8Url.first
                             quality = m3u8Url.second
-
                         }
                         C.TYPE_M3U8_PREP -> {
-                            val m3u8Pre = HtmlParser.parseencryptajax(response = response.string(),id)
+                            val m3u8Pre = HtmlParser.parseencryptajax(response = response.string())
                             compositeDisposable.add(
                                 episodeRepository.m3u8preprocessor("${C.REFERER}encrypt-ajax.php?${m3u8Pre}")
                                     .subscribeWith(

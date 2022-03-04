@@ -1,6 +1,7 @@
 package net.sanic.Kayuri.ui.main.home
 
 import android.os.Bundle
+import android.os.StrictMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +33,8 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
         homebind = FragmentHomeBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         return homebind.root

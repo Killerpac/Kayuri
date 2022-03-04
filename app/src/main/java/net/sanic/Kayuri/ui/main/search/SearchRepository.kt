@@ -16,5 +16,4 @@ class SearchRepository {
         val searchService = retrofit.create(NetworkInterface.FetchSearchData::class.java)
         return searchService.get(Utils.getHeader(),keyWord,pageNumber).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
-
 }

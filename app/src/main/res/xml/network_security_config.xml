@@ -4,5 +4,7 @@
         <domain includeSubdomains="true">gogoanime.film</domain>
         <domain includeSubdomains="true">ajax.gogocdn.net</domain>
         <domain includeSubdomains="true">gogoplay.io</domain>
+        <domain includeSubdomains="true">api.myanimelist.net</domain>
+        <domain includeSubdomains="true">myanimelist.net</domain>
     </domain-config>
 </network-security-config>

@@ -11,6 +11,7 @@ import net.sanic.Kayuri.utils.model.EpisodeModel
 import net.sanic.Kayuri.utils.model.FavouriteModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
 import okhttp3.ResponseBody
+import org.jetbrains.annotations.Async
 
 class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
 
@@ -65,7 +66,7 @@ class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
             }
 
             override fun onComplete() {
-
+              //  animeInfoModel.value?.let { animeInfoRepository.searchMalForAnime(it.animeTitle) }
             }
 
             override fun onError(e: Throwable) {

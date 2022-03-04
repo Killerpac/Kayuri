@@ -16,7 +16,9 @@ class C {
         const val SEARCH_URL = "/search.html"
 
         //Gogoanime Secrets
-        const val GogoSecretkey = "25746538592938396764662879833288"
+        const val GogoSecretkey = "25716538522938396164662278833288"
+        const val GogoSecretIV = "1285672985238393"
+        val GogoPadding= byteArrayOf(0x8,0xe,0x3,0x8,0x9,0x3,0x4,0x9)
 
         //Model Type
         const val TYPE_RECENT_SUB = 1
@@ -61,7 +63,7 @@ class C {
         //Network Requests Header
         const val USER_AGENT = "Mozilla/5.0 (Linux; U; Android 10; en; SM-M105F Build/QP1A.190711.020) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 UCBrowser/12.10.0.1163 UCTurbo/1.10.9.900 Mobile Safari/537.3"
         const val ORIGIN = "https://goganime.film/"
-        const val  REFERER = "https://gogoplay.io/"
+        const val  REFERER = "https://gogoplay4.com/"
 
         //Preferred Quality
         const val QUALITY = "Auto"
