@@ -5,10 +5,12 @@ import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.Carousel.setDefaultGlobalSnapHelperFactory
 import com.airbnb.epoxy.CarouselModel_
 import com.airbnb.epoxy.TypedEpoxyController
+import kotlinx.android.synthetic.main.tags_genre.view.*
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.epoxy.AnimeCommonModel_
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import net.sanic.Kayuri.utils.model.GenreModel
 import net.sanic.Kayuri.utils.model.HomeScreenModel
 
 
@@ -19,12 +21,10 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
 
 
         data.forEach { homeScreenModel ->
-
             AnimeMiniHeaderModel_()
                 .id(homeScreenModel.typeValue)
                 .typeName(homeScreenModel.type)
                 .addIf(!homeScreenModel.animeList.isNullOrEmpty(),this)
-
 
 
             when (homeScreenModel.typeValue) {
@@ -37,8 +37,9 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
                         movieModelList.add(
                             AnimeCommonModel_()
                                 .id(animeMetaModel.ID)
-                                .clickListener { model, _, _, _ ->
-                                   adapterCallbacks.animeTitleClick(model = model.animeMetaModel())
+                                .clickListener { model, holder, _, _ ->
+                                   adapterCallbacks.animeTitleClick(model = model.animeMetaModel(),sharedTitle = holder.animeTitle,
+                                       sharedImage = holder.animeImageView)
                                 }
                                 .animeMetaModel(animeMetaModel)
                         )
@@ -59,13 +60,39 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
 
                         AnimePopularModel_()
                             .id(animeMetaModel.ID)
-                            .clickListener { model, _, _, _ ->
-                                adapterCallbacks.animeTitleClick(model = model.animeMetaModel())
+                            .clickListener { model, holder, _, _ ->
+                                adapterCallbacks.animeTitleClick(model = model.animeMetaModel(),sharedTitle = holder.animeTitle,
+                                    sharedImage = holder.animeImageView)
+                            }
+                            .tagClickListener { model, _, view, _ ->
+                                adapterCallbacks.tagClick(model = model.animeMetaModel(), genreName = view.genre.text.toString())
                             }
                             .animeMetaModel(animeMetaModel)
                             .addTo(this)
                     }
 
+                }
+                C.TYPE_GENRE -> {
+
+                    val genreModelList: ArrayList<HomeGenresModel_> = ArrayList()
+
+                    homeScreenModel.genreList?.forEach {
+                        val genreModel = it
+                        genreModelList.add(
+                            HomeGenresModel_()
+                                .id(genreModel.genreName)
+                                .clickListener { model, _, _, _ ->
+                                    adapterCallbacks.genreClick(model = model.genreModel())
+                                }
+                                .genreModel(genreModel)
+                        )
+                    }
+
+                    CarouselModel_()
+                        .id(homeScreenModel.hashCode())
+                        .models(genreModelList)
+                        .padding(Carousel.Padding.dp(20,0,20,0,0))
+                        .addTo(this)
                 }
                 else ->{
                     val recentModelList: ArrayList<AnimeSubDubModel2_> = ArrayList()
@@ -74,8 +101,11 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
                         recentModelList.add(
                         AnimeSubDubModel2_()
                             .id(animeMetaModel.ID)
-                            .clickListener { model, _, clickedView, _ ->
-                                recentSubDubClick(model.animeMetaModel(),clickedView)
+                            .clickListener { model, holder, clickedView, _ ->
+                                recentSubDubClick(model = model.animeMetaModel(),
+                                    clickedView = clickedView,
+                                    sharedTitle = holder.animeTitle,
+                                    sharedImage = holder.animeImageView)
                             }
                             .animeMetaModel(animeMetaModel)
                         )
@@ -92,13 +122,16 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
 
     }
 
-    private fun recentSubDubClick(model: AnimeMetaModel, clickedView: View){
+    private fun recentSubDubClick(model: AnimeMetaModel, clickedView: View,sharedTitle: View, sharedImage: View){
         when(clickedView.id){
-            R.id.backgroundImage->{
-                adapterCallbacks.recentSubDubEpisodeClick(model = model )
+            R.id.animeImage->{
+                adapterCallbacks.recentSubDubEpisodeClick(model = model)
             }
             R.id.animeTitle->{
-                adapterCallbacks.animeTitleClick(model = model)
+                adapterCallbacks.animeTitleClick(
+                    model = model,
+                    sharedTitle = sharedTitle,
+                    sharedImage = sharedImage)
             }
         }
 
@@ -107,7 +140,9 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
 
     interface EpoxyAdapterCallbacks{
         fun recentSubDubEpisodeClick(model: AnimeMetaModel)
-        fun animeTitleClick(model: AnimeMetaModel)
+        fun animeTitleClick(model: AnimeMetaModel,sharedTitle: View, sharedImage: View)
+        fun tagClick(model: AnimeMetaModel, genreName: String)
+        fun genreClick(model: GenreModel)
     }
 
 }

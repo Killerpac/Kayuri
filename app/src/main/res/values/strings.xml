@@ -7,13 +7,13 @@
     <string name="released">Released:</string>
     <string name="type">Type:</string>
     <string name="status">Status:</string>
-    <string name="next_episode"><u>Next Episode</u>&gt;</string>
-    <string name="previous_episode">&lt;<u>Previous Episode</u></string>
+    <string name="next_episode">Next Ep</string>
+    <string name="previous_episode">Prev Ep</string>
     <string name="back_button">Back Button</string>
     <string name="search">Search</string>
     <string name="something_went_wrong">Something Went Wrong</string>
 
-    <string name="no_internet">No Internet Connection</string>
+    <string name="no_internet">No Internet or Links not found</string>
     <string name="favourite">Favourites</string>
     <string name="status_code_default">Something went Wrong</string>
     <string name="server_error">Server Error</string>
@@ -27,14 +27,27 @@
     <string name="large_disc">This app gets all it\'s content from GoGoAnime.
  Therefore any heavy changes on this site might cause the
  app to stop working, But we will try our
- best to get this app running</string>
+ best to get this app running</string>>
     <string name="night_mode">Night Mode</string>
     <string name="switch_between_light_dark_theme"><![CDATA[Switch Between Light & Dark Theme]]></string>
     <string name="picture_in_picture">Picture in Picture</string>
     <string name="toggle_pip_mode">Toggle PIP Mode</string>
-    <string name="Google_Server">Google Server</string>
-    <string name="Toogle_Google_Server">1080p only! Faster Speeds</string>
+    <string name="Google_Server">Backup Servers</string>
+    <string name="dllocation">The Default Location For Download is Movies Folder in Internal Storage</string>
+    <string name="Toogle_Google_Server">Enable This If You Need Backup</string>
     <string name="controlsname">Player Controls</string>
     <string name="controlstext">Slide Contols For Volume And Brightness in Player</string>
+    <string name="genres">Genres</string>
+    <string name="genre">Genre %s</string>
+    <string name="qualitytoogle">Preferred Video Quality</string>
+    <string name="qualitytext">Set The Preferred Streaming Quality</string>
+    <string name="qualitychoose">Auto</string>
+    <string name="shared_image" translatable="false">HEHEBOIII</string>
+    <string name="shared_title" translatable="false">LOL</string>
+    <string name="favourite_transition">favourite_transition</string>
+    <string name="search_transition">search_transition</string>
+    <string name="settings_transition">settings_transition</string>
+    <string name="genre_transition">nente</string>
+    <string name="skipop" translatable="false">Skip OP</string>
 
 </resources>

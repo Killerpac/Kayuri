@@ -2,6 +2,7 @@ package net.sanic.Kayuri.ui.main.search
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -13,16 +14,21 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView.OnEditorActionListener
+import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_search.view.*
-import kotlinx.android.synthetic.main.loading.view.*
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFadeThrough
 import net.sanic.Kayuri.R
+import net.sanic.Kayuri.databinding.FragmentSearchBinding
+import net.sanic.Kayuri.databinding.LoadingBinding
 import net.sanic.Kayuri.ui.main.search.epoxy.SearchController
 import net.sanic.Kayuri.utils.CommonViewModel2
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
@@ -33,34 +39,37 @@ import net.sanic.Kayuri.utils.model.AnimeMetaModel
 class SearchFragment : Fragment(), View.OnClickListener,
     SearchController.EpoxySearchAdapterCallbacks {
 
-    private lateinit var rootView: View
+    private lateinit var searchBinding: FragmentSearchBinding
+    private lateinit var loadingBinding: LoadingBinding
     private lateinit var viewModel: SearchViewModel
-    private lateinit var searchController: SearchController
+    private lateinit var searchController:SearchController
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        rootView = inflater.inflate(R.layout.fragment_search, container, false)
+    ): View {
+        searchBinding = FragmentSearchBinding.inflate(inflater, container, false)
+        loadingBinding = LoadingBinding.inflate(inflater, searchBinding.root)
+        viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+        return searchBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupTransitions(view)
         setOnClickListeners()
         setAdapters()
         setRecyclerViewScroll()
         setEditTextListener()
         showKeyBoard()
-        return rootView
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
         setObserver()
     }
 
     private fun setEditTextListener() {
-        rootView.searchEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+        searchBinding.searchEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH || event.action == KeyEvent.ACTION_DOWN) {
                 hideKeyBoard()
-                rootView.searchEditText.clearFocus()
+                searchBinding.searchEditText.clearFocus()
                 viewModel.fetchSearchList(v.text.toString().trim())
                 return@OnEditorActionListener true
             }
@@ -70,18 +79,35 @@ class SearchFragment : Fragment(), View.OnClickListener,
 
 
     private fun setOnClickListeners() {
-        rootView.backButton.setOnClickListener(this)
+        searchBinding.backButton.setOnClickListener(this)
     }
-
+    private fun setupTransitions(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        exitTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
+        reenterTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.navHostFragmentContainer
+            duration = 300
+            scrimColor = Color.TRANSPARENT
+            fadeMode = MaterialContainerTransform.FADE_MODE_THROUGH
+            startContainerColor = ContextCompat.getColor(view.context, android.R.color.transparent)
+            endContainerColor = ContextCompat.getColor(view.context, android.R.color.transparent)
+        }
+    }
     private fun setAdapters() {
         searchController = SearchController(this)
         searchController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
-        rootView.searchRecyclerView.apply {
+        searchBinding.searchRecyclerView.apply {
             layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))
             adapter = searchController.adapter
             (layoutManager as GridLayoutManager).spanSizeLookup = searchController.spanSizeLookup
         }
-        rootView.searchRecyclerView.addItemDecoration(
+        searchBinding.searchRecyclerView.addItemDecoration(
             ItemOffsetDecoration(
                 context,
                 R.dimen.episode_offset_left
@@ -90,27 +116,25 @@ class SearchFragment : Fragment(), View.OnClickListener,
 
     }
 
-    private fun getSpanCount(): Int {
-        val orientation = resources.configuration.orientation
-        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            5
-        } else {
-            3
-        }
-    }
+//    private fun getSpanCount(): Int {
+//        val orientation = resources.configuration.orientation
+//        return if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            5
+//        } else {
+//            3
+//        }
+//    }
 
     private fun setObserver() {
 
 
-        viewModel.loadingModel.observe(viewLifecycleOwner, Observer {
+        viewModel.loadingModel.observe(viewLifecycleOwner) {
             if (it.isListEmpty) {
-                if (it.loading == CommonViewModel2.Loading.LOADING) rootView.loading.visibility =
+                if (it.loading == CommonViewModel2.Loading.LOADING) loadingBinding.loading.visibility =
                     View.VISIBLE
-                //TODO Error Visibiity GONE
 
                 else if (it.loading == CommonViewModel2.Loading.ERROR
-                //Todo Error visisblity visible
-                ) rootView.loading.visibility = View.GONE
+                ) loadingBinding.loading.visibility = View.GONE
             } else {
                 searchController.setData(
                     viewModel.searchList.value,
@@ -123,12 +147,12 @@ class SearchFragment : Fragment(), View.OnClickListener,
                         Snackbar.LENGTH_SHORT
                     ).show()
                 }
-                else if (it.loading == CommonViewModel2.Loading.COMPLETED) rootView.loading.visibility =
+                else if (it.loading == CommonViewModel2.Loading.COMPLETED) loadingBinding.loading.visibility =
                     View.GONE
 
             }
 
-        })
+        }
 
 //        viewModel.searchList.observe(viewLifecycleOwner, Observer {
 //            searchController.setData(it ,viewModel.isLoading.value?.isLoading ?: false)
@@ -163,10 +187,10 @@ class SearchFragment : Fragment(), View.OnClickListener,
     }
 
     private fun setRecyclerViewScroll() {
-        rootView.searchRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        searchBinding.searchRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val layoutManger = rootView.searchRecyclerView.layoutManager as GridLayoutManager
+                val layoutManger = searchBinding.searchRecyclerView.layoutManager as GridLayoutManager
                 val visibleItemCount = layoutManger.childCount
                 val totalItemCount = layoutManger.itemCount
                 val firstVisibleItemPosition = layoutManger.findFirstVisibleItemPosition()
@@ -195,14 +219,21 @@ class SearchFragment : Fragment(), View.OnClickListener,
 
     private fun showKeyBoard() {
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(activity?.currentFocus, 0)
+        imm.showSoftInput(searchBinding.root, 0)
     }
 
-    override fun animeTitleClick(model: AnimeMetaModel) {
+    override fun animeTitleClick(model: AnimeMetaModel, sharedTitle: View, sharedImage: View) {
+        hideKeyBoard()
+        val extras = FragmentNavigatorExtras(
+            sharedTitle to resources.getString(R.string.shared_title),
+            sharedImage to resources.getString(R.string.shared_image)
+        )
         findNavController().navigate(
             SearchFragmentDirections.actionSearchFragmentToAnimeInfoFragment(
-                categoryUrl = model.categoryUrl
-            )
+                categoryUrl = model.categoryUrl,
+                animeName = model.title,
+                animeImageUrl = model.imageUrl
+            ),extras
         )
     }
 

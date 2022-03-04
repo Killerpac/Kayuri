@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:transitionName="@string/search_transition"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -30,24 +31,26 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow"
                 android:id="@+id/backButton"
-                android:tint="@color/search_back"
-                android:scaleX="1.2"
-                android:scaleY="1.2"
+                android:scaleX="1"
+                android:scaleY="1"
                 android:padding="10dp"
-                android:contentDescription="@string/back_button" />
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/back_button"
+                app:tint="@color/search_back" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/search_edit_text_background"
                 android:layout_gravity="center"
-                android:layout_marginEnd="20dp"
-                android:layout_marginStart="20dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 android:textSize="22sp"
                 android:hint="@string/search"
+                android:textColor="@color/colorAccent"
                 android:paddingStart="20dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
                 android:paddingEnd="20dp"
                 android:id="@+id/searchEditText"
                 android:imeOptions="actionSearch"

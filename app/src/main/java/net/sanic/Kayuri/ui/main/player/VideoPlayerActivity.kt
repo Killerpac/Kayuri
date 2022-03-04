@@ -14,6 +14,7 @@ import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_video_player.*
 import kotlinx.android.synthetic.main.fragment_video_player.*
 import net.sanic.Kayuri.R
@@ -34,10 +35,6 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         setContentView(R.layout.activity_video_player)
         viewModel = ViewModelProvider(this).get(VideoPlayerViewModel::class.java)
         getExtra(intent)
-//        (playerFragment as VideoPlayerFragment).updateContent(Content(
-//            url = url,
-//            episodeNumber = "153"
-//        ))
         setObserver()
         goFullScreen()
     }
@@ -76,8 +73,8 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
             Content(
                 animeName = animeName ?: "",
                 episodeUrl = url,
-                episodeName = animeName!! + " (" + episodeNumber!! + ")",
-                url = ""
+                episodeName = "\"$episodeNumber\"",
+                url = RealmList()
             )
         )
         viewModel.fetchEpisodeMediaUrl()
@@ -144,7 +141,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
                     this.enterPictureInPictureMode()
                 }
             } catch (ex: Exception) {
-                Timber.e(ex.message)
+                Timber.e(ex)
             }
 
         } else {
@@ -184,24 +181,24 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     }
 
     private fun setObserver() {
-        viewModel.liveContent.observe(this, Observer {
+        viewModel.liveContent.observe(this) {
             this.content = it
             it?.let {
                 if (!it.url.isNullOrEmpty()) {
                     (playerFragment as VideoPlayerFragment).updateContent(it)
                 }
             }
-        })
-        viewModel.isLoading.observe(this, Observer {
+        }
+        viewModel.isLoading.observe(this) {
             (playerFragment as VideoPlayerFragment).showLoading(it.isLoading)
-        })
-        viewModel.errorModel.observe(this, Observer {
+        }
+        viewModel.errorModel.observe(this) {
             (playerFragment as VideoPlayerFragment).showErrorLayout(
                 it.show,
                 it.errorMsgId,
                 it.errorCode
             )
-        })
+        }
     }
 
     override fun onBackPressed() {
@@ -233,9 +230,11 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         viewModel.updateEpisodeContent(
             Content(
                 episodeUrl = content.nextEpisodeUrl,
-                episodeName = "$animeName (EP ${incrimentEpisodeNumber(content.episodeName!!)})",
-                url = "",
-                animeName = content.animeName
+                episodeName = "\"EP ${incrimentEpisodeNumber(content.episodeName!!)}\"",
+                url = content.url,
+                animeName = content.animeName,
+                index = content.index,
+                quality = content.quality
             )
         )
         viewModel.fetchEpisodeMediaUrl()
@@ -247,9 +246,11 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         viewModel.updateEpisodeContent(
             Content(
                 episodeUrl = content.previousEpisodeUrl,
-                episodeName = "$animeName (EP ${decrimentEpisodeNumber(content.episodeName!!)})",
-                url = "",
-                animeName = content.animeName
+                episodeName =  "\"EP ${decrimentEpisodeNumber(content.episodeName!!)}\"",
+                url = content.url,
+                animeName = content.animeName,
+                index = content.index,
+                quality = content.quality
             )
         )
         viewModel.fetchEpisodeMediaUrl()
@@ -259,7 +260,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         return try {
             val episodeString = episodeName.substring(
                 episodeName.lastIndexOf(' ') + 1,
-                episodeName.lastIndexOf(')')
+                episodeName.lastIndex
             )
             var episodeNumber = Integer.parseInt(episodeString)
             episodeNumber++
@@ -269,12 +270,11 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
             ""
         }
     }
-
     private fun decrimentEpisodeNumber(episodeName: String): String {
         return try {
             val episodeString = episodeName.substring(
                 episodeName.lastIndexOf(' ') + 1,
-                episodeName.lastIndexOf(')')
+                episodeName.lastIndex
             )
             var episodeNumber = Integer.parseInt(episodeString)
             episodeNumber--
@@ -286,7 +286,6 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     }
 
     fun refreshM3u8Url() {
-
         viewModel.fetchEpisodeMediaUrl(fetchFromDb = false)
     }
 

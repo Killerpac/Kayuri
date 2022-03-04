@@ -8,8 +8,8 @@
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -33,16 +33,20 @@
                 app:show_buffering="when_playing"
                 app:resize_mode="fit"
                 app:show_timeout="3000"
-                app:scrubber_dragged_size="25dp"
-                app:controller_layout_id="@layout/exo_player_custom_controls"
-                app:rewind_increment="10000"
-                app:fastforward_increment="10000"/>
+                app:played_color="#19fbff"
+                app:scrubber_dragged_size="18dp"
+                app:scrubber_enabled_size="15dp"
+                app:auto_show="true"
+                app:hide_on_touch="true"
+                app:bar_height="5px"
+                app:controller_layout_id="@layout/exo_player_custom_controls" />
 
         </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
 
         <include layout="@layout/fragment_video_player_placeholder"/>
         <include layout="@layout/error_screen_video_player"/>
+
 
         <RelativeLayout
             android:id="@+id/root_layout"

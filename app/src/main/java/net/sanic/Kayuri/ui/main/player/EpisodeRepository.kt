@@ -20,7 +20,6 @@ class EpisodeRepository {
     private var retrofit: Retrofit = RetrofitHelper.getRetrofitInstance()!!
     private var realm = Realm.getInstance(InitalizeRealm.getConfig())
 
-
     fun fetchEpisodeMediaUrl(url: String): Observable<ResponseBody> {
         val mediaUrlService = retrofit.create(NetworkInterface.FetchEpisodeMediaUrl::class.java)
         return mediaUrlService.get(Utils.getHeader(),url).subscribeOn(Schedulers.io())
@@ -39,6 +38,13 @@ class EpisodeRepository {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
+    fun m3u8preprocessor(url: String):Observable<ResponseBody> {
+        val m3u8Url = retrofit.create(NetworkInterface.Fetch3u8preprocessor::class.java)
+        return m3u8Url.get(Utils.getHeader(),url)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
 
     fun fetchWatchedDuration(id: Int): WatchedEpisode?{
         return realm.where(WatchedEpisode::class.java).equalTo("id", id).findFirst()
@@ -51,10 +57,9 @@ class EpisodeRepository {
             result?.let {
                 content = realm.copyFromRealm(it)
             }
-            Timber.e("ID : %s", content?.episodeUrl.hashCode())
+           // Timber.e("ID : %s", content?.episodeUrl.hashCode())
             val watchedEpisode = fetchWatchedDuration(content?.episodeUrl.hashCode())
-            content?.watchedDuration = watchedEpisode?.watchedDuration?.let { it
-            } ?: 0
+            content?.watchedDuration = watchedEpisode?.watchedDuration ?: 0
             return content
 
 

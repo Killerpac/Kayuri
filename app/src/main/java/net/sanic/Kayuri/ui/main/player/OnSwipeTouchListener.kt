@@ -14,10 +14,7 @@ import kotlin.math.abs
 open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
     private var context: Context? = null
     init {
-
         context = c
-
-
         /** you can do multi if else statements for multi activity classes  */
     }
 
@@ -35,16 +32,6 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             return true
         }
 
-        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            //   gestureDetector.setIsLongpressEnabled(true)
-            //  onTouch(e)
-            return true}
-
-        override fun onUp(ev: MotionEvent?) {
-            (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
-            (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
-            (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
-        }
         fun getdisplayheight():Int
         {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
@@ -87,7 +74,28 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             }
         }
 
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            //   gestureDetector.setIsLongpressEnabled(true)
+            //  onTouch(e)
+            if((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
+            else ((context as VideoPlayerActivity).exoPlayerView.showController())
+            return true}
+
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+            if((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
+            else ((context as VideoPlayerActivity).exoPlayerView.showController())
+            return super.onDoubleTap(e)
+        }
+
+
+        override fun onUp(ev: MotionEvent?) {
+            (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
+            (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
+            (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
+        }
+
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+            if((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
             val height = getdisplayheight()
             val width = getdisplaywidth()
             val mOldX = e1.x
@@ -119,18 +127,18 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             else if (mode == 1) {
 
                 val audiomanager = (context as VideoPlayerActivity).getSystemService(Context.AUDIO_SERVICE)  as AudioManager
-                var currentVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value
 
                 val maxVolume = audiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) // Get the maximum volume of the system
-                currentVolume = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value
+                var currentVolume: Int =
+                    audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value // Get the current value
                 if (abs(distanceY)> abs(distanceX)) {// Vertical movement is greater than horizontal movement
-                    if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 1.0f)) {// Turn up the volume, pay attention to the coordinate system when the screen is horizontal, although the upper left corner is the origin, distanceY is positive when sliding up horizontally
+                    if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 2.0f)) {// Turn up the volume, pay attention to the coordinate system when the screen is horizontal, although the upper left corner is the origin, distanceY is positive when sliding up horizontally
                         if (currentVolume <maxVolume) {// To avoid too fast adjustment, distanceY should be greater than a set value
                             currentVolume++
 
                         }
                         //   gesture_iv_player_volume.setImageResource(R.drawable.player_volume);
-                    } else if (distanceY <= -DensityUtil.dip2px((context as VideoPlayerActivity), 1.0f)) {// Turn down the volume
+                    } else if (distanceY <= -DensityUtil.dip2px((context as VideoPlayerActivity), 2.0f)) {// Turn down the volume
                         if (currentVolume > 0) {
                             currentVolume--
 //                                                if (currentVolume == 0) {// Mute, set mute unique picture
@@ -155,7 +163,7 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
                     mBrightness = 0.01f
 
                 val lpa = (context as VideoPlayerActivity).window.attributes
-                lpa.screenBrightness = mBrightness + (mOldY - y) / height
+                lpa.screenBrightness = mBrightness + (mOldY - y) / height * 0.05f
                 if (lpa.screenBrightness > 1.0f)
                     lpa.screenBrightness = 1.0f
                 else if (lpa.screenBrightness < 0.01f)
@@ -169,25 +177,6 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             return true
 
         }
-
-//        try {
-//        val diffY = e2.y - e1.y
-//        val diffX = e2.x - e1.x
-//        if (Math.abs(diffX) > Math.abs(diffY)) {
-//        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-//        if (diffX > 0) {
-//        onSwipeRight()
-//        } else {
-//        onSwipeLeft()
-//        }
-//        }
-//        } else {
-//        // onTouch(e);
-//        }
-//        } catch (exception: Exception) {
-//        exception.printStackTrace()
-//        }
-
         //    return result
     }
 
@@ -197,10 +186,6 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
             (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
             (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
-        }
-        else
-        {
-            (context as VideoPlayerActivity).exoPlayerView.hideController()
         }
         return gestureDetector.onTouchEvent(event)
     }

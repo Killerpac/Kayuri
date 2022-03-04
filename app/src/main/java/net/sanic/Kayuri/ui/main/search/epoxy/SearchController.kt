@@ -1,5 +1,6 @@
 package net.sanic.Kayuri.ui.main.search.epoxy
 
+import android.view.View
 import com.airbnb.epoxy.Typed2EpoxyController
 import net.sanic.Kayuri.utils.epoxy.AnimeCommonModel_
 import net.sanic.Kayuri.utils.epoxy.LoadingModel_
@@ -14,8 +15,10 @@ class SearchController(var adapterCallbacks: EpoxySearchAdapterCallbacks) : Type
                 .id(animeMetaModel.ID)
                 .animeMetaModel(animeMetaModel)
                 .spanSizeOverride { totalSpanCount, _, _ -> totalSpanCount / totalSpanCount }
-                .clickListener { model, _, _, _ ->
-                    adapterCallbacks.animeTitleClick(model = model.animeMetaModel())
+                .clickListener { model, holder, _, _ ->
+                    adapterCallbacks.animeTitleClick(model = model.animeMetaModel(),
+                        sharedTitle = holder.animeTitle,
+                        sharedImage = holder.animeImageView)
                 }
                 .addTo(this)
         }
@@ -31,7 +34,7 @@ class SearchController(var adapterCallbacks: EpoxySearchAdapterCallbacks) : Type
 
 
     interface EpoxySearchAdapterCallbacks{
-        fun animeTitleClick(model: AnimeMetaModel)
+        fun animeTitleClick(model: AnimeMetaModel, sharedTitle: View, sharedImage: View)
     }
 
 }

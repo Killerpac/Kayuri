@@ -1,87 +1,99 @@
 package net.sanic.Kayuri.ui.main.home
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import android.os.StrictMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_home.view.*
-import net.sanic.Kayuri.BuildConfig
+import com.github.javiersantos.appupdater.AppUpdater
+import com.github.javiersantos.appupdater.enums.Display
+import com.github.javiersantos.appupdater.enums.UpdateFrom
+import com.google.android.material.transition.MaterialFadeThrough
 import net.sanic.Kayuri.R
+import net.sanic.Kayuri.databinding.FragmentHomeBinding
 import net.sanic.Kayuri.ui.main.home.epoxy.HomeController
-import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
-import timber.log.Timber
+import net.sanic.Kayuri.utils.model.GenreModel
 
 class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapterCallbacks {
 
 
-    private lateinit var rootView: View
-    private lateinit var homeController: HomeController
+    private lateinit var homeController:HomeController
     private var doubleClickLastTime = 0L
+    private lateinit var homebind: FragmentHomeBinding
     private lateinit var viewModel: HomeViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        rootView = inflater.inflate(R.layout.fragment_home, container, false)
+    ): View {
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+        homebind = FragmentHomeBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        return homebind.root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupTransitions(view)
         setAdapter()
         setClickListeners()
-        return rootView
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         viewModelObserver()
+        checkUpdate()
     }
-    
 
     private fun setAdapter() {
+       // homeController.isDebugLoggingEnabled = true
         homeController = HomeController(this)
-
-        homeController.isDebugLoggingEnabled = true
-        val homeRecyclerView = rootView.recyclerView
+        val homeRecyclerView = homebind.recyclerView
         homeRecyclerView.layoutManager = LinearLayoutManager(context)
         homeRecyclerView.adapter = homeController.adapter
     }
 
     private fun viewModelObserver() {
-        viewModel.animeList.observe(viewLifecycleOwner, {
+        viewModel.animeList.observe(viewLifecycleOwner) {
             homeController.setData(it)
-        })
-
-        viewModel.updateModel.observe(viewLifecycleOwner, {
-            Timber.e(it.whatsNew)
-            if (it.versionCode > BuildConfig.VERSION_CODE) {
-                showDialog(it.whatsNew)
-            }
-        })
+        }
+//        viewModel.updateModel.observe(viewLifecycleOwner, {
+//            Timber.e(it.whatsNew)
+//            if (it.versionCode > BuildConfig.VERSION_CODE) {
+//                showDialog(it.whatsNew)
+//            }
+//        })
     }
 
-    private fun setTransitionListener() {
 
+    private fun setupTransitions(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        exitTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
+        reenterTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
     }
 
     private fun setClickListeners() {
-        rootView.header.setOnClickListener(this)
-        rootView.search.setOnClickListener(this)
-        rootView.favorite.setOnClickListener(this)
-        rootView.settings.setOnClickListener(this)
+        homebind.header.setOnClickListener(this)
+        homebind.search.setOnClickListener(this)
+        homebind.favorite.setOnClickListener(this)
+        homebind.settings.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.header -> {
                 doubleClickLastTime = if (System.currentTimeMillis() - doubleClickLastTime < 300) {
-                    rootView.recyclerView.smoothScrollToPosition(0)
+                    homebind.recyclerView.smoothScrollToPosition(0)
                     0L
                 } else {
                     System.currentTimeMillis()
@@ -89,14 +101,32 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
 
             }
             R.id.search -> {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())
+                val extras =
+                    FragmentNavigatorExtras(homebind.search to resources.getString(R.string.search_transition))
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToSearchFragment(),
+                    extras
+                )
             }
             R.id.favorite -> {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFavouriteFragment())
+                val extras = FragmentNavigatorExtras(
+                    homebind.favorite to resources.getString(R.string.favourite_transition)
+
+                )
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToFavouriteFragment(),
+                    extras
+                )
             }
             R.id.settings -> {
-                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSettings())
+                val extras = FragmentNavigatorExtras(
+                    homebind.settings to resources.getString(R.string.settings_transition)
 
+                )
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToSettings(),
+                    extras
+                )
             }
         }
     }
@@ -106,34 +136,73 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
             HomeFragmentDirections.actionHomeFragmentToVideoPlayerActivity(
                 episodeUrl = model.episodeUrl,
                 animeName = model.title,
-                episodeNumber = model.episodeNumber
+                episodeNumber = model.episodeNumber?.replace("Episode","EP")
             )
         )
     }
 
-    override fun animeTitleClick(model: AnimeMetaModel) {
+    override fun animeTitleClick(model: AnimeMetaModel,sharedTitle: View, sharedImage: View) {
         if (!model.categoryUrl.isNullOrBlank()) {
+
+            val extras = FragmentNavigatorExtras(
+                sharedTitle to resources.getString(R.string.shared_title),
+                sharedImage to resources.getString(R.string.shared_image)
+            )
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToAnimeInfoFragment(
-                    categoryUrl = model.categoryUrl
+                    categoryUrl = model.categoryUrl,
+                    animeImageUrl = model.imageUrl,
+                    animeName = model.title
+                ),
+                extras
+            )
+        }
+    }
+
+    override fun tagClick(model: AnimeMetaModel, genreName: String) {
+        if (!model.genreList.isNullOrEmpty()) {
+            val genre = model.genreList!!.find { it.genreName == genreName }!!
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToGenreFragment(
+                    genreUrl = genre.genreUrl, genreName = genre.genreName
                 )
             )
         }
-
     }
 
-    private fun showDialog(whatsNew: String) {
-        AlertDialog.Builder(requireContext()).setTitle("New Update Available")
-            .setMessage("What's New ! \n$whatsNew")
+    override fun genreClick(model: GenreModel) {
+        if (model.genreUrl.isNotEmpty()) {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToGenreFragment(
+                    genreUrl = model.genreUrl, genreName = model.genreName
+                )
+            )
+        }
+    }
+
+    private fun checkUpdate() {
+        AppUpdater(context)
+            .setDisplay(Display.DIALOG)
+            .setGitHubUserAndRepo("Killerpac","Kayuri")
+            .setUpdateFrom(UpdateFrom.GITHUB)
+            .setDisplay(Display.DIALOG)
+            .showAppUpdated(false)
             .setCancelable(false)
-            .setPositiveButton("Update") { _, _ ->
-                val i = Intent(Intent.ACTION_VIEW)
-                i.data = Uri.parse(C.GIT_DOWNLOAD_URL)
-                startActivity(i)
-            }
-            .setNegativeButton("Not now") { dialog, _ ->
-                dialog.cancel()
-            }.show()
+            .setButtonDoNotShowAgain("")
+            .start()
     }
+//    private fun showDialog(whatsNew: String) {
+//        AlertDialog.Builder(requireContext()).setTitle("New Update Available")
+//            .setMessage("What's New ! \n$whatsNew")
+//            .setCancelable(false)
+//            .setPositiveButton("Update") { _, _ ->
+//                val i = Intent(Intent.ACTION_VIEW)
+//                i.data = Uri.parse(C.GIT_DOWNLOAD_URL)
+//                startActivity(i)
+//            }
+//            .setNegativeButton("Not now") { dialog, _ ->
+//                dialog.cancel()
+//            }.show()
+//    }
 
 }

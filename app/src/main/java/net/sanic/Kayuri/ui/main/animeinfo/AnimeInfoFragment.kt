@@ -1,121 +1,164 @@
 package net.sanic.Kayuri.ui.main.animeinfo
 
+import android.animation.TimeInterpolator
+import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import net.sanic.Kayuri.databinding.FragmentAnimeinfoBinding
+import net.sanic.Kayuri.databinding.LoadingBinding
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_animeinfo.*
-import kotlinx.android.synthetic.main.fragment_animeinfo.view.*
-import kotlinx.android.synthetic.main.loading.view.*
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.ui.main.animeinfo.epoxy.AnimeInfoController
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Tags.GenreTags
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.AnimeInfoModel
+import timber.log.Timber
+
 class AnimeInfoFragment : Fragment() {
 
-    private lateinit var rootView: View
     private lateinit var viewModelFactory: AnimeInfoViewModelFactory
     private lateinit var viewModel: AnimeInfoViewModel
-    private lateinit var episodeController: AnimeInfoController
+    private val episodeController by lazy {
+        AnimeInfoController()
+    }
 
+    private lateinit var animeInfoBinding: FragmentAnimeinfoBinding
+    private lateinit var loadingBinding: LoadingBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        rootView = inflater.inflate(R.layout.fragment_animeinfo, container, false)
+    ): View {
+        animeInfoBinding = FragmentAnimeinfoBinding.inflate(inflater, container, false)
+        loadingBinding = LoadingBinding.inflate(inflater, animeInfoBinding.root)
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.shared_element)
+        return animeInfoBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setPreviews()
         viewModelFactory = AnimeInfoViewModelFactory(AnimeInfoFragmentArgs.fromBundle(requireArguments()).categoryUrl!!)
         viewModel = ViewModelProvider(this, viewModelFactory).get(AnimeInfoViewModel::class.java)
         setupRecyclerView()
         setObserver()
         transitionListener()
         setOnClickListeners()
-        return rootView
     }
 
+
+    private fun setPreviews() {
+        val imageUrl = AnimeInfoFragmentArgs.fromBundle(requireArguments()).animeImageUrl
+        val animeTitle = AnimeInfoFragmentArgs.fromBundle(requireArguments()).animeName
+        animeInfoBinding.animeInfoTitle.text = animeTitle
+        animeInfoBinding.animeInfoImage.apply {
+            Glide.with(this).load(imageUrl).into(this)
+        }
+    }
 
 
     private fun setObserver() {
-        viewModel.animeInfoModel.observe(viewLifecycleOwner, Observer {
+        viewModel.animeInfoModel.observe(viewLifecycleOwner) {
             it?.let {
                 updateViews(it)
             }
-        })
+        }
 
-        viewModel.episodeList.observe(viewLifecycleOwner, Observer {
+        viewModel.episodeList.observe(viewLifecycleOwner) {
             it?.let {
-                rootView.animeInfoRoot.visibility = View.VISIBLE
+                animeInfoBinding.animeInfoRoot.visibility = View.VISIBLE
                 episodeController.setData(it)
             }
-        })
+        }
 
-        viewModel.isLoading.observe(viewLifecycleOwner, Observer {
-
-            if(it.isLoading){
-                rootView.loading.visibility = View.VISIBLE
-            }else{
-                rootView.loading.visibility = View.GONE
+        viewModel.isLoading.observe(viewLifecycleOwner) {
+            if (it.isLoading) {
+                loadingBinding.loading.visibility = View.VISIBLE
+            } else {
+                loadingBinding.loading.visibility = View.GONE
             }
-        })
+        }
 
-
-
-        viewModel.isFavourite.observe(viewLifecycleOwner, Observer {
-            if(it){
-                favourite.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_favorite , null))
-            }else{
-                favourite.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.ic_unfavorite , null))
+        viewModel.isFavourite.observe(viewLifecycleOwner) {
+            if (it) {
+                animeInfoBinding.favourite.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_favorite,
+                        null
+                    )
+                )
+            } else {
+                animeInfoBinding.favourite.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_unfavorite,
+                        null
+                    )
+                )
             }
-        })
+        }
     }
 
     private fun updateViews(animeInfoModel: AnimeInfoModel) {
+        animeInfoBinding.animeInfoReleased.text = animeInfoModel.releasedTime
+        animeInfoBinding.animeInfoStatus.text = animeInfoModel.status
+        animeInfoBinding.animeInfoType.text = animeInfoModel.type
+        animeInfoBinding.animeInfoTitle.text = animeInfoModel.animeTitle
+        animeInfoBinding.toolbarText.text = animeInfoModel.animeTitle
 
-        Glide.with(this).load(animeInfoModel.imageUrl).into(rootView.animeInfoImage)
-        animeInfoReleased.text = animeInfoModel.releasedTime
-        animeInfoStatus.text = animeInfoModel.status
-        animeInfoType.text = animeInfoModel.type
-        animeInfoTitle.text = animeInfoModel.animeTitle
-        toolbarText.text = animeInfoModel.animeTitle
-        flowLayout.removeAllViews()
+        animeInfoBinding.flowLayout.removeAllViews()
         animeInfoModel.genre.forEach {
-            flowLayout.addView(GenreTags(requireContext()).getGenreTag(genreName = it.genreName, genreUrl = it.genreUrl))
+            val genreUrl = it.genreUrl
+            val genreName = it.genreName
+            val genreView = GenreTags(requireContext()).getGenreTag(genreName = genreName, genreUrl = genreUrl){
+                findNavController().navigate(
+                    AnimeInfoFragmentDirections.actionAnimeInfoFragmentToGenreFragment(
+                        genreUrl = genreUrl, genreName = genreName
+                    )
+                )
+            }
+            animeInfoBinding.flowLayout.addView(genreView)
         }
-       episodeController.setAnime(animeInfoModel.animeTitle)
-        animeInfoSummary.text = animeInfoModel.plotSummary
-        rootView.favourite.visibility = View.VISIBLE
-        rootView.animeInfoRoot.visibility = View.VISIBLE
+        episodeController.setAnime(animeInfoModel.animeTitle)
+        animeInfoBinding.animeInfoSummary.text = animeInfoModel.plotSummary
+        animeInfoBinding.favourite.visibility = View.VISIBLE
+        animeInfoBinding.animeInfoRoot.visibility = View.VISIBLE
+        animeInfoBinding.releasedLayout.visibility = View.VISIBLE
+        animeInfoBinding.typeLayout.visibility = View.VISIBLE
+        animeInfoBinding.statusLayout.visibility = View.VISIBLE
     }
 
     private fun setupRecyclerView(){
-        episodeController = AnimeInfoController()
-        episodeController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
-        rootView.animeInfoRecyclerView.adapter = episodeController.adapter
+        episodeController.spanCount = Utils.calculateNoOfColumns(requireContext(), 165f)
+        animeInfoBinding.animeInfoRecyclerView.adapter = episodeController.adapter
         val itemOffsetDecoration = ItemOffsetDecoration(context, R.dimen.episode_offset_left)
-        rootView.animeInfoRecyclerView.addItemDecoration(itemOffsetDecoration)
-        rootView.animeInfoRecyclerView.apply {
-            layoutManager = GridLayoutManager(context,Utils.calculateNoOfColumns(requireContext(), 150f))
+        animeInfoBinding.animeInfoRecyclerView.addItemDecoration(itemOffsetDecoration)
+        animeInfoBinding.animeInfoRecyclerView.apply {
+            layoutManager = GridLayoutManager(context,Utils.calculateNoOfColumns(requireContext(), 165f))
             (layoutManager as GridLayoutManager).spanSizeLookup = episodeController.spanSizeLookup
 
         }
     }
 
-    private fun transitionListener(){
-        rootView.motionLayout.setTransitionListener(
-            object: MotionLayout.TransitionListener{
+    private fun transitionListener() {
+        animeInfoBinding.motionLayout.setTransitionListener(
+            object : MotionLayout.TransitionListener {
                 override fun onTransitionTrigger(
                     p0: MotionLayout?,
                     p1: Int,
@@ -126,20 +169,21 @@ class AnimeInfoFragment : Fragment() {
                 }
 
                 override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-                    rootView.topView.cardElevation = 0F
-                    rootView.animeInfoSummary.elevation = 0F
+                    animeInfoBinding.topView.cardElevation = 0F
                 }
 
-                override fun onTransitionChange(p0: MotionLayout?, startId: Int, endId: Int, progress: Float) {
-                    if(startId == R.id.start){
-                        rootView.topView.cardElevation = 20F * progress
-                        rootView.animeInfoSummary.elevation = 20F * progress
-                        rootView.toolbarText.alpha = progress
-                    }
-                    else{
-                        rootView.topView.cardElevation = 10F * (1 - progress)
-                        rootView.animeInfoSummary.elevation = 10F * (1 - progress)
-                        rootView.toolbarText.alpha = (1-progress)
+                override fun onTransitionChange(
+                    p0: MotionLayout?,
+                    startId: Int,
+                    endId: Int,
+                    progress: Float
+                ) {
+                    if (startId == R.id.start) {
+                        animeInfoBinding.topView.cardElevation = 20F * progress
+                        animeInfoBinding.toolbarText.alpha = progress
+                    } else {
+                        animeInfoBinding.topView.cardElevation = 10F * (1 - progress)
+                        animeInfoBinding.toolbarText.alpha = (1 - progress)
                     }
                 }
 
@@ -149,26 +193,28 @@ class AnimeInfoFragment : Fragment() {
             }
         )
     }
+
     private fun setOnClickListeners(){
-        rootView.favourite.setOnClickListener {
+        animeInfoBinding.favourite.setOnClickListener {
             onFavouriteClick()
         }
-        rootView.animeInfoSummary.setOnClickListener{
-                animeInfoSummary.maxLines = 10
-                animeInfoSummary.movementMethod = ScrollingMovementMethod()
+
+        animeInfoBinding.animeInfoSummary.setOnClickListener{
+                animeInfoBinding.animeInfoSummary.maxLines = 10
+                animeInfoBinding.animeInfoSummary.movementMethod = ScrollingMovementMethod()
         }
 
 
-        rootView.back.setOnClickListener {
-            findNavController().popBackStack()
+        animeInfoBinding.back.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 
     private fun onFavouriteClick(){
         if(viewModel.isFavourite.value!!){
-            Snackbar.make(rootView, getText(R.string.removed_from_favourites), Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(animeInfoBinding.root, getText(R.string.removed_from_favourites), Snackbar.LENGTH_SHORT).show()
         }else{
-            Snackbar.make(rootView, getText(R.string.added_to_favourites), Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(animeInfoBinding.root, getText(R.string.added_to_favourites), Snackbar.LENGTH_SHORT).show()
         }
         viewModel.toggleFavourite()
     }

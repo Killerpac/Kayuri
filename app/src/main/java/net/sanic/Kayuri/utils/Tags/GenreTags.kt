@@ -5,14 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import kotlinx.android.synthetic.main.tags_genre.view.*
 import net.sanic.Kayuri.R
+import net.sanic.Kayuri.databinding.TagsGenreBinding
 
 class GenreTags(var context: Context){
-
-    fun getGenreTag(genreName: String, genreUrl: String): View{
-        var view =LayoutInflater.from(context).inflate(R.layout.tags_genre, null)
-        var button = view.genre
+    fun getGenreTag(genreName: String, genreUrl: String, onClickListener: View.OnClickListener): View{
+        val view =LayoutInflater.from(context).inflate(R.layout.tags_genre, null)
+        val genreBinding:TagsGenreBinding = TagsGenreBinding.bind(view)
+        val button = genreBinding.genre
         button.text = genreName
         button.maxLines  = 1
         val rel_button1 = LinearLayout.LayoutParams(
@@ -21,6 +21,7 @@ class GenreTags(var context: Context){
         )
         rel_button1.setMargins(8, 8, 8, 8)
         button.layoutParams = rel_button1
+        button.setOnClickListener(onClickListener)
         return view
     }
 

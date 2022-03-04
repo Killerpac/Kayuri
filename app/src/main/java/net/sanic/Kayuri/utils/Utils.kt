@@ -17,7 +17,7 @@ class Utils {
                 C.TYPE_RECENT_SUB -> "Recent Sub"
                 C.TYPE_MOVIE -> "Movies"
                 C.TYPE_POPULAR_ANIME -> "Popular Anime"
-                C.TYPE_GENRE -> "Categories"
+                C.TYPE_GENRE -> "Genres"
                 C.TYPE_NEW_SEASON-> "New Season"
                 else -> "Default"
             }
@@ -28,7 +28,6 @@ class Utils {
             return mapOf("referer" to pref.getReferrer(), "origin" to pref.getOrigin(), "user-agent" to C.USER_AGENT)
         }
         fun getGoogle():Map<String,String>{
-            val perf = PreferenceHelper.sharedPreference
             return mapOf("user-agent" to C.USER_AGENT)
         }
         fun calculateNoOfColumns(

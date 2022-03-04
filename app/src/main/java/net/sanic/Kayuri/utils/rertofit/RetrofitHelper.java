@@ -2,6 +2,7 @@ package net.sanic.Kayuri.utils.rertofit;
 
 import net.sanic.Kayuri.BuildConfig;
 
+import okhttp3.Dns;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -17,7 +18,7 @@ public  class RetrofitHelper {
 
         if(BuildConfig.DEBUG){
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
             client = new OkHttpClient.Builder()
                     .retryOnConnectionFailure(true)
                     .addInterceptor(interceptor)
