@@ -25,7 +25,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 32
         versionCode 8
-        versionName "1.5.7"
+        versionName "1.6.1"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "Kayuri-v$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -37,7 +37,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug{
-          //  signingConfig signingConfigs.release
+
         }
     }
     splits {
@@ -92,7 +92,7 @@ dependencies {
     //For Network Request
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.2'
 
     //For Managing Memory Leaks & Data
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -103,19 +103,20 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     //Epoxy For Complex Recycler View
-    implementation 'com.airbnb.android:epoxy:3.8.0'
-    kapt 'com.airbnb.android:epoxy-processor:3.8.0'
+    implementation 'com.airbnb.android:epoxy:4.4.2'
+    kapt 'com.airbnb.android:epoxy-processor:4.4.0'
 
     //For Image Loading
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
-    kapt 'com.github.bumptech.glide:compiler:4.10.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    kapt 'com.github.bumptech.glide:compiler:4.12.0'
 
     //Flow layout
     implementation 'org.apmem.tools:layouts:1.10@aar'
 
+
     //Exo Player
-    implementation 'com.google.android.exoplayer:exoplayer:2.16.1'
-    implementation 'com.google.android.exoplayer:extension-mediasession:2.16.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.17.1'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.17.1'
 
     //Expandable TextView
     implementation 'com.ms-square:expandableTextView:0.1.4'

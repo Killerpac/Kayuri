@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -393,7 +394,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
             var i = 0
             val build = AlertDialog.Builder(requireContext(), R.style.RoundedCornersDialog)
             build.apply {
-                setTitle("Select Quality")
+                setTitle(R.string.video_quality)
                 setSingleChoiceItems(quality.toTypedArray(), i) { _, which ->
                     i = which
                     eandex = which
