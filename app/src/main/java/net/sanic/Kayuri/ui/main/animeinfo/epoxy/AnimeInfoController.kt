@@ -139,7 +139,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                             quality = m3u8Url.second
                         }
                         C.TYPE_M3U8_PREP -> {
-                            val m3u8Pre = HtmlParser.parseencryptajax(response = response.string())
+                            val m3u8Pre = HtmlParser.parseencryptajax(response = response.string(),id)
                             compositeDisposable.add(
                                 episodeRepository.m3u8preprocessor("${C.REFERER}encrypt-ajax.php?${m3u8Pre}")
                                     .subscribeWith(

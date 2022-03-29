@@ -69,7 +69,7 @@ class VideoPlayerViewModel : CommonViewModel() {
                 when(type) {
                     C.TYPE_MEDIA_URL -> {
                         val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
-                        //id = Regex("id=([^&]+)").find(episodeInfo.vidcdnUrl!!)!!.value.removePrefix("id=")
+                        id = Regex("id=([^&]+)").find(episodeInfo.vidcdnUrl!!)!!.value.removePrefix("id=")
                         episodeInfo.vidcdnUrl?.let {
                             if (PreferenceHelper.sharedPreference.getGoogleServer()) {
                                 compositeDisposable.add(
@@ -112,7 +112,7 @@ class VideoPlayerViewModel : CommonViewModel() {
                         updateLoading(false)
                     }
                     C.TYPE_M3U8_PREP -> {
-                        val m3u8Pre = HtmlParser.parseencryptajax(response = response.string())
+                        val m3u8Pre = HtmlParser.parseencryptajax(response = response.string(),id)
                         compositeDisposable.add(
                             episodeRepository.m3u8preprocessor("${C.REFERER}encrypt-ajax.php?${m3u8Pre}")
                                 .subscribeWith(

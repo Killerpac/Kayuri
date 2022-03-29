@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
@@ -47,7 +48,13 @@ import net.sanic.Kayuri.utils.constants.C.Companion.NO_INTERNET_CONNECTION
 import net.sanic.Kayuri.utils.constants.C.Companion.RESPONSE_UNKNOWN
 import net.sanic.Kayuri.utils.model.Content
 import net.sanic.Kayuri.utils.preference.PreferenceHelper
+import okhttp3.Cache
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.dnsoverhttps.DnsOverHttps
 import timber.log.Timber
+import java.io.File
+import java.net.InetAddress
 
 class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     AudioManager.OnAudioFocusChangeListener {
@@ -153,22 +160,37 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         }
     }
     private fun buildMediaSource(uri: Uri): MediaSource {
-
         val lastPath = uri.lastPathSegment
-        if(lastPath!!.contains("m3u8")) tempbit=true
-        val defaultDataSourceFactory =  {
-            val dataSource:DataSource.Factory = DefaultHttpDataSource.Factory()
-                .setUserAgent(requests.USER_AGENT)
-                .setDefaultRequestProperties(hashMapOf("Referer" to requests.REFERER))
-            dataSource.createDataSource()
+        if(lastPath!!.contains("m3u8"))
+        {
+            tempbit=true
+            val appCache = Cache(File("cacheDir", "okhttpcache"), 10 * 1024 * 1024)
+            val bootstrapClient = OkHttpClient.Builder().cache(appCache).build()
+
+            val dns = DnsOverHttps.Builder().client(bootstrapClient)
+                .url("https://security.cloudflare-dns.com/dns-query".toHttpUrl())
+                .bootstrapDnsHosts(InetAddress.getByName("1.1.1.1"))
+                .build()
+            val client = bootstrapClient.newBuilder().dns(dns).build()
+            val dataSource = {
+                val dataSource = OkHttpDataSource.Factory(client)
+                    .setUserAgent(requests.USER_AGENT)
+                    .setDefaultRequestProperties(hashMapOf("Referer" to requests.REFERER))
+                dataSource.createDataSource()
+            }
+            return HlsMediaSource.Factory(dataSource)
+                    .setAllowChunklessPreparation(true)
+                    .createMediaSource(MediaItem.fromUri(uri))
         }
-        return if(lastPath.contains("m3u8")){
-            HlsMediaSource.Factory(defaultDataSourceFactory)
-                .setAllowChunklessPreparation(true)
-                .createMediaSource(MediaItem.fromUri(uri))
-        }else{
-            ProgressiveMediaSource.Factory(defaultDataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(uri))
+        else {
+           val dataSource = {
+                val dataSource: DataSource.Factory = DefaultHttpDataSource.Factory()
+                    .setUserAgent(requests.USER_AGENT)
+                    .setDefaultRequestProperties(hashMapOf("Referer" to requests.REFERER))
+                dataSource.createDataSource()
+            }
+            return ProgressiveMediaSource.Factory(dataSource)
+                    .createMediaSource(MediaItem.fromUri(uri))
         }
 
     }

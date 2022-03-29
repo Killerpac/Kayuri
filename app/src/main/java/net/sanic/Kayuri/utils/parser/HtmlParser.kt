@@ -196,9 +196,9 @@ class HtmlParser {
             )
         }
 
-        private fun decryptAES(encrypted: String, key: String, iv: String): String {
+        fun decryptAES(encrypted: String, key: String, iv: String): String {
             val ix = IvParameterSpec(iv.toByteArray())
-            val cipher = Cipher.getInstance("AES/CBC/NoPadding")
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
             val secretKey = SecretKeySpec(key.toByteArray(Charsets.UTF_8), "AES")
             cipher.init(Cipher.DECRYPT_MODE, secretKey,ix)
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -208,15 +208,15 @@ class HtmlParser {
             }
         }
 
-        private fun encryptAes(text: String, key: String,iv:String): String {
+         fun encryptAes(text: String, key: String,iv:String): String {
             val ix = IvParameterSpec(iv.toByteArray())
-            val cipher = Cipher.getInstance("AES/CBC/NoPadding")
+            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
             val secretKey = SecretKeySpec(key.toByteArray(), "AES")
             cipher.init(Cipher.ENCRYPT_MODE, secretKey,ix)
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Base64.getEncoder().encodeToString(cipher.doFinal(text.toByteArray()+C.GogoPadding))
+                Base64.getEncoder().encodeToString(cipher.doFinal(text.toByteArray()))
             } else {
-                android.util.Base64.encodeToString(cipher.doFinal(text.toByteArray()+C.GogoPadding), android.util.Base64.DEFAULT)
+                android.util.Base64.encodeToString(cipher.doFinal(text.toByteArray()), android.util.Base64.DEFAULT)
             }
         }
 
@@ -233,16 +233,15 @@ class HtmlParser {
 //        }
 
         //should be faster
-        fun parseencryptajax(response: String):String{
-            val document=Jsoup.parse(response)
-            val value2 = document.select("script[data-name='crypto']").attr("data-value")
-            val decryptkey = decryptAES(value2,C.GogoSecretkey,C.GogoSecretIV).replaceAfter("&","").removeSuffix("&")
-            val encrypted = encryptAes(decryptkey, C.GogoSecretkey, C.GogoSecretIV)
+        fun parseencryptajax(response: String,id:String):String{
+            //val document=Jsoup.parse(response)
+            //val value2 = document.select("script[data-name='episode']").attr("data-value")
+            //val decryptkey = decryptAES(value2,C.GogoSecretkey,C.GogoSecretIV).replaceAfter("&","").removeSuffix("&")
+            val encrypted = encryptAes(id, C.GogoSecretkey, C.GogoSecretIV)
             return "id=$encrypted"
         }
 
         fun parseencrypturls(response: String): Pair<RealmList<String>,RealmList<String>>{
-            Timber.e(response)
             var crackit = JSONObject(response).getString("data")
             crackit = decryptAES(crackit,C.GogoSecretkey,C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
             val urls:RealmList<String> = RealmList()
@@ -263,8 +262,11 @@ class HtmlParser {
         }
 
         fun parsegoogleurl(response: String): Pair<RealmList<String>,RealmList<String>>{
+            Timber.e(response)
             var crackit = JSONObject(response).getString("data")
+            Timber.e(crackit)
             crackit = decryptAES(crackit,C.GogoSecretkey,C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
+            Timber.e(crackit)
             val urls:RealmList<String> = RealmList()
             val qualities: RealmList<String> = RealmList()
             var i = 0
