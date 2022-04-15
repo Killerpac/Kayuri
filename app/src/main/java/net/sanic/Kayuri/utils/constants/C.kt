@@ -16,8 +16,9 @@ class C {
         const val SEARCH_URL = "/search.html"
 
         //Gogoanime Secrets
-        var GogoSecretkey = "63976882873559819639988080820907"
-        var GogoSecretIV = "4770478969418267"
+        var GogoSecretkey = "93106165734640459728346589106791"
+        var GogoSecretIV = "8244002440089157"
+        var GogoSecretSecondKey = "97952160493714852094564712118349"
         val GogoPadding= byteArrayOf(0x8,0xe,0x3,0x8,0x9,0x3,0x4,0x9)
 
         //Model Type
@@ -62,7 +63,7 @@ class C {
         const val TYPE_GENRE_UPDATE = 3001
 
         //Network Requests Header
-        const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36"
+        const val USER_AGENT = "Mozilla/5.0 (Linux; Android 8.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Focus/7.0.13 Chrome/70.0.3538.110 Mobile Safari/537.36"
         const val ORIGIN = "https://gogoanime.gg/"
         const val  REFERER = "https://goload.pro/"
 

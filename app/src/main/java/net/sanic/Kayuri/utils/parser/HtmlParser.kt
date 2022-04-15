@@ -222,11 +222,14 @@ class HtmlParser {
 
         fun updatekeys(response: String){
             try {
-                val key = JSONObject(response).getString("key")
-                val iv = JSONObject(response).getString("iv")
-                if(C.GogoSecretIV != iv || C.GogoSecretkey != key ){
+                val obj = JSONObject(response)
+                val key = obj.getString("key")
+                val iv = obj.getString("iv")
+                val secondkey = obj.getString("second_key")
+                if(C.GogoSecretIV != iv || C.GogoSecretkey != key  || C.GogoSecretSecondKey != secondkey){
                     C.GogoSecretIV = iv
                     C.GogoSecretkey = key
+                    C.GogoSecretSecondKey = secondkey
                 }
             }catch (exp:NullPointerException){
                 Timber.e(exp)
@@ -258,7 +261,7 @@ class HtmlParser {
         fun parseencrypturls(response: String): Pair<RealmList<String>,RealmList<String>>{
             Timber.e(response)
             var crackit = JSONObject(response).getString("data")
-            crackit = decryptAES(crackit,C.GogoSecretkey,C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
+            crackit = decryptAES(crackit,C.GogoSecretSecondKey,C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
             val urls:RealmList<String> = RealmList()
             val qualities: RealmList<String> = RealmList()
             var i = 0

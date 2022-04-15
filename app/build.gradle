@@ -86,9 +86,6 @@ dependencies {
     //For HTML Parsing
     implementation 'org.jsoup:jsoup:1.13.1'
 
-    //MAL Sync Library
-    implementation"com.kttdevelopment:mal4j:2.7.2"
-
     //For Network Request
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
