@@ -1,8 +1,6 @@
 package net.sanic.Kayuri.ui.main.animeinfo
 
 import android.os.Build
-import com.kttdevelopment.mal4j.MyAnimeList
-import com.kttdevelopment.mal4j.anime.AnimePreview
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -42,21 +40,21 @@ class AnimeInfoRepository {
         } ?: return false
     }
 
-    fun searchMalForAnime(name:String) {
-        Timber.e(name)
-        val mal = MyAnimeList.withClientID("ppop")
-       try {
-           val search:List<AnimePreview> = mal.anime
-               .withQuery(name.filter { it.isLetterOrDigit() })
-               .withLimit(1)
-               .includeNSFW(true)
-               .search()
-           Timber.e(search.toString())
-           Timber.e(search.first().broadcast.startTime.get12Hour().toString())
-       }catch (ex:NullPointerException){
-
-       }
-    }
+//    fun searchMalForAnime(name:String) {
+//        Timber.e(name)
+//        val mal = MyAnimeList.withClientID("ppop")
+//       try {
+//           val search:List<AnimePreview> = mal.anime
+//               .withQuery(name.filter { it.isLetterOrDigit() })
+//               .withLimit(1)
+//               .includeNSFW(true)
+//               .search()
+//           Timber.e(search.toString())
+//           Timber.e(search.first().broadcast.startTime.get12Hour().toString())
+//       }catch (ex:NullPointerException){
+//
+//       }
+//    }
 
     fun addToFavourite(favouriteModel: FavouriteModel) {
         realm.executeTransaction {

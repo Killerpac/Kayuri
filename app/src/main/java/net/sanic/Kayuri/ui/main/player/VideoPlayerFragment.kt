@@ -4,7 +4,6 @@ import android.content.Context
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -166,12 +165,15 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
             tempbit=true
             val appCache = Cache(File("cacheDir", "okhttpcache"), 10 * 1024 * 1024)
             val bootstrapClient = OkHttpClient.Builder().cache(appCache).build()
-
-            val dns = DnsOverHttps.Builder().client(bootstrapClient)
-                .url("https://security.cloudflare-dns.com/dns-query".toHttpUrl())
-                .bootstrapDnsHosts(InetAddress.getByName("1.1.1.1"))
-                .build()
-            val client = bootstrapClient.newBuilder().dns(dns).build()
+            val client:OkHttpClient = if (PreferenceHelper.sharedPreference.getdns()){
+                val dns = DnsOverHttps.Builder().client(bootstrapClient)
+                    .url("https://security.cloudflare-dns.com/dns-query".toHttpUrl())
+                    .bootstrapDnsHosts(InetAddress.getByName("1.1.1.1"))
+                    .build()
+                bootstrapClient.newBuilder().dns(dns).build()
+            } else{
+                bootstrapClient.newBuilder().build()
+            }
             val dataSource = {
                 val dataSource = OkHttpDataSource.Factory(client)
                     .setUserAgent(requests.USER_AGENT)

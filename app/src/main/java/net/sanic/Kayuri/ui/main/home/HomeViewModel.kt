@@ -1,10 +1,13 @@
 package net.sanic.Kayuri.ui.main.home
 
+import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
+import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
@@ -17,7 +20,10 @@ import net.sanic.Kayuri.utils.model.UpdateModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
 import net.sanic.Kayuri.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
+import org.json.JSONObject
+import org.jsoup.Jsoup
 import timber.log.Timber
+import java.lang.NullPointerException
 
 class HomeViewModel : ViewModel(){
 
@@ -35,6 +41,7 @@ class HomeViewModel : ViewModel(){
     }
 
     private fun fetchHomeList(){
+        fetchkeys()
         fetchGenres()
         fetchRecentSub()
         fetchRecentDub()
@@ -55,6 +62,9 @@ class HomeViewModel : ViewModel(){
                     C.TYPE_GENRE -> {
                         val list = parseGenreList(response = response.string(), typeValue = typeValue)
                         homeRepository.addGenreDataInRealm(list)
+                    }
+                    C.TYPE_KEYS ->{
+                        HtmlParser.updatekeys(response = response.string())
                     }
                     else -> {
                         val list = parseList(response = response.string(), typeValue = typeValue)
@@ -78,7 +88,6 @@ class HomeViewModel : ViewModel(){
             }
         }
 //        super.updateErrorModel(true , e , isListEmpty)
-
     }
 
     private fun parseList(response: String, typeValue: Int): ArrayList<AnimeMetaModel>{
@@ -211,6 +220,17 @@ class HomeViewModel : ViewModel(){
         compositeDisposable.add(homeRepository.fetchRecentSubOrDub(1, C.RECENT_SUB).subscribeWith(getHomeListObserver(C.TYPE_RECENT_SUB)))
         addRealmListener(C.TYPE_RECENT_SUB)
     }
+
+    //make an observable response body fot the fetchkeys api
+    // credits and thanks to https://github.com/justfoolingaround/animdl
+    private fun fetchkeys(){
+        try {
+            compositeDisposable.add(homeRepository.fetchkeyandiv("https://raw.githubusercontent.com/justfoolingaround/animdl-provider-benchmarks/master/api/gogoanime.json").subscribeWith(getHomeListObserver(C.TYPE_KEYS)))
+        }catch (e:NullPointerException){
+            Timber.e(e)
+        }
+    }
+
 
     private fun fetchRecentDub(){
         val list = homeRepository.fetchFromRealm(C.TYPE_RECENT_DUB)

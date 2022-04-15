@@ -66,6 +66,10 @@ class Settings : Fragment(), View.OnClickListener {
         settingsBinding.toogleadvance.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setadvancecontrols(isChecked)
         }
+        settingsBinding.toogledns.isChecked = sharesPreference.getdns()
+        settingsBinding.toogledns.setOnCheckedChangeListener { _, isChecked ->
+            sharesPreference.setdns(isChecked)
+        }
     }
     private fun setupTransitions(view: View) {
         postponeEnterTransition()

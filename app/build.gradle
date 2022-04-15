@@ -25,7 +25,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 32
         versionCode 8
-        versionName "1.6.5"
+        versionName "1.7.5"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "Kayuri-v$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

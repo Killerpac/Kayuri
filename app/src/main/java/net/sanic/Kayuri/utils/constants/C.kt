@@ -16,8 +16,8 @@ class C {
         const val SEARCH_URL = "/search.html"
 
         //Gogoanime Secrets
-        const val GogoSecretkey = "63976882873559819639988080820907"
-        const val GogoSecretIV = "4770478969418267"
+        var GogoSecretkey = "63976882873559819639988080820907"
+        var GogoSecretIV = "4770478969418267"
         val GogoPadding= byteArrayOf(0x8,0xe,0x3,0x8,0x9,0x3,0x4,0x9)
 
         //Model Type
@@ -28,6 +28,7 @@ class C {
         const val TYPE_MOVIE = 5
         const val TYPE_NEW_SEASON = 6
         const val TYPE_DEFAULT= -1
+        const val TYPE_KEYS = 7
 
         // Retrofit Request TYPE
 
@@ -61,9 +62,9 @@ class C {
         const val TYPE_GENRE_UPDATE = 3001
 
         //Network Requests Header
-        const val USER_AGENT = "Mozilla/5.0 (Linux; U; Android 10; en; SM-M105F Build/QP1A.190711.020) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 UCBrowser/12.10.0.1163 UCTurbo/1.10.9.900 Mobile Safari/537.3"
+        const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36"
         const val ORIGIN = "https://gogoanime.gg/"
-        const val  REFERER = "https://gogoplay4.com/"
+        const val  REFERER = "https://goload.pro/"
 
         //Preferred Quality
         const val QUALITY = "Auto"

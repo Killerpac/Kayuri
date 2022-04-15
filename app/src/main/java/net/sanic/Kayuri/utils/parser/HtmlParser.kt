@@ -220,6 +220,20 @@ class HtmlParser {
             }
         }
 
+        fun updatekeys(response: String){
+            try {
+                val key = JSONObject(response).getString("key")
+                val iv = JSONObject(response).getString("iv")
+                if(C.GogoSecretIV != iv || C.GogoSecretkey != key ){
+                    C.GogoSecretIV = iv
+                    C.GogoSecretkey = key
+                }
+            }catch (exp:NullPointerException){
+                Timber.e(exp)
+            }
+
+        }
+
 //        fun parseencryptajax(response: String):String{
 //            val document=Jsoup.parse(response)
 //            val value6 = document.getElementsByAttributeValue("data-name","ts").attr("data-value")
@@ -242,6 +256,7 @@ class HtmlParser {
         }
 
         fun parseencrypturls(response: String): Pair<RealmList<String>,RealmList<String>>{
+            Timber.e(response)
             var crackit = JSONObject(response).getString("data")
             crackit = decryptAES(crackit,C.GogoSecretkey,C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
             val urls:RealmList<String> = RealmList()

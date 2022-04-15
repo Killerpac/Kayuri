@@ -41,6 +41,8 @@
     <string name="genre">Genre %s</string>
     <string name="qualitytoogle">Preferred Video Quality</string>
     <string name="qualitytext">Set The Preferred Streaming Quality</string>
+    <string name="dnstoogle" translatable="false">DNS Over Https</string>
+    <string name="dnstxt" translatable="false">Change the DNS for Bypassing Restrictions</string>
     <string name="qualitychoose">Auto</string>
     <string name="shared_image" translatable="false">HEHEBOIII</string>
     <string name="shared_title" translatable="false">LOL</string>

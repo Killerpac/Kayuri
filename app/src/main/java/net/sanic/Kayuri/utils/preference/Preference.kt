@@ -16,6 +16,7 @@ class Preference(private val context: Context) {
     private val PRIVATE_MODE = 0
     private val GOOGLESERVER = "GOOGLESERVER"
     private val ADVANCECONTROLS = "ADVANCECONTROLS"
+    private val DNS = "DNS"
     private var sharedPreferences: SharedPreferences =
         context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
 
@@ -41,6 +42,16 @@ class Preference(private val context: Context) {
 
     fun getGoogleServer():Boolean {
         return  sharedPreferences.getBoolean(GOOGLESERVER, false)
+    }
+
+    fun getdns():Boolean {
+        return  sharedPreferences.getBoolean(DNS,false)
+    }
+
+    fun setdns(dns:Boolean){
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(DNS, dns)
+        editor.apply()
     }
 
     fun setGoogleServer(gogo: Boolean){

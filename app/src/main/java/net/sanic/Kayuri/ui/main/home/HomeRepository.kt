@@ -30,6 +30,12 @@ class HomeRepository {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
+    fun fetchkeyandiv(url: String): Observable<ResponseBody> {
+        val mediaUrlService = retrofit.create(NetworkInterface.FetchEpisodeMediaUrl::class.java)
+        return mediaUrlService.get(Utils.getHeader(),url).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
     fun fetchPopularFromAjax(page: Int): Observable<ResponseBody> {
         val fetchPopularListService =
             retrofit.create(NetworkInterface.FetchPopularFromAjax::class.java)

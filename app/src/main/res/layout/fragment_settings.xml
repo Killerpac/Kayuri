@@ -352,11 +352,55 @@
                     android:id="@+id/button"
                     android:layout_width="55dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/qualitychoose"
                     android:background="@null"
+                    android:text="@string/qualitychoose"
                     app:layout_constraintEnd_toEndOf="@id/qualitytoogle"
                     app:layout_constraintStart_toEndOf="@id/qualitytoogletext"
                     app:layout_constraintTop_toTopOf="@id/qualitytoogle" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toStartOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@id/qualitytoogle">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/work_sans"
+                    android:text="@string/dnstxt"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/toogledns"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dnstext" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/toogledns"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dnstext"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <TextView
+                    android:id="@+id/dnstext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dnstoogle"
+                    android:textColor="@color/favourite_header"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toStartOf="@id/toogledns"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_constraintStart_toStartOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.Guideline
