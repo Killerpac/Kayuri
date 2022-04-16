@@ -64,7 +64,10 @@ class HomeViewModel : ViewModel(){
                         homeRepository.addGenreDataInRealm(list)
                     }
                     C.TYPE_KEYS ->{
-                        HtmlParser.updatekeys(response = response.string())
+                        HtmlParser.updatekeys(response = response.string(),true)
+                    }
+                    C.TYPE_UPDATE ->{
+                        HtmlParser.updatekeys(response = response.string(),false)
                     }
                     else -> {
                         val list = parseList(response = response.string(), typeValue = typeValue)
@@ -225,6 +228,7 @@ class HomeViewModel : ViewModel(){
     // credits and thanks to https://github.com/justfoolingaround/animdl
     private fun fetchkeys(){
         try {
+            compositeDisposable.add(homeRepository.fetchkeyandiv("https://raw.githubusercontent.com/Killerpac/Kayuri/main/gogo.json").subscribeWith(getHomeListObserver(C.TYPE_UPDATE)))
             compositeDisposable.add(homeRepository.fetchkeyandiv("https://raw.githubusercontent.com/justfoolingaround/animdl-provider-benchmarks/master/api/gogoanime.json").subscribeWith(getHomeListObserver(C.TYPE_KEYS)))
         }catch (e:NullPointerException){
             Timber.e(e)

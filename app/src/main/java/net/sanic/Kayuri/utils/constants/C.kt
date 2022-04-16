@@ -30,6 +30,7 @@ class C {
         const val TYPE_NEW_SEASON = 6
         const val TYPE_DEFAULT= -1
         const val TYPE_KEYS = 7
+        const val TYPE_UPDATE = 8
 
         // Retrofit Request TYPE
 

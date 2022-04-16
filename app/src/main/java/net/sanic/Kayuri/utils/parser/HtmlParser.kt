@@ -1,5 +1,6 @@
 package net.sanic.Kayuri.utils.parser
 
+import android.content.SharedPreferences
 import android.net.Uri.decode
 import android.os.Build
 import androidx.appcompat.app.WindowDecorActionBar
@@ -8,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import io.realm.RealmList
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.*
+import net.sanic.Kayuri.utils.preference.PreferenceHelper
 import okhttp3.internal.http2.Http2Reader
 import org.apache.commons.lang3.RandomStringUtils
 import org.json.JSONObject
@@ -184,7 +186,7 @@ class HtmlParser {
         fun parseMediaUrl(response: String): EpisodeInfo{
             val mediaUrl: String?
             val document = Jsoup.parse(response)
-            val info = document?.getElementsByClass("anime")?.first()?.select("a")
+            val info = document?.getElementsByClass("vidcdn")?.first()?.select("a")
             mediaUrl = info?.attr("data-video").toString()
             val nextEpisodeUrl = document.getElementsByClass("anime_video_body_episodes_r")?.select("a")?.first()?.attr("href")
             val previousEpisodeUrl = document.getElementsByClass("anime_video_body_episodes_l")?.select("a")?.first()?.attr("href")
@@ -220,20 +222,38 @@ class HtmlParser {
             }
         }
 
-        fun updatekeys(response: String){
-            try {
-                val obj = JSONObject(response)
-                val key = obj.getString("key")
-                val iv = obj.getString("iv")
-                val secondkey = obj.getString("second_key")
-                if(C.GogoSecretIV != iv || C.GogoSecretkey != key  || C.GogoSecretSecondKey != secondkey){
-                    C.GogoSecretIV = iv
-                    C.GogoSecretkey = key
-                    C.GogoSecretSecondKey = secondkey
+        fun updatekeys(response: String,flag:Boolean){
+            if (flag){
+                try {
+                    val obj = JSONObject(response)
+                    val key = obj.getString("key")
+                    val iv = obj.getString("iv")
+                    val secondkey = obj.getString("second_key")
+                    if(C.GogoSecretIV != iv || C.GogoSecretkey != key  || C.GogoSecretSecondKey != secondkey){
+                        C.GogoSecretIV = iv
+                        C.GogoSecretkey = key
+                        C.GogoSecretSecondKey = secondkey
+                    }
+                }catch (exp:NullPointerException){
+                    Timber.e(exp)
                 }
-            }catch (exp:NullPointerException){
-                Timber.e(exp)
+            }else{
+                val ref = PreferenceHelper.sharedPreference
+                try {
+                    val obj = JSONObject(response)
+                    val domain = obj.getString("domain")
+                    val origin = obj.getString("origin")
+                    val referer = obj.getString("referer")
+                    if( ref.getBaseUrl() != domain || ref.getOrigin() != origin  || ref.getReferrer() != referer){
+                        ref.setBaseUrl(domain)
+                        ref.setOrigin(origin)
+                        ref.setReferrer(referer)
+                    }
+                }catch (exp:NullPointerException){
+                    Timber.e(exp)
+                }
             }
+
 
         }
 
@@ -251,11 +271,12 @@ class HtmlParser {
 
         //should be faster
         fun parseencryptajax(response: String,id:String):String{
-            //val document=Jsoup.parse(response)
-            //val value2 = document.select("script[data-name='episode']").attr("data-value")
-            //val decryptkey = decryptAES(value2,C.GogoSecretkey,C.GogoSecretIV).replaceAfter("&","").removeSuffix("&")
+            val document=Jsoup.parse(response)
+            val value2 = document.select("script[data-name=\"episode\"]").attr("data-value")
+            val decrypt = decryptAES(value2,C.GogoSecretkey,C.GogoSecretIV).replace("\t","").substringAfter(id)
+            Timber.e(decrypt)
             val encrypted = encryptAes(id, C.GogoSecretkey, C.GogoSecretIV)
-            return "id=$encrypted"
+            return "id=$encrypted$decrypt&alias=$id"
         }
 
         fun parseencrypturls(response: String): Pair<RealmList<String>,RealmList<String>>{
@@ -283,7 +304,7 @@ class HtmlParser {
             Timber.e(response)
             var crackit = JSONObject(response).getString("data")
             Timber.e(crackit)
-            crackit = decryptAES(crackit,C.GogoSecretkey,C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
+            crackit = decryptAES(crackit,C.GogoSecretSecondKey,C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
             Timber.e(crackit)
             val urls:RealmList<String> = RealmList()
             val qualities: RealmList<String> = RealmList()
