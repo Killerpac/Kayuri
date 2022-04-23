@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layoutDescription="@xml/motion_scene_settings"
     android:id="@+id/motionLayout"
     android:transitionName="@string/settings_transition"
     xmlns:tools="http://schemas.android.com/tools">
@@ -43,23 +42,23 @@
                 tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
             <TextView
-                android:id="@+id/toolbarText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_toEndOf="@id/back"
-                android:alpha="0"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:fontFamily="@font/work_sans_bold"
-                android:textColor="@color/info_anime_title"
                 android:textSize="20sp"
+                android:textColor="@color/anime_title"
+                android:gravity="center_vertical"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/back"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                android:ellipsize="end"
+                android:alpha="0"
+                android:maxLines="1"
+                android:text="@string/settings"
+                android:id="@+id/toolbarText"
+                />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -85,10 +84,10 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:id="@+id/settingsscroll"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintVertical_bias="1.0"
-        tools:layout_editor_absoluteX="-141dp">
+        app:layout_constraintVertical_bias="1.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -277,13 +276,55 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/advancecontrols"
+                android:id="@+id/sb_server"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
                 app:layout_constraintTop_toBottomOf="@id/google_server">
+
+                <TextView
+                    android:id="@+id/sbstreamtxt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sbstreamhead"
+                    android:textColor="@color/favourite_header"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toStartOf="@id/sbstreamtoogle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/work_sans"
+                    android:text="@string/sbstreamtext"
+                    android:textSize="12sp"
+                    app:layout_constraintEnd_toStartOf="@id/sbstreamtoogle"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sbstreamtxt" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/sbstreamtoogle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/sbstreamtxt"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/advancecontrols"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@id/sb_server">
 
                 <TextView
                     android:id="@+id/controlstext"

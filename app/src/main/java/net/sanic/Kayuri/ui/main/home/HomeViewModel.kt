@@ -1,13 +1,10 @@
 package net.sanic.Kayuri.ui.main.home
 
-import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
-import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
@@ -20,10 +17,7 @@ import net.sanic.Kayuri.utils.model.UpdateModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
 import net.sanic.Kayuri.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
-import org.json.JSONObject
-import org.jsoup.Jsoup
 import timber.log.Timber
-import java.lang.NullPointerException
 
 class HomeViewModel : ViewModel(){
 

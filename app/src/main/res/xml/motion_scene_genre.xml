@@ -88,10 +88,4 @@
 
     </ConstraintSet>
 
-    <Constraint android:id="@+id/loading">
-        <PropertySet
-            app:applyMotionScene="false"
-            app:visibilityMode="ignore" />
-    </Constraint>
-
 </MotionScene>

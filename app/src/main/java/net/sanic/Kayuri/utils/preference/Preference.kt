@@ -17,6 +17,7 @@ class Preference(private val context: Context) {
     private val GOOGLESERVER = "GOOGLESERVER"
     private val ADVANCECONTROLS = "ADVANCECONTROLS"
     private val DNS = "DNS"
+    private val SBSTREAM = "SBSTREAM"
     private var sharedPreferences: SharedPreferences =
         context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
 
@@ -53,6 +54,17 @@ class Preference(private val context: Context) {
         editor.putBoolean(DNS, dns)
         editor.apply()
     }
+
+    fun setSB(sb:Boolean){
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(SBSTREAM, sb)
+        editor.apply()
+    }
+
+    fun getSB():Boolean{
+        return  sharedPreferences.getBoolean(SBSTREAM,false)
+    }
+
 
     fun setGoogleServer(gogo: Boolean){
         val editor = sharedPreferences.edit()

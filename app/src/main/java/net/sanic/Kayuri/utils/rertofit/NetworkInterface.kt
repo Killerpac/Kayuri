@@ -65,6 +65,7 @@ class NetworkInterface {
 
     interface FetchM3u8Url {
         @GET
+       @Headers("watchsb:streamsb")
         fun get(
             @HeaderMap header: Map<String, String>,
             @Url url: String

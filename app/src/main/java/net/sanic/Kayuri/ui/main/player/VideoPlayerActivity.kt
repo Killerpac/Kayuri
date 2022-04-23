@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -204,6 +205,19 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     override fun onBackPressed() {
         enterPipModeOrExit()
     }
+
+
+        override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+            when (keyCode) {
+                KeyEvent.KEYCODE_DPAD_CENTER -> {
+                    if (!exoPlayerView.isControllerVisible) {
+                        exoPlayerView.showController()
+                    }
+                    return true
+                }
+            }
+            return super.onKeyDown(keyCode, event)
+        }
 
     private fun goFullScreen() {
 

@@ -117,6 +117,10 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         super.onDestroy()
     }
 
+    private fun tvsupport(view: View){
+
+    }
+
     private fun initializePlayer() {
         trackSelectionFactory = AdaptiveTrackSelection.Factory()
         trackSelector = DefaultTrackSelector(requireContext())

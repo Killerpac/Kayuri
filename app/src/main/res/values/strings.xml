@@ -13,7 +13,7 @@
     <string name="search">Search</string>
     <string name="something_went_wrong">Something Went Wrong</string>
 
-    <string name="no_internet">No Internet or Links not found</string>
+    <string name="no_internet">No Internet</string>
     <string name="favourite">Favourites</string>
     <string name="status_code_default">Something went Wrong</string>
     <string name="server_error">Server Error</string>
@@ -51,5 +51,7 @@
     <string name="settings_transition">settings_transition</string>
     <string name="genre_transition">nente</string>
     <string name="skipop" translatable="false">Skip OP</string>
+    <string name="sbstreamhead" translatable="false">SB Play Server</string>
+    <string name="sbstreamtext" translatable="false">Use the SB Stream Server</string>
 
 </resources>

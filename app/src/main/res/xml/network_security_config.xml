@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">gogoanime.film</domain>
+        <domain includeSubdomains="true">gogoanime.gg</domain>
         <domain includeSubdomains="true">ajax.gogocdn.net</domain>
-        <domain includeSubdomains="true">gogoplay.io</domain>
+        <domain includeSubdomains="true">goload.pro</domain>
         <domain includeSubdomains="true">api.myanimelist.net</domain>
         <domain includeSubdomains="true">myanimelist.net</domain>
     </domain-config>

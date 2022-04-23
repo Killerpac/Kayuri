@@ -32,9 +32,9 @@ class EpisodeRepository {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun fetchM3u8Url(url: String): Observable<ResponseBody> {
+    fun fetchM3u8Url(url: String,ref:String): Observable<ResponseBody> {
         val m3u8urlService = retrofit.create(NetworkInterface.FetchM3u8Url::class.java)
-        return m3u8urlService.get(Utils.getHeader(),url).subscribeOn(Schedulers.io())
+        return m3u8urlService.get(Utils.getHeader(ref),url).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 

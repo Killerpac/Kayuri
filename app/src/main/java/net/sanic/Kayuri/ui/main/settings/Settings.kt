@@ -70,6 +70,10 @@ class Settings : Fragment(), View.OnClickListener {
         settingsBinding.toogledns.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setdns(isChecked)
         }
+        settingsBinding.sbstreamtoogle.isChecked = sharesPreference.getSB()
+        settingsBinding.sbstreamtoogle.setOnCheckedChangeListener{ _, isChecked ->
+            sharesPreference.setSB(isChecked)
+        }
     }
     private fun setupTransitions(view: View) {
         postponeEnterTransition()

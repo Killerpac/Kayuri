@@ -23,9 +23,9 @@ class Utils {
             }
         }
 
-        fun getHeader(): Map<String, String>{
+        fun getHeader(url:String = C.REFERER): Map<String, String>{
             val pref = PreferenceHelper.sharedPreference
-            return mapOf("referer" to pref.getReferrer(), "origin" to pref.getOrigin(), "user-agent" to C.USER_AGENT)
+            return mapOf("referer" to url, "origin" to pref.getOrigin(), "user-agent" to C.USER_AGENT)
         }
         fun getGoogle():Map<String,String>{
             return mapOf("user-agent" to C.USER_AGENT)

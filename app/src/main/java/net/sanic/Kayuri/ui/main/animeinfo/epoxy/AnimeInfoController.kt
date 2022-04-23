@@ -23,6 +23,7 @@ import net.sanic.Kayuri.ui.main.player.VideoPlayerActivity
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.EpisodeModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
+import net.sanic.Kayuri.utils.parser.extractors.gogoplay
 import okhttp3.ResponseBody
 import timber.log.Timber
 
@@ -97,7 +98,7 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                     var num = 0
                     if (!urlList.isNullOrEmpty()) {
                         load.dismiss()
-                        if(quality.first()!!.contains("autop")){
+                        if(quality.first()!!.contains("autop") || quality.first()!!.contains("hlsp")){
                             Snackbar.make(clickedView.rootView,"No Download Links Found!!",3000).show()
                             return
                         }
@@ -121,11 +122,11 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                 override fun onNext(response: ResponseBody) {
                     when(type) {
                         C.TYPE_MEDIA_URL -> {
-                            val episodeInfo = HtmlParser.parseMediaUrl(response = response.string())
+                            val episodeInfo = gogoplay.parseMediaUrl(response = response.string())
                             id = Regex("id=([^&]+)").find(episodeInfo.vidcdnUrl!!)!!.value.removePrefix("id=")
                             episodeInfo.vidcdnUrl?.let {
                                     compositeDisposable.add(
-                                        episodeRepository.fetchM3u8Url(episodeInfo.vidcdnUrl!!)
+                                        episodeRepository.fetchM3u8Url(episodeInfo.vidcdnUrl!!,"pp")
                                             .subscribeWith(
                                                 getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
                                             )
@@ -133,13 +134,13 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
                             }
                         }
                         C.TYPE_M3U8_URL -> {
-                            val m3u8Url: Pair<RealmList<String>,RealmList<String>> = HtmlParser.parseencrypturls(response = response.string())
+                            val m3u8Url: Pair<RealmList<String>,RealmList<String>> = gogoplay.parseencrypturls(response = response.string())
                             Timber.e(m3u8Url.toString())
                             urlList = m3u8Url.first
                             quality = m3u8Url.second
                         }
                         C.TYPE_M3U8_PREP -> {
-                            val m3u8Pre = HtmlParser.parseencryptajax(response = response.string(),id)
+                            val m3u8Pre = gogoplay.parseencryptajax(response = response.string(),id)
                             compositeDisposable.add(
                                 episodeRepository.m3u8preprocessor("${C.REFERER}encrypt-ajax.php?${m3u8Pre}")
                                     .subscribeWith(
