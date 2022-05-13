@@ -11,6 +11,7 @@ This is a Fork Of Anime X Stream which was abondoned but continued here</h4>
 </p>
 <p align="center"><a href="https://discord.gg/h9BCZKTbBs"><img src="https://invidget.switchblade.xyz/h9BCZKTbBs"></a></p>
 <h3 align="center">**🥳:  Let's Get the Server To 1k !** 🥰:</h4>
+<h2 align="center">** 🏅: New Release Sneek Peeks and Memes Awaits  !** 🍭:</h2>
 <hr>
 <b>WARNING: THIS IS A BETA VERSION of application, THEREFORE YOU MAY ENCOUNTER BUGS. You can OPEN the ISSUE on GITHUB REPOSITORY.</b>
 <p></p>
