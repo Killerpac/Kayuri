@@ -9,10 +9,14 @@ This is a Fork Of Anime X Stream which was abondoned but continued here</h4>
 <a href="https://github.com/Killerpac/AnimeXStream-Re" alt="Build Status"><img src="https://img.shields.io/badge/build-passing-green.svg?style=for-the-badge&color=green"></a>
 <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/killerpac/Kayuri/total?style=for-the-badge">
 </p>
+<p align="center"><a href="https://discord.gg/h9BCZKTbBs"><img src="https://invidget.switchblade.xyz/h9BCZKTbBs"></a></p>
 <hr>
 <b>WARNING: THIS IS A BETA VERSION of application, THEREFORE YOU MAY ENCOUNTER BUGS. You can OPEN the ISSUE on GITHUB REPOSITORY.</b>
+<br>
 
-<b><br>Do not PUT Kayuri OR ANY FORK OF IT INTO GOOGLE PLAYSTORE or Any other Store. It may VIOLATE THEIR TERMS AND CONDITIONS or you may encounter legal obligations.</b>
+> Please do not attempt to upload Saikou or any of it's forks on Playstore or any other Android appstores on the internet. Doing so, may infringe their terms and conditions. This may result to legal action or immediate take-down of the app.
+
+<br>
 
 <h3 align="center">**Star :star:  this repo to show your support and it really does matter!** :clap:</h4>
 
