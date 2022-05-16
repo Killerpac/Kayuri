@@ -17,7 +17,7 @@ This is a Fork Of Anime X Stream which was abondoned but continued here</h4>
 <p></p>
 <br>
 
-> Please do not attempt to upload Saikou or any of it's forks on Playstore or any other Android appstores on the internet. Doing so, may infringe their terms and conditions. This may result to legal action or immediate take-down of the app.
+> Please do not attempt to upload Kayuri or any of it's forks on Playstore or any other Android appstores on the internet. Doing so, may infringe their terms and conditions. This may result to legal action or immediate take-down of the app.
 
 <br>
 
