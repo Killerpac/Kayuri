@@ -21,7 +21,6 @@ This is a Fork Of Anime X Stream which was abondoned but continued here</h4>
 [<img src="meta/android/Screenshot_2022-07-09-23-44-28-90_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_04.jpg)
 [<img src="meta/android/Screenshot_2022-07-09-23-44-57-66_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_05.jpg)
 [<img src="meta/android/Screenshot_2022-07-09-23-45-02-23_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_06.jpg)
-[<img src="meta/android/Screenshot_2022-07-09-23-45-02-23_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_07.jpg)
 [<img src="meta/android/Screenshot_2022-07-09-23-59-39-86_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_08.jpg)
 [<img src="meta/android/Screenshot_2022-07-09-23-59-27-54_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_09.jpg)
 [<img src="meta/android/Screenshot_2022-07-09-23-59-17-12_0fe048591332d0c2eaceaca804083d38.jpg" width=405>](meta/android/screenshots/screenshot_10.png)
