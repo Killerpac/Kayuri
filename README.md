@@ -13,6 +13,21 @@ This is a Fork Of Anime X Stream which was abondoned but continued here</h4>
 <h3 align="center">**🥳:  Let's Get the Server To 1k !** 🥰:</h4>
 <h2 align="center">** 🏅: New Release Sneek Peeks and Memes Awaits  !** 🍭:</h2>
 <hr>
+
+## Screenshots
+[<img src="meta/android/Screenshot_2022-07-09-23-59-39-86_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_01.jpg)
+[<img src="meta/android/Screenshot_2022-07-09-23-43-31-13_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_02.jpg)
+[<img src="meta/android/Screenshot_2022-07-09-23-43-45-86_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_03.jpg)
+[<img src="meta/android/Screenshot_2022-07-09-23-44-28-90_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_04.jpg)
+[<img src="meta/android/Screenshot_2022-07-09-23-44-57-66_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_05.jpg)
+[<img src="meta/android/Screenshot_2022-07-09-23-45-02-23_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_06.jpg)
+[<img src="meta/android/Screenshot_2022-07-09-23-45-02-23_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_07.jpg)
+[<img src="meta/android/Screenshot_2022-07-09-23-59-39-86_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_08.jpg)
+[<img src="meta/android/Screenshot_2022-07-09-23-59-27-54_0fe048591332d0c2eaceaca804083d38.jpg" width=160>](meta/android/screenshots/screenshot_09.jpg)
+[<img src="meta/android/Screenshot_2022-07-09-23-59-17-12_0fe048591332d0c2eaceaca804083d38.jpg" width=405>](meta/android/screenshots/screenshot_10.png)
+[<img src="meta/android/Screenshot_2022-07-09-23-44-44-75_0fe048591332d0c2eaceaca804083d38.jpg" width=405>](meta/android/screenshots/screenshot_11.png)
+
+
 <b>WARNING: THIS IS A BETA VERSION of application, THEREFORE YOU MAY ENCOUNTER BUGS. You can OPEN the ISSUE on GITHUB REPOSITORY.</b>
 <p></p>
 <br>
