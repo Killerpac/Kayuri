@@ -4,12 +4,11 @@ import android.os.Build
 import io.realm.RealmList
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.EpisodeInfo
+import net.sanic.Kayuri.utils.preference.PreferenceHelper
 import org.json.JSONException
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import timber.log.Timber
-import java.lang.Exception
-import java.lang.NullPointerException
 import java.net.URLDecoder
 import java.util.*
 import javax.crypto.Cipher
@@ -23,7 +22,18 @@ class gogoplay {
         fun parseMediaUrl(response: String): EpisodeInfo {
             val mediaUrl: String?
             val document = Jsoup.parse(response)
-            val info = document?.getElementsByClass("anime")?.first()?.select("a")
+            //GogoCdn and VidStream Server Same Logic Differrent Url
+            val info = when(PreferenceHelper.sharedPreference.getserver()){
+                0->{
+                    document?.getElementsByClass("anime")?.first()?.select("a")
+                }
+                1->{
+                    document?.getElementsByClass("vidcdn")?.first()?.select("a")
+                }
+                else->{
+                    document?.getElementsByClass("anime")?.first()?.select("a")
+                }
+            }
             mediaUrl = info?.attr("data-video").toString()
             val nextEpisodeUrl = document.getElementsByClass("anime_video_body_episodes_r")?.select("a")?.first()?.attr("href")
             val previousEpisodeUrl = document.getElementsByClass("anime_video_body_episodes_l")?.select("a")?.first()?.attr("href")
@@ -92,6 +102,7 @@ class gogoplay {
             return try {
                 var crackit = JSONObject(response).getString("data")
                 crackit = decryptAES(crackit, C.GogoSecretSecondKey, C.GogoSecretIV).replace("""o"<P{#meme":""","""e":[{"file":""")
+                Timber.e(crackit)
                 val res =  JSONObject(crackit).getJSONArray("source")
                 while(i != res.length() && res.getJSONObject(i).getString("label") != "Auto") {
                     urls.add(res.getJSONObject(i).getString("file"))

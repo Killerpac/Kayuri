@@ -34,14 +34,14 @@
 
         <TextView
             android:id="@+id/episodeNumber"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
+            android:fontFamily="@font/work_sans"
             android:gravity="start"
             android:paddingStart="20dp"
-            android:paddingEnd="20dp"
             android:paddingTop="12dp"
-            android:fontFamily="@font/work_sans"
+            android:paddingEnd="20dp"
             android:textColor="@color/episode_text"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -49,15 +49,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="EP 127" />
-
-        <ImageButton
-            android:id="@+id/downloadbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:backgroundTint="@android:color/transparent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_download" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

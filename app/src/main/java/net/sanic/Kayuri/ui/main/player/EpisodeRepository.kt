@@ -13,7 +13,6 @@ import net.sanic.Kayuri.utils.rertofit.NetworkInterface
 import net.sanic.Kayuri.utils.rertofit.RetrofitHelper
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
-import timber.log.Timber
 
 
 class EpisodeRepository {
@@ -26,15 +25,21 @@ class EpisodeRepository {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun fetchGoogleUrl(url: String): Observable<ResponseBody> {
+    fun fetchGogoPlayUrl(url: String): Observable<ResponseBody> {
         val m3u8urlService = retrofit.create(NetworkInterface.FetchGoogleUrl::class.java)
-        return m3u8urlService.get(Utils.getGoogle(),url).subscribeOn(Schedulers.io())
+        return m3u8urlService.get(Utils.getHeader(),url).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun fetchM3u8Url(url: String,ref:String): Observable<ResponseBody> {
         val m3u8urlService = retrofit.create(NetworkInterface.FetchM3u8Url::class.java)
         return m3u8urlService.get(Utils.getHeader(ref),url).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun fetchXstreamCdn(url: String): Observable<ResponseBody> {
+        val m3u8urlService = retrofit.create(NetworkInterface.FetchXstreamCdn::class.java)
+        return m3u8urlService.get(Utils.getHeader(url),url).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
 

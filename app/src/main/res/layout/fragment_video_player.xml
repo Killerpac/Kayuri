@@ -38,7 +38,6 @@
                 app:scrubber_enabled_size="15dp"
                 app:auto_show="true"
                 app:hide_on_touch="true"
-                app:bar_height="5px"
                 app:controller_layout_id="@layout/exo_player_custom_controls" />
 
         </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
@@ -46,97 +45,7 @@
 
         <include layout="@layout/fragment_video_player_placeholder"/>
         <include layout="@layout/error_screen_video_player"/>
-
-
-        <RelativeLayout
-            android:id="@+id/root_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <RelativeLayout
-                android:id="@+id/gesture_volume_layout"
-                android:layout_width="120dp"
-                android:layout_height="100dp"
-                android:layout_centerInParent="true"
-
-                android:gravity="center"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/gesture_iv_player_volume"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_centerHorizontal="true"
-
-                    app:srcCompat="@drawable/ic_volume" />
-
-                <TextView
-                    android:id="@+id/gesture_tv_volume_percentage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/gesture_iv_player_volume"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="right"
-                    android:text="80%"
-                    android:textColor="#ffececec" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/gesture_bright_layout"
-                android:layout_width="120dp"
-                android:layout_height="100dp"
-                android:layout_centerInParent="true"
-
-                android:gravity="center"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/gesture_iv_player_bright"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_centerHorizontal="true"
-                    app:srcCompat="@drawable/ic_brightness" />
-
-                <TextView
-                    android:id="@+id/gesture_tv_bright_percentage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/gesture_iv_player_bright"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="right"
-                    android:text="80%"
-                    android:textColor="#ffececec" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/gesture_progress_layout"
-                android:layout_width="120dp"
-                android:layout_height="100dp"
-                android:layout_centerInParent="true"
-
-                android:gravity="center"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/gesture_iv_progress"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_centerHorizontal="true" />
-
-                <TextView
-                    android:id="@+id/gesture_tv_progress_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/gesture_iv_progress"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="right"
-                    android:text="00:35/24:89"
-                    android:textColor="#ffececec" />
-            </RelativeLayout>
-        </RelativeLayout>
+        <include layout="@layout/exo_advance_controls"/>
          </androidx.cardview.widget.CardView>
 
 

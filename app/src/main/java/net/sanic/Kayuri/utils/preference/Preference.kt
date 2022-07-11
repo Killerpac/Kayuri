@@ -2,13 +2,11 @@ package net.sanic.Kayuri.utils.preference
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.core.location.LocationRequestCompat
 import net.sanic.Kayuri.utils.constants.C
 
 class Preference(private val context: Context) {
     private val PREF_NAME = "Kayuri"
     private val BASE_URL = "BASE_URL"
-    private val QUALITY = "AUTO"
     private val ORIGIN = "ORIGIN"
     private val REFERER = "REFERER"
     private val NIGHT_MODE = "NIGHT_MODE"
@@ -17,7 +15,7 @@ class Preference(private val context: Context) {
     private val GOOGLESERVER = "GOOGLESERVER"
     private val ADVANCECONTROLS = "ADVANCECONTROLS"
     private val DNS = "DNS"
-    private val SBSTREAM = "SBSTREAM"
+    private val SERVER = "0"
     private var sharedPreferences: SharedPreferences =
         context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
 
@@ -41,8 +39,14 @@ class Preference(private val context: Context) {
         return sharedPreferences.getBoolean(PIP, true)
     }
 
-    fun getGoogleServer():Boolean {
-        return  sharedPreferences.getBoolean(GOOGLESERVER, false)
+    fun getserver():Int {
+        return sharedPreferences.getInt(SERVER,C.SERVER)
+    }
+
+    fun setserver(server:Int){
+        val editor = sharedPreferences.edit()
+        editor.putInt(SERVER,server)
+        editor.apply()
     }
 
     fun getdns():Boolean {
@@ -55,16 +59,6 @@ class Preference(private val context: Context) {
         editor.apply()
     }
 
-    fun setSB(sb:Boolean){
-        val editor = sharedPreferences.edit()
-        editor.putBoolean(SBSTREAM, sb)
-        editor.apply()
-    }
-
-    fun getSB():Boolean{
-        return  sharedPreferences.getBoolean(SBSTREAM,false)
-    }
-
 
     fun setGoogleServer(gogo: Boolean){
         val editor = sharedPreferences.edit()
@@ -74,16 +68,6 @@ class Preference(private val context: Context) {
 
     fun getadvancecontrols():Boolean {
         return  sharedPreferences.getBoolean(ADVANCECONTROLS,false)
-    }
-
-    fun getpreferredquality():String {
-        return sharedPreferences.getString(QUALITY, C.QUALITY) ?: C.QUALITY
-    }
-
-    fun setpreferredquality(quality:String) {
-        val editor = sharedPreferences.edit()
-        editor.putString(QUALITY, quality)
-        editor.apply()
     }
 
     fun setadvancecontrols(controls:Boolean){

@@ -13,7 +13,6 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_video_player.*
@@ -29,6 +28,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
     private lateinit var viewModel: VideoPlayerViewModel
     private var episodeNumber: String? = ""
     private var animeName: String? = ""
+    private var imageUrl:String? = ""
     private lateinit var content: Content
     private val sharedPreference: Preference = PreferenceHelper.sharedPreference
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +57,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         super.onUserLeaveHint()
         enterPipMode()
     }
+
 
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -185,7 +186,7 @@ class VideoPlayerActivity : AppCompatActivity(), VideoPlayerListener {
         viewModel.liveContent.observe(this) {
             this.content = it
             it?.let {
-                if (!it.url.isNullOrEmpty()) {
+                if (!it.url.isEmpty()) {
                     (playerFragment as VideoPlayerFragment).updateContent(it)
                 }
             }

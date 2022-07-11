@@ -13,6 +13,7 @@ class Utils {
 
            return when(typeValue){
 
+                C.TYPE_PLAYED -> "Continue Watching"
                 C.TYPE_RECENT_DUB -> "Recent Dub"
                 C.TYPE_RECENT_SUB -> "Recent Sub"
                 C.TYPE_MOVIE -> "Movies"

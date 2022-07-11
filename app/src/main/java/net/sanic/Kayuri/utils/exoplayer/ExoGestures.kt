@@ -1,4 +1,4 @@
-package net.sanic.Kayuri.ui.main.player
+package net.sanic.Kayuri.utils.exoplayer
 
 import android.content.Context
 import android.graphics.Insets
@@ -7,7 +7,9 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
+import kotlinx.android.synthetic.main.exo_advance_controls.*
 import kotlinx.android.synthetic.main.fragment_video_player.*
+import net.sanic.Kayuri.ui.main.player.VideoPlayerActivity
 import kotlin.math.abs
 
 
@@ -20,31 +22,23 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
 
     private val gestureDetector = GestureDetector(GestureListener())
 
-    fun onTouch(event: MotionEvent): Boolean {
-
-        return gestureDetector.onTouchEvent(event)
-    }
-
-    private  inner class GestureListener : SimpleOnGestureListener(),ModifyGestureDetector.MyGestureListener {
+    private  inner class GestureListener : SimpleOnGestureListener(),
+        ModifyGestureDetector.MyGestureListener {
 
 
         override fun onDown(e: MotionEvent): Boolean {
             return true
         }
 
-        fun getdisplayheight():Int
-        {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-            {
+        fun getdisplayheight(): Int {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val windowMetrics: WindowMetrics =
                     (context as VideoPlayerActivity).windowManager.currentWindowMetrics
                 val insets: Insets = windowMetrics.windowInsets
                     .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
                 return windowMetrics.bounds.height() - insets.left - insets.right
 
-            }
-            else
-            {
+            } else {
                 val metrics = DisplayMetrics()
                 (context as VideoPlayerActivity).windowManager
                     .defaultDisplay
@@ -53,19 +47,15 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             }
         }
 
-        fun getdisplaywidth():Int
-        {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-            {
+        fun getdisplaywidth(): Int {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val windowMetrics: WindowMetrics =
                     (context as VideoPlayerActivity).windowManager.currentWindowMetrics
                 val insets: Insets = windowMetrics.windowInsets
                     .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
                 return windowMetrics.bounds.width() - insets.left - insets.right
 
-            }
-            else
-            {
+            } else {
                 val metrics = DisplayMetrics()
                 (context as VideoPlayerActivity).windowManager
                     .defaultDisplay
@@ -74,28 +64,23 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             }
         }
 
-        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-            //   gestureDetector.setIsLongpressEnabled(true)
-            //  onTouch(e)
-            if((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
-            else ((context as VideoPlayerActivity).exoPlayerView.showController())
-            return true}
-
-        override fun onDoubleTap(e: MotionEvent?): Boolean {
-            if((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
-            else ((context as VideoPlayerActivity).exoPlayerView.showController())
-            return super.onDoubleTap(e)
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            showhidecontrols()
+            return super.onSingleTapUp(e)
         }
-
 
         override fun onUp(ev: MotionEvent?) {
             (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
             (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
-            (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
         }
 
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-            if((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
+        override fun onScroll(
+            e1: MotionEvent,
+            e2: MotionEvent,
+            distanceX: Float,
+            distanceY: Float
+        ): Boolean {
+            if ((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
             val height = getdisplayheight()
             val width = getdisplaywidth()
             val mOldX = e1.x
@@ -103,7 +88,6 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
             var mode = -1
             val y = e2.rawY.toInt()
             if (abs(distanceX) >= abs(distanceY)) {
-                //      (context as VideoPlayerActivity).gesture_progress_layout.setVisibility(View.VISIBLE)
                 (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
                 (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
                 mode = 0
@@ -111,83 +95,92 @@ open class OnSwipeTouchListener(c: Context?) : View.OnTouchListener {
                 if (mOldX > width * 3.0 / 5) { //Volume
                     (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.VISIBLE
                     (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
-                    (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
                     mode = 1
                 } else if (mOldX < width * 2.0 / 5) { // Brightness
                     (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.VISIBLE
                     (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
-                    (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
                     mode = 2
                 }
             }
-            if (mode == 0) {
-            }
-
             // If the first scroll is to adjust the volume after each touch of the screen, then the subsequent scroll events will handle the volume adjustment until you leave the screen to perform the next operation
-            else if (mode == 1) {
-
-                val audiomanager = (context as VideoPlayerActivity).getSystemService(Context.AUDIO_SERVICE)  as AudioManager
-
-                val maxVolume = audiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) // Get the maximum volume of the system
+            if (mode == 1) {
+                val audiomanager =
+                    (context as VideoPlayerActivity).getSystemService(Context.AUDIO_SERVICE) as AudioManager
                 var currentVolume: Int =
-                    audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value // Get the current value
-                if (abs(distanceY)> abs(distanceX)) {// Vertical movement is greater than horizontal movement
-                    if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 2.0f)) {// Turn up the volume, pay attention to the coordinate system when the screen is horizontal, although the upper left corner is the origin, distanceY is positive when sliding up horizontally
-                        if (currentVolume <maxVolume) {// To avoid too fast adjustment, distanceY should be greater than a set value
-                            currentVolume++
-
-                        }
+                    audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value
+                    if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 2f)) {// Turn up the volume, pay attention to the coordinate system when the screen is horizontal, although the upper left corner is the origin, distanceY is positive when sliding up horizontally
+                        currentVolume++
                         //   gesture_iv_player_volume.setImageResource(R.drawable.player_volume);
-                    } else if (distanceY <= -DensityUtil.dip2px((context as VideoPlayerActivity), 2.0f)) {// Turn down the volume
-                        if (currentVolume > 0) {
-                            currentVolume--
-//                                                if (currentVolume == 0) {// Mute, set mute unique picture
-//                                                        gesture_iv_player_volume.setImageResource(R.drawable.player_silence);
-//                                                }
-                        }
+                    } else if (distanceY <= -DensityUtil.dip2px(
+                            (context as VideoPlayerActivity),
+                            2f
+                        )
+                    ) {// Turn down the volume
+                        currentVolume--
                     }
-                    val percentage = (currentVolume * 100) / maxVolume
-                    (context as VideoPlayerActivity).gesture_tv_volume_percentage.text = percentage.toString() + "%"
                     audiomanager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0)
-                }
+                    adjustvolume()
             }
-
             // If the first scroll is to adjust the brightness every time you touch the screen, then the subsequent scroll events will handle the brightness adjustment until you leave the screen to perform the next operation
             else if (mode == 2) {
-//                        gesture_iv_player_bright.setImageResource(R.drawable.player_bright);
-
                 var mBrightness = (context as VideoPlayerActivity).window.attributes.screenBrightness
-                if (mBrightness <= 0.00f)
-                    mBrightness = 0.50f
-                if (mBrightness < 0.01f)
-                    mBrightness = 0.01f
-
+                if (mBrightness <= 0.00f) mBrightness = 0.50f
+                if (mBrightness < 0.01f) mBrightness = 0.01f
                 val lpa = (context as VideoPlayerActivity).window.attributes
-                lpa.screenBrightness = mBrightness + (mOldY - y) / height * 0.05f
+                if (distanceY >= DensityUtil.dip2px((context as VideoPlayerActivity), 2f)) {// Turn up the Brightness,
+                    lpa.screenBrightness= mBrightness + 0.045f
+                } else if (distanceY <= -DensityUtil.dip2px((context as VideoPlayerActivity), 2f)
+                ) {// Turn down the Brightness
+                    lpa.screenBrightness= mBrightness - 0.045f
+                }
                 if (lpa.screenBrightness > 1.0f)
                     lpa.screenBrightness = 1.0f
                 else if (lpa.screenBrightness < 0.01f)
                     lpa.screenBrightness = 0.01f
                 (context as VideoPlayerActivity).window.attributes = lpa
-                (context as VideoPlayerActivity).gesture_tv_bright_percentage.text =
-                    (lpa.screenBrightness * 100).toInt().toString() + "%"
+                adjustbrightness((lpa.screenBrightness * 100).toInt())
             }
 
-            //firstScroll = false;// The first scroll execution is complete, modify the flag
-            return true
+                //firstScroll = false;// The first scroll execution is complete, modify the flag
+                return true
 
+            }
+            //    return result
         }
-        //    return result
-    }
 
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         if(event.action == MotionEvent.ACTION_UP){
-            (context as VideoPlayerActivity).gesture_volume_layout.visibility = View.GONE
+            (context as VideoPlayerActivity).gesture_volume_layout.visibility  = View.GONE
             (context as VideoPlayerActivity).gesture_bright_layout.visibility = View.GONE
-            (context as VideoPlayerActivity).gesture_progress_layout.visibility = View.GONE
         }
         return gestureDetector.onTouchEvent(event)
+    }
+
+    private fun showhidecontrols(){
+        if ((context as VideoPlayerActivity).exoPlayerView.isControllerVisible) (context as VideoPlayerActivity).exoPlayerView.hideController()
+        else ((context as VideoPlayerActivity).exoPlayerView.showController())
+    }
+
+    private fun adjustvolume(){
+        val seekBar = (context as VideoPlayerActivity).volumeseekbar
+        val audiomanager = (context as VideoPlayerActivity).getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val maxVolume = audiomanager.getStreamMaxVolume(AudioManager.STREAM_MUSIC) // Get the maximum volume of the system
+        val currentVolume: Int = audiomanager.getStreamVolume(AudioManager.STREAM_MUSIC) // Get the current value // Get the current value
+        seekBar.maxValue = maxVolume
+        seekBar.progress = currentVolume
+    }
+    private fun adjustbrightness(lpa:Int){
+        val seekBar = (context as VideoPlayerActivity).brightnessseekbar
+        seekBar.maxValue = 100
+        seekBar.progress = lpa
+    }
+
+    fun isAClick(startX: Float, endX: Float, startY: Float, endY: Float): Boolean {
+        val CLICK_ACTION_THRESHOLD = 300
+        val differenceX = abs(startX - endX)
+        val differenceY = abs(startY - endY)
+        return !(differenceX > CLICK_ACTION_THRESHOLD /* =5 */ || differenceY > CLICK_ACTION_THRESHOLD)
     }
 
     open fun onSwipeRight() {}
@@ -202,14 +195,4 @@ internal object DensityUtil {
         return (dpValue * scale + 1f).toInt()
     }
 
-    fun px2dip(context: Context, pxValue: Float): Int {
-        val scale = context.resources.displayMetrics.density
-            return (pxValue / scale + 1f).toInt()
-    }
-}
-
-class MyGestureListener : SimpleOnGestureListener(), ModifyGestureDetector.MyGestureListener {
-    override fun onUp(ev: MotionEvent) {
-        //do what u want
-    }
 }

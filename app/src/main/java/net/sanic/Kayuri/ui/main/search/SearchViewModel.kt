@@ -25,7 +25,7 @@ class SearchViewModel : CommonViewModel2() {
         this.keyword = keyword
         val list = _searchList.value
         list?.clear()
-        _searchList.value = list
+        _searchList.value = list.let { list }
         if (!super.isLoading()) {
             compositeDisposable.add(
                 searchRepository.fetchSearchList(
@@ -60,7 +60,7 @@ class SearchViewModel : CommonViewModel2() {
             override fun onNext(response: ResponseBody) {
                 val list =
                     HtmlParser.parseMovie(response = response.string(), typeValue = C.TYPE_DEFAULT)
-                if (list.isNullOrEmpty() || list.size < 20) {
+                if (list.isEmpty() || list.size < 20) {
                     _canNextPageLoaded = false
                 }
                 if (searchType == C.TYPE_SEARCH_NEW) {
@@ -68,7 +68,7 @@ class SearchViewModel : CommonViewModel2() {
                 } else if (searchType == C.TYPE_SEARCH_UPDATE) {
                     val updatedList = _searchList.value
                     updatedList?.addAll(list)
-                    _searchList.value = updatedList
+                    _searchList.value = updatedList.let { updatedList }
                 }
                 pageNumber++
             }

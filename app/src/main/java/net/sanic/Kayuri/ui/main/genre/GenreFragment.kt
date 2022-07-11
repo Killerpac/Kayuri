@@ -3,7 +3,6 @@ package net.sanic.Kayuri.ui.main.genre
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
-import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -12,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,21 +18,17 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.TransitionInflater
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.MaterialContainerTransform
-import com.google.android.material.transition.MaterialFadeThrough
+import com.google.android.material.transition.MaterialElevationScale
+import net.sanic.Kayuri.MainActivity
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentGenreBinding
 import net.sanic.Kayuri.databinding.LoadingBinding
-import net.sanic.Kayuri.ui.main.favourites.FavouriteFragmentDirections
-import net.sanic.Kayuri.ui.main.genre.GenreFragmentDirections.Companion.actionGenreFragmentToAnimeInfoFragment
 import net.sanic.Kayuri.ui.main.genre.epoxy.GenreController
 import net.sanic.Kayuri.utils.CommonViewModel2
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
-import net.sanic.Kayuri.utils.model.FavouriteModel
 import java.util.*
 
 class GenreFragment : Fragment(), View.OnClickListener,
@@ -63,15 +57,10 @@ class GenreFragment : Fragment(), View.OnClickListener,
         viewModelFactory = GenreViewModelFactory(genreUrl)
         viewModel = ViewModelProvider(this, viewModelFactory).get(GenreViewModel::class.java)
         setObserver(genreUrl.substring(genreUrl.lastIndexOf('/') + 1))
+        setAdapters()
         setOnClickListeners()
         transitionListener()
-        setAdapters()
         setRecyclerViewScroll()
-    }
-
-    private fun setTransitions(view: View) {
-        postponeEnterTransition()
-        view.doOnPreDraw { startPostponedEnterTransition() }
     }
 
     private fun setOnClickListeners(){
@@ -80,11 +69,19 @@ class GenreFragment : Fragment(), View.OnClickListener,
         }
     }
 
+    private fun setTransitions(view: View) {
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
+        reenterTransition = MaterialElevationScale(true).apply {
+            duration = 250
+        }
+    }
+
     private fun setAdapters() {
         genreController = GenreController(this)
-        genreController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
+        genreController.spanCount = Utils.calculateNoOfColumns(requireContext(), 143f)
         genreBinding.recyclerView.apply {
-            layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))
+            layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 143f))
             adapter = genreController.adapter
             (layoutManager as GridLayoutManager).spanSizeLookup = genreController.spanSizeLookup
         }
@@ -94,6 +91,15 @@ class GenreFragment : Fragment(), View.OnClickListener,
                 R.dimen.episode_offset_left
             )
         )
+    }
+
+    override fun onStart() {
+        shownavbar(View.GONE)
+        super.onStart()
+    }
+
+    private fun shownavbar(visibility:Int,transition:Boolean = false){
+        (requireActivity() as MainActivity).barvisibility(visibility)
     }
 
     private fun getSpanCount(): Int {
@@ -193,12 +199,15 @@ class GenreFragment : Fragment(), View.OnClickListener,
                 }
 
                 override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                    if(p1 == R.id.start){
+                        genreBinding.toolbarText.visibility = View.GONE
+                    }else{
+                        genreBinding.toolbarText.visibility = View.VISIBLE
+                    }
                 }
-
             }
         )
     }
-
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.back ->{

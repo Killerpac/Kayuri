@@ -1,6 +1,5 @@
 package net.sanic.Kayuri.ui.main.player
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.disposables.CompositeDisposable
@@ -9,9 +8,9 @@ import io.realm.RealmList
 import net.sanic.Kayuri.utils.CommonViewModel
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.Content
-import net.sanic.Kayuri.utils.parser.HtmlParser
 import net.sanic.Kayuri.utils.parser.extractors.gogoplay
 import net.sanic.Kayuri.utils.parser.extractors.streamsb
+import net.sanic.Kayuri.utils.parser.extractors.xstreamcdn
 import net.sanic.Kayuri.utils.preference.PreferenceHelper
 import okhttp3.ResponseBody
 import timber.log.Timber
@@ -69,116 +68,156 @@ class VideoPlayerViewModel : CommonViewModel() {
             }
 
             override fun onNext(response: ResponseBody) {
-                if(PreferenceHelper.sharedPreference.getSB()) {
-                    when (type) {
-                        C.TYPE_MEDIA_URL -> {
-                            val episodeInfo = streamsb.parseMediaUrl(response = response.string())
-                            val pp = streamsb.parseurl(episodeInfo.vidcdnUrl!!)
-                            episodeInfo.vidcdnUrl?.let {
-                                compositeDisposable.add(
-                                    episodeRepository.fetchM3u8Url(
-                                        pp, episodeInfo.vidcdnUrl!!
+                when (PreferenceHelper.sharedPreference.getserver()) {
+                    0, 1 -> {
+                        when (type) {
+                            C.TYPE_MEDIA_URL -> {
+                                val episodeInfo =
+                                    gogoplay.parseMediaUrl(response = response.string())
+                                id =
+                                    Regex("id=([^&]+)").find(episodeInfo.vidcdnUrl!!)!!.value.removePrefix(
+                                        "id="
                                     )
+                                episodeInfo.vidcdnUrl?.let {
+                                    if (PreferenceHelper.sharedPreference.getserver() == 1) {
+                                        compositeDisposable.add(
+                                            episodeRepository.fetchGogoPlayUrl(
+                                                episodeInfo.vidcdnUrl!!
+                                            )
+                                                .subscribeWith(
+                                                    getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
+                                                )
+                                        )
+                                    } else {
+                                        compositeDisposable.add(
+                                            episodeRepository.fetchM3u8Url(
+                                                episodeInfo.vidcdnUrl!!,
+                                                episodeInfo.vidcdnUrl!!
+                                            )
+                                                .subscribeWith(
+                                                    getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
+                                                )
+                                        )
+                                    }
+                                }
+
+                                val watchedEpisode =
+                                    episodeRepository.fetchWatchedDuration(_content.value?.episodeUrl.hashCode())
+                                _content.value?.watchedDuration =
+                                    watchedEpisode?.watchedDuration ?: 0
+                                _content.value?.previousEpisodeUrl = episodeInfo.previousEpisodeUrl
+                                _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
+                            }
+                            C.TYPE_M3U8_URL -> {
+                                val m3u8Url: Pair<RealmList<String>, RealmList<String>> =
+                                    if (PreferenceHelper.sharedPreference.getserver() == 1) {
+                                        gogoplay.parsegoogleurl(response = response.string())
+                                    } else {
+                                        gogoplay.parseencrypturls(response = response.string())
+                                    }
+                                Timber.e(m3u8Url.toString())
+                                val content = _content.value
+                                content?.url = m3u8Url.first
+                                content?.quality = m3u8Url.second
+                                _content.value = content
+                                saveContent(content!!)
+                                updateLoading(false)
+                            }
+                            C.TYPE_M3U8_PREP -> {
+                                val m3u8Pre =
+                                    gogoplay.parseencryptajax(response = response.string(), id)
+                                compositeDisposable.add(
+                                    episodeRepository.m3u8preprocessor("${PreferenceHelper.sharedPreference.getReferrer()}encrypt-ajax.php?${m3u8Pre}")
                                         .subscribeWith(
                                             getEpisodeUrlObserver(C.TYPE_M3U8_URL)
                                         )
                                 )
                             }
-                            val watchedEpisode =
-                                episodeRepository.fetchWatchedDuration(_content.value?.episodeUrl.hashCode())
-                            _content.value?.watchedDuration = watchedEpisode?.watchedDuration ?: 0
-                            _content.value?.previousEpisodeUrl = episodeInfo.previousEpisodeUrl
-                            _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
                         }
-                        C.TYPE_M3U8_URL ->{
-                            val m3u8Url: Pair<RealmList<String>, RealmList<String>> = streamsb.parseencrypturls(response = response.string())
-                            val content = _content.value
-                            content?.url = m3u8Url.first
-                            content?.quality = m3u8Url.second
-                            _content.value = content
-                            saveContent(content!!)
-                            updateLoading(false)
-                        }
+
                     }
-                }
-                else {
-                    when (type) {
-                        C.TYPE_MEDIA_URL -> {
-                            val episodeInfo = gogoplay.parseMediaUrl(response = response.string())
-                            id =
-                                Regex("id=([^&]+)").find(episodeInfo.vidcdnUrl!!)!!.value.removePrefix(
-                                    "id="
-                                )
-                            //val pp = streamsb.parseurl(episodeInfo.vidcdnUrl!!)
-                            episodeInfo.vidcdnUrl?.let {
-                                if (PreferenceHelper.sharedPreference.getGoogleServer()) {
-                                    compositeDisposable.add(
-                                        episodeRepository.fetchGoogleUrl(
-                                            episodeInfo.vidcdnUrl!!
-                                        )
-                                            .subscribeWith(
-                                                getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
-                                            )
-                                    )
-                                } else {
+                    2 -> {
+                        when (type) {
+                            C.TYPE_MEDIA_URL -> {
+                                val episodeInfo =
+                                    streamsb.parseMediaUrl(response = response.string())
+                                val pp = streamsb.parseurl(episodeInfo.vidcdnUrl!!)
+                                episodeInfo.vidcdnUrl?.let {
                                     compositeDisposable.add(
                                         episodeRepository.fetchM3u8Url(
-                                            episodeInfo.vidcdnUrl!!,
-                                            episodeInfo.vidcdnUrl!!
+                                            pp, episodeInfo.vidcdnUrl!!
                                         )
                                             .subscribeWith(
-                                                getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
+                                                getEpisodeUrlObserver(C.TYPE_M3U8_URL)
                                             )
                                     )
                                 }
+                                val watchedEpisode =
+                                    episodeRepository.fetchWatchedDuration(_content.value?.episodeUrl.hashCode())
+                                _content.value?.watchedDuration =
+                                    watchedEpisode?.watchedDuration ?: 0
+                                _content.value?.previousEpisodeUrl = episodeInfo.previousEpisodeUrl
+                                _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
                             }
-
-                            val watchedEpisode =
-                                episodeRepository.fetchWatchedDuration(_content.value?.episodeUrl.hashCode())
-                            _content.value?.watchedDuration = watchedEpisode?.watchedDuration ?: 0
-                            _content.value?.previousEpisodeUrl = episodeInfo.previousEpisodeUrl
-                            _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
+                            C.TYPE_M3U8_URL -> {
+                                val m3u8Url: Pair<RealmList<String>, RealmList<String>> =
+                                    streamsb.parseencrypturls(response = response.string())
+                                val content = _content.value
+                                content?.url = m3u8Url.first
+                                content?.quality = m3u8Url.second
+                                _content.value = content
+                                saveContent(content!!)
+                                updateLoading(false)
+                            }
                         }
-                        C.TYPE_M3U8_URL -> {
-                            val m3u8Url: Pair<RealmList<String>, RealmList<String>> =
-                                if (PreferenceHelper.sharedPreference.getGoogleServer()) {
-                                    gogoplay.parsegoogleurl(response = response.string())
-                                } else {
-                                    gogoplay.parseencrypturls(response = response.string())
-                                }
-                            Timber.e(m3u8Url.toString())
-                            val content = _content.value
-                            content?.url = m3u8Url.first
-                            content?.quality = m3u8Url.second
-                            _content.value = content
-                            saveContent(content!!)
-                            updateLoading(false)
-                        }
-                        C.TYPE_M3U8_PREP -> {
-                            val m3u8Pre =
-                                gogoplay.parseencryptajax(response = response.string(), id)
-                            compositeDisposable.add(
-                                episodeRepository.m3u8preprocessor("${C.REFERER}encrypt-ajax.php?${m3u8Pre}")
-                                    .subscribeWith(
-                                        getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                    }
+                    3 -> {
+                        when (type) {
+                            C.TYPE_MEDIA_URL -> {
+                                val episodeInfo =
+                                    xstreamcdn.parseMediaUrl(response = response.string())
+                                episodeInfo.vidcdnUrl?.let {
+                                    compositeDisposable.add(
+                                        episodeRepository.fetchXstreamCdn(
+                                            episodeInfo.vidcdnUrl!!
+                                        )
+                                            .subscribeWith(
+                                                getEpisodeUrlObserver(C.TYPE_M3U8_URL)
+                                            )
                                     )
-                            )
+                                }
+                                val watchedEpisode =
+                                    episodeRepository.fetchWatchedDuration(_content.value?.episodeUrl.hashCode())
+                                _content.value?.watchedDuration =
+                                    watchedEpisode?.watchedDuration ?: 0
+                                _content.value?.previousEpisodeUrl = episodeInfo.previousEpisodeUrl
+                                _content.value?.nextEpisodeUrl = episodeInfo.nextEpisodeUrl
+                            }
+                            C.TYPE_M3U8_URL -> {
+                                val m3u8Url: Pair<RealmList<String>, RealmList<String>> =
+                                    xstreamcdn.parseencrypturls(response = response.string())
+                                val content = _content.value
+                                content?.url = m3u8Url.first
+                                content?.quality = m3u8Url.second
+                                _content.value = content
+                                saveContent(content!!)
+                                updateLoading(false)
+                            }
                         }
                     }
                 }
-
             }
 
-            override fun onError(e: Throwable) {
-                updateLoading(false)
-                updateErrorModel(true, e, false)
-            }
+                override fun onError(e: Throwable) {
+                    updateLoading(false)
+                    updateErrorModel(true, e, false)
+                }
 
+            }
         }
-    }
 
     fun saveContent(content: Content) {
-        if (!content.url.isNullOrEmpty()) {
+        if (!content.url.isEmpty()) {
             episodeRepository.saveContent(content)
         }
     }

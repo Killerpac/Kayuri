@@ -10,10 +10,7 @@ import io.realm.RealmResults
 import io.realm.Sort
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.constants.C
-import net.sanic.Kayuri.utils.model.AnimeMetaModel
-import net.sanic.Kayuri.utils.model.GenreModel
-import net.sanic.Kayuri.utils.model.HomeScreenModel
-import net.sanic.Kayuri.utils.model.UpdateModel
+import net.sanic.Kayuri.utils.model.*
 import net.sanic.Kayuri.utils.parser.HtmlParser
 import net.sanic.Kayuri.utils.realm.InitalizeRealm
 import okhttp3.ResponseBody
@@ -29,6 +26,7 @@ class HomeViewModel : ViewModel(){
     private val compositeDisposable = CompositeDisposable()
     private val realmListenerList = ArrayList<RealmResults<AnimeMetaModel>>()
     private val realmListenerGenreList = ArrayList<RealmResults<GenreModel>>()
+    private val realmListenerRecentlyPlayedList = ArrayList<RealmResults<RecentlyPlayed>>()
 
     init {
         fetchHomeList()
@@ -36,6 +34,7 @@ class HomeViewModel : ViewModel(){
 
     private fun fetchHomeList(){
         fetchkeys()
+        fetchRecentlyPlayed()
         fetchGenres()
         fetchRecentSub()
         fetchRecentDub()
@@ -43,6 +42,7 @@ class HomeViewModel : ViewModel(){
         fetchNewSeason()
         fetchMovies()
     }
+
 
     private fun getHomeListObserver(typeValue: Int): DisposableObserver<ResponseBody> {
         return  object : DisposableObserver<ResponseBody>(){
@@ -114,21 +114,36 @@ class HomeViewModel : ViewModel(){
 
         val newList = animeList.value!!
             try{
-//               val preHomeScreenModel = newList[getPositionByType(typeValue)]
-//                if(preHomeScreenModel.typeValue == homeScreenModel.typeValue){
                     newList[getPositionByType(typeValue)] = homeScreenModel
-//                }else{
-//                    newList.add(getPositionByType(typeValue),homeScreenModel)
-//                }
 
             }catch (iobe: IndexOutOfBoundsException){
 //                newList.add(getPositionByType(typeValue),homeScreenModel)
             }
+        _animeList.value = newList
+    }
 
+    //update recently played with animemetamodel or recentlyplayedmodel
+    fun updateRecentlyPlayed(model:AnimeMetaModel){
+        val RecentlyPlayed = RecentlyPlayed()
+        RecentlyPlayed.ID = model.ID
+        RecentlyPlayed.title = model.title
+        RecentlyPlayed.imageUrl = model.imageUrl
+        RecentlyPlayed.episodeNumber = model.episodeNumber
+        RecentlyPlayed.categoryUrl = model.categoryUrl
+        RecentlyPlayed.episodeUrl = model.episodeUrl
+        homeRepository.addrecentplayed(RecentlyPlayed)
+    }
 
-//        newList.sortedByDescending {
-//            Utils.getPositionByType(it.typeValue)
-//        }
+    private fun updateRecentlyPlayedList(list: ArrayList<RecentlyPlayed>, typeValue: Int){
+        val homeScreenModel = HomeScreenModel(
+            typeValue = typeValue,
+            type = Utils.getTypeName(typeValue),
+            recentlyPlayedList = list
+        )
+        val newList = animeList.value!!
+        try {
+            newList[getPositionByType(typeValue)] = homeScreenModel
+        } catch (iobe: IndexOutOfBoundsException){}
         _animeList.value = newList
     }
 
@@ -160,6 +175,19 @@ class HomeViewModel : ViewModel(){
         }
     }
 
+    private fun addRecentRealmListener(typeValue: Int){
+        val realm = Realm.getInstance(InitalizeRealm.getConfig())
+        realm.use {
+            val results = it.where(RecentlyPlayed::class.java).findAll().sort("timestamp", Sort.ASCENDING)
+            results.addChangeListener { newResult :RealmResults<RecentlyPlayed> , _ ->
+                val newAnimeList = (it.copyFromRealm(newResult) as ArrayList<RecentlyPlayed>)
+                newAnimeList.reverse()
+                updateRecentlyPlayedList(newAnimeList, typeValue)
+            }
+            realmListenerRecentlyPlayedList.add(results)
+        }
+    }
+
     private fun addGenreRealmListener(typeValue: Int){
         val realm = Realm.getInstance(InitalizeRealm.getConfig())
         realm.use {
@@ -177,6 +205,7 @@ class HomeViewModel : ViewModel(){
         val size = animeList.value!!.size
         return when(typeValue){
             C.TYPE_GENRE -> if(size >= C.GENRE_POSITION) C.GENRE_POSITION else size
+            C.TYPE_PLAYED -> if(size >= C.PLAYED_POSITION) C.PLAYED_POSITION else size
             C.TYPE_RECENT_SUB -> if(size >= C.RECENT_SUB_POSITION) C.RECENT_SUB_POSITION else size
             C.TYPE_RECENT_DUB -> if(size >= C.RECENT_DUB_POSITION) C.RECENT_DUB_POSITION else size
             C.TYPE_POPULAR_ANIME -> if(size >= C.POPULAR_POSITION) C.POPULAR_POSITION else size
@@ -189,7 +218,7 @@ class HomeViewModel : ViewModel(){
     private fun makeEmptyArrayList(): ArrayList<HomeScreenModel>{
         var i = 1
         val arrayList: ArrayList<HomeScreenModel> = ArrayList()
-        while (i<=6){
+        while (i<=8){
             arrayList.add(
                 HomeScreenModel(
                     typeValue = i
@@ -198,6 +227,14 @@ class HomeViewModel : ViewModel(){
             i++
         }
         return arrayList
+    }
+
+    private fun fetchRecentlyPlayed(){
+        val list = homeRepository.fetchFromRealmRecentPlayed()
+        if (list.size > 0){
+            updateRecentlyPlayedList(list,C.TYPE_PLAYED)
+        }
+        addRecentRealmListener(C.TYPE_PLAYED)
     }
 
     private fun fetchGenres(){
@@ -218,7 +255,7 @@ class HomeViewModel : ViewModel(){
         addRealmListener(C.TYPE_RECENT_SUB)
     }
 
-    //make an observable response body fot the fetchkeys api
+    //make an observable response body for the fetchkeys api
     // credits and thanks to https://github.com/justfoolingaround/animdl
     private fun fetchkeys(){
         try {
@@ -268,6 +305,7 @@ class HomeViewModel : ViewModel(){
 
     override fun onCleared() {
         homeRepository.removeFromRealm()
+        homeRepository.deleteRecentlyPlayedFromRealm()
         if(!compositeDisposable.isDisposed){
             compositeDisposable.dispose()
         }

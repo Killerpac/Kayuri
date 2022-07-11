@@ -1,14 +1,11 @@
 package net.sanic.Kayuri.utils.parser.extractors
 
 import io.realm.RealmList
-import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.EpisodeInfo
 import org.json.JSONException
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import timber.log.Timber
-import java.lang.NullPointerException
-import java.util.*
 
 class streamsb {
 
@@ -42,16 +39,13 @@ class streamsb {
         }
 
         fun parseurl(url: String): String {
-            Timber.e(url.substringAfter("/e/"))
             return "https://sbplay2.xyz/sources43/7361696b6f757c7c${
                 bytesToHex(url.substringAfter("/e/").encodeToByteArray())
             }7c7c616e696d646c616e696d646c7c7c73747265616d7362/616e696d646c616e696d646c7c7c363136653639366436343663363136653639366436343663376337633631366536393664363436633631366536393664363436633763376336313665363936643634366336313665363936643634366337633763373337343732363536313664373336327c7c616e696d646c616e696d646c7c7c73747265616d7362"
         }
         fun parseencrypturls(response: String): Pair<RealmList<String>, RealmList<String>>{
-            Timber.e(response)
             val urls: RealmList<String> = RealmList()
             val qualities: RealmList<String> = RealmList()
-            var i = 0
             return try {
                 val res =  JSONObject(response).getJSONObject("stream_data").getString("file")
                 Timber.e(res.toString())

@@ -10,8 +10,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/animeCardView"
-        android:layout_width="105dp"
-        android:layout_height="180dp"
+        android:layout_width="100dp"
+        android:layout_height="175dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="0dp"
         app:cardBackgroundColor="@android:color/transparent"
@@ -50,7 +50,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/animeCardView"
-
         tools:text="One Piece" />
 
     <TextView
@@ -67,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/animeTitle"
-        tools:text="EP 7" />
+        tools:text="Episode 7" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

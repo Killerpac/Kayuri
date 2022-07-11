@@ -1,7 +1,6 @@
 package net.sanic.Kayuri.ui.main.home
 
 import android.os.Bundle
-import android.os.StrictMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import com.github.javiersantos.appupdater.AppUpdater
 import com.github.javiersantos.appupdater.enums.Display
 import com.github.javiersantos.appupdater.enums.UpdateFrom
 import com.google.android.material.transition.MaterialFadeThrough
+import net.sanic.Kayuri.MainActivity
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentHomeBinding
 import net.sanic.Kayuri.ui.main.home.epoxy.HomeController
@@ -33,8 +33,6 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
         homebind = FragmentHomeBinding.inflate(inflater, container, false)
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         return homebind.root
@@ -51,7 +49,6 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
     }
 
     private fun setAdapter() {
-       // homeController.isDebugLoggingEnabled = true
         homeController = HomeController(this)
         val homeRecyclerView = homebind.recyclerView
         homeRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -62,14 +59,12 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         viewModel.animeList.observe(viewLifecycleOwner) {
             homeController.setData(it)
         }
-//        viewModel.updateModel.observe(viewLifecycleOwner, {
-//            Timber.e(it.whatsNew)
-//            if (it.versionCode > BuildConfig.VERSION_CODE) {
-//                showDialog(it.whatsNew)
-//            }
-//        })
     }
 
+    override fun onStart() {
+        shownavbar(View.VISIBLE)
+        super.onStart()
+    }
 
     private fun setupTransitions(view: View) {
         postponeEnterTransition()
@@ -82,10 +77,12 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
         }
     }
 
+    private fun shownavbar(visibility:Int,transition:Boolean = false){
+        (requireActivity() as MainActivity).barvisibility(visibility)
+    }
+
     private fun setClickListeners() {
         homebind.header.setOnClickListener(this)
-        homebind.search.setOnClickListener(this)
-        homebind.favorite.setOnClickListener(this)
         homebind.settings.setOnClickListener(this)
     }
 
@@ -99,24 +96,6 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
                     System.currentTimeMillis()
                 }
 
-            }
-            R.id.search -> {
-                val extras =
-                    FragmentNavigatorExtras(homebind.search to resources.getString(R.string.search_transition))
-                findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToSearchFragment(),
-                    extras
-                )
-            }
-            R.id.favorite -> {
-                val extras = FragmentNavigatorExtras(
-                    homebind.favorite to resources.getString(R.string.favourite_transition)
-
-                )
-                findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToFavouriteFragment(),
-                    extras
-                )
             }
             R.id.settings -> {
                 val extras = FragmentNavigatorExtras(
@@ -138,12 +117,14 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
                 animeName = model.title,
                 episodeNumber = model.episodeNumber?.replace("Episode","EP")
             )
-        )
+        ).also {
+            viewModel.updateRecentlyPlayed(model)
+        }
     }
 
     override fun animeTitleClick(model: AnimeMetaModel,sharedTitle: View, sharedImage: View) {
+        shownavbar(View.GONE)
         if (!model.categoryUrl.isNullOrBlank()) {
-
             val extras = FragmentNavigatorExtras(
                 sharedTitle to resources.getString(R.string.shared_title),
                 sharedImage to resources.getString(R.string.shared_image)
@@ -160,6 +141,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
     }
 
     override fun tagClick(model: AnimeMetaModel, genreName: String) {
+        shownavbar(View.GONE)
         if (!model.genreList.isNullOrEmpty()) {
             val genre = model.genreList!!.find { it.genreName == genreName }!!
             findNavController().navigate(
@@ -171,6 +153,7 @@ class HomeFragment : Fragment(), View.OnClickListener, HomeController.EpoxyAdapt
     }
 
     override fun genreClick(model: GenreModel) {
+        shownavbar(View.GONE)
         if (model.genreUrl.isNotEmpty()) {
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToGenreFragment(

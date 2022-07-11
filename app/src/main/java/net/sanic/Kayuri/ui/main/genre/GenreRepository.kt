@@ -6,7 +6,6 @@ import io.reactivex.schedulers.Schedulers
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.rertofit.NetworkInterface
 import net.sanic.Kayuri.utils.rertofit.RetrofitHelper
-import okhttp3.HttpUrl
 import okhttp3.ResponseBody
 
 class GenreRepository {

@@ -23,6 +23,28 @@
         android:ellipsize="end"
         android:maxLines="2"
         />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/episoderangelayout"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/animeInfoSummary"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:textAlignment="center"
+            android:hint="Episodes"
+            android:layout_height="50dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/filterMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/animeInfoRoot"
         android:layout_width="match_parent"
@@ -31,6 +53,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:visibility="visible"
+        android:backgroundTintMode="src_over"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topView">
@@ -193,7 +216,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/animeInfoSummary" />
+        app:layout_constraintTop_toBottomOf="@id/episoderangelayout" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/topView"
@@ -250,7 +273,6 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/favourite"
                 android:layout_width="30dp"
-
                 android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"

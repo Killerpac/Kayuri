@@ -1,31 +1,16 @@
 package net.sanic.Kayuri.utils.parser
 
-import android.content.SharedPreferences
-import android.net.Uri.decode
-import android.os.Build
-import androidx.appcompat.app.WindowDecorActionBar
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import io.realm.RealmList
 import net.sanic.Kayuri.utils.constants.C
-import net.sanic.Kayuri.utils.model.*
+import net.sanic.Kayuri.utils.model.AnimeInfoModel
+import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import net.sanic.Kayuri.utils.model.EpisodeModel
+import net.sanic.Kayuri.utils.model.GenreModel
 import net.sanic.Kayuri.utils.preference.PreferenceHelper
-import okhttp3.internal.http2.Http2Reader
-import org.apache.commons.lang3.RandomStringUtils
 import org.json.JSONObject
 import org.jsoup.Jsoup
 import org.jsoup.select.Elements
 import timber.log.Timber
-import java.lang.Byte.decode
-import java.lang.NullPointerException
-import java.net.URLDecoder
-import java.net.URLEncoder
-import java.util.*
-import java.util.regex.Pattern
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
-import kotlin.collections.ArrayList
 
 class HtmlParser {
 
@@ -44,7 +29,6 @@ class HtmlParser {
                 val episodeNumber = anime.getElementsByClass("episode").first().text()
                 val animeImageInfo = anime.selectFirst("a")
                 val imageUrl = animeImageInfo.select("img").first().absUrl("src")
-
                 animeMetaModelList.add(
                     AnimeMetaModel(
                         ID = "$title$typeValue".hashCode(),
@@ -278,9 +262,7 @@ class HtmlParser {
             }catch (exception: StringIndexOutOfBoundsException){
                 Timber.e("Image URL: $url")
                 ""
-
             }
-
         }
 
     }

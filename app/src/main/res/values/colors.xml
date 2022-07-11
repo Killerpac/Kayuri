@@ -21,7 +21,7 @@
     <color name="recycler_releases_date">@color/recycler_anime_type</color>
     <color name="recycler_episode_number">@color/recycler_anime_type</color>
     <color name="recycler_tags">#e3f2fd</color>
-    <color name="searchbar">#e3f2fd</color>
+    <color name="searchbar">@color/secondary_background</color>
 
     //Recycler mini Header
     <color name="recycler_mini_header_title">@color/text_default</color>
@@ -46,8 +46,8 @@
     <color name="types_value">#3D3838</color>
 
     //AnimeInfo Episodes
-    <color name="episode_background">#e3f2fd</color>
-    <color name="episode_watched_progress">@color/progress</color>
+    <color name="episode_background">@color/secondary_background</color>
+    <color name="episode_watched_progress">#b5c1ca</color>
     <color name="episode_text">#000000</color>
 
 
@@ -58,5 +58,8 @@
 
     //Shimmer Background
     <color name="shimmer_background">#dddddd</color>
+
+    //sub dub indiactor color
+    <color name="subdub_indicator">#ff6f61</color>
 
 </resources>

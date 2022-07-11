@@ -12,20 +12,18 @@ import net.sanic.Kayuri.utils.epoxy.AnimeCommonModel_
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
 import net.sanic.Kayuri.utils.model.GenreModel
 import net.sanic.Kayuri.utils.model.HomeScreenModel
+import net.sanic.Kayuri.utils.model.RecentlyPlayed
 
 
 class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyController<ArrayList<HomeScreenModel>>() {
 
-
     override fun buildModels(data: ArrayList<HomeScreenModel>) {
-
 
         data.forEach { homeScreenModel ->
             AnimeMiniHeaderModel_()
                 .id(homeScreenModel.typeValue)
                 .typeName(homeScreenModel.type)
-                .addIf(!homeScreenModel.animeList.isNullOrEmpty(),this)
-
+                .addIf(!homeScreenModel.animeList.isNullOrEmpty() or !homeScreenModel.recentlyPlayedList.isNullOrEmpty(),this)
 
             when (homeScreenModel.typeValue) {
 
@@ -87,11 +85,32 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
                                 .genreModel(genreModel)
                         )
                     }
-
                     CarouselModel_()
                         .id(homeScreenModel.hashCode())
                         .models(genreModelList)
                         .padding(Carousel.Padding.dp(20,0,20,0,0))
+                        .addTo(this)
+                }
+                C.TYPE_PLAYED->{
+                    val recentModelList: ArrayList<AnimeRecentlyPlayedModel_> = ArrayList()
+                    homeScreenModel.recentlyPlayedList?.forEach {
+                        val recentmodel = it
+                        recentModelList.add(
+                            AnimeRecentlyPlayedModel_()
+                                .id(recentmodel.ID)
+                                .clickListener { model, holder, clickedView, _ ->
+                                    recentSubDubClick(model = parseRecentlyPlayedToAnimeMetaModel(model.recentlyplayedmodel()),
+                                        clickedView = clickedView,
+                                        sharedTitle = holder.animeTitle,
+                                        sharedImage = holder.animeImageView)
+                                }
+                                .recentlyplayedmodel(recentmodel)
+                        )
+                    }
+                    CarouselModel_()
+                        .id(homeScreenModel.hashCode())
+                        .models(recentModelList)
+                        .padding(Carousel.Padding.dp(20,0,20,0,20))
                         .addTo(this)
                 }
                 else ->{
@@ -134,6 +153,18 @@ class HomeController(var adapterCallbacks: EpoxyAdapterCallbacks) : TypedEpoxyCo
                     sharedImage = sharedImage)
             }
         }
+    }
+
+    private fun parseRecentlyPlayedToAnimeMetaModel(model:RecentlyPlayed):AnimeMetaModel{
+        return AnimeMetaModel(
+            ID = model.ID,
+            title = model.title.toString(),
+            categoryUrl = model.categoryUrl,
+            episodeUrl = model.episodeUrl,
+            typeValue = 10,
+            episodeNumber = model.episodeNumber,
+            imageUrl = model.imageUrl.toString()
+        )
 
     }
 

@@ -1,24 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
-    <item android:id="@+id/homeFragment"
-        android:title="@string/home"
-        app:showAsAction="always"
-        android:orderInCategory="1"
-        android:icon="@drawable/ic_favorite"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/searchFragment"
-        android:title="@string/search"
-        app:showAsAction="always"
-        android:orderInCategory="2"
-        android:icon="@drawable/ic_favorite"/>
+    <item android:title="@string/search"
+        android:id="@+id/searchFragment"
+        android:icon="@drawable/ic_search" />
 
+    <item android:title="@string/home"
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home" />
 
-    <item android:id="@+id/more"
-        android:title="@string/settings"
-        app:showAsAction="always"
-        android:orderInCategory="2"
-        android:icon="@drawable/ic_favorite"/>
+    <item android:title="@string/favourite"
+        android:id="@+id/favouriteFragment"
+        android:icon="@drawable/ic_favorite" />
 
 </menu>

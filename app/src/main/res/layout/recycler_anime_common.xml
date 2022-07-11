@@ -11,8 +11,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/animeCardView"
-        android:layout_width="105dp"
-        android:layout_height="180dp"
+        android:layout_width="100dp"
+        android:layout_height="175dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,6 +25,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/subindicator"
+            android:layout_width="35dp"
+            android:layout_height="25dp"
+            android:text="Sub"
+            android:textColor="#ffffff"
+            android:textSize="11sp"
+            android:gravity="center"
+            android:fontFamily="@font/the_last_suriken"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/sub_indicator"/>
+        <TextView
+            android:id="@+id/dubindicator"
+            android:layout_width="35dp"
+            android:layout_height="25dp"
+            android:text="Dub"
+            android:textColor="#ffffff"
+            android:textSize="11sp"
+            android:gravity="center"
+            android:fontFamily="@font/the_last_suriken"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/dub_indicator"/>
+
     </androidx.cardview.widget.CardView>
 
     <TextView

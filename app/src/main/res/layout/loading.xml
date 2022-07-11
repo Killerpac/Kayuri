@@ -8,12 +8,12 @@
     android:id="@+id/loading"
     android:visibility="gone"
     style="@android:style/Widget.Material.ProgressBar.Large"
-    android:progressTint="#ff80"
+    android:progressTint="@color/secondary_background"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     android:indeterminate="true"
-    android:indeterminateTint="#ff80"
+    android:indeterminateTint="@color/secondary_background"
     xmlns:android="http://schemas.android.com/apk/res/android" />
 </merge>

@@ -1,20 +1,20 @@
 package net.sanic.Kayuri.ui.main.favourites
 
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
+import com.google.android.material.transition.MaterialFadeThrough
+import net.sanic.Kayuri.MainActivity
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentFavouriteBinding
 import net.sanic.Kayuri.databinding.FragmentSearchBinding
@@ -44,6 +44,7 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        shownavbar(View.VISIBLE)
         setTransitions(view = requireView())
         setObserver()
     }
@@ -63,15 +64,14 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
     private fun setTransitions(view: View) {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            drawingViewId = R.id.navHostFragmentContainer
+        enterTransition = MaterialElevationScale(true).apply {
             duration = 300
-            scrimColor = Color.TRANSPARENT
-            fadeMode = MaterialContainerTransform.FADE_MODE_THROUGH
-            startContainerColor =
-                ContextCompat.getColor(view.context, android.R.color.transparent)
-            endContainerColor =
-                ContextCompat.getColor(view.context, android.R.color.transparent)
+        }
+        exitTransition = MaterialFadeThrough().apply {
+            duration = 300
+        }
+        reenterTransition = MaterialFadeThrough().apply {
+            duration = 300
         }
     }
 
@@ -81,6 +81,10 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
         }
     }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        shownavbar(View.VISIBLE)
+        super.onViewStateRestored(savedInstanceState)
+    }
 
     private fun setAdapters(){
         favouriteController = FavouriteController(this)
@@ -145,6 +149,7 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
     }
 
     override fun animeTitleClick(model: FavouriteModel, sharedTitle: View, sharedImage: View) {
+        shownavbar(View.GONE)
         val extras = FragmentNavigatorExtras(
             sharedTitle to resources.getString(R.string.shared_title),
             sharedImage to resources.getString(R.string.shared_image)
@@ -156,6 +161,26 @@ class FavouriteFragment: Fragment(), FavouriteController.EpoxySearchAdapterCallb
                 animeImageUrl = model.imageUrl!!
             ), extras
         )
+    }
+
+//    private fun setuphidehavbaronscroll(){
+//        favouriteBinding.recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                if(recyclerView.scrollState == RecyclerView.SCROLL_STATE_DRAGGING){
+//                    if(dy > 10 )
+//                    {
+//                        shownavbar(View.GONE,true)
+//                    }
+//                    else if(dy < -15 ){
+//                        shownavbar(View.VISIBLE,true)
+//                    }
+//                }
+//            }
+//        })
+//    }
+
+    private fun shownavbar(visibility:Int,transition:Boolean = false){
+        (requireActivity() as MainActivity).barvisibility(visibility)
     }
 
     override fun onClick(v: View?) {

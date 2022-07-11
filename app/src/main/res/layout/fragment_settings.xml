@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/motionLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/motionLayout"
     android:transitionName="@string/settings_transition"
-    xmlns:tools="http://schemas.android.com/tools">
+    app:layoutDescription="@xml/fragment_settings_scene">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/topView"
@@ -42,74 +43,74 @@
                 tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
             <TextView
+                android:id="@+id/toolbarText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/anime_title"
-                android:gravity="center_vertical"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/back"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="20dp"
-                android:ellipsize="end"
+                android:layout_marginEnd="10dp"
                 android:alpha="0"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
                 android:maxLines="1"
                 android:text="@string/settings"
-                android:id="@+id/toolbarText"
-                />
+                android:textColor="@color/anime_title"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/back"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:id="@+id/header"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:fontFamily="@font/work_sans_medium"
-        android:orientation="vertical"
-        android:paddingLeft="30dp"
-        android:paddingTop="10dp"
-        android:paddingRight="30dp"
-        android:paddingBottom="10dp"
-        android:text="@string/settings"
-        android:textColor="@color/favourite_header"
-        android:textSize="28sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topView" />
-
     <ScrollView
+        android:id="@+id/settingsscroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/settingsscroll"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintTop_toBottomOf="@id/topView"
         app:layout_constraintVertical_bias="1.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:paddingBottom="20dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:id="@+id/header"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:fontFamily="@font/gotham"
+                android:orientation="vertical"
+                android:paddingLeft="30dp"
+                android:paddingTop="10dp"
+                android:paddingRight="30dp"
+                android:paddingBottom="10dp"
+                android:text="@string/settings"
+                android:textColor="@color/favourite_header"
+                android:textSize="28sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/logo"
                 android:layout_width="152dp"
                 android:layout_height="138dp"
+                android:padding="15dp"
                 android:src="@drawable/stream"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/header" />
 
             <TextView
                 android:id="@+id/appName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/the_last_suriken"
                 android:gravity="center"
                 android:text="@string/app_name"
-                android:fontFamily="@font/work_sans_medium"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -131,32 +132,23 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:gravity="center"
                 android:fontFamily="@font/work_sans"
+                android:gravity="center"
                 android:text="@string/large_disc"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
                 app:layout_constraintTop_toBottomOf="@id/littleDisc" />
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:fontFamily="@font/work_sans"
-                app:layout_constraintTop_toBottomOf="@id/largeDisc"
-                android:id="@+id/dllocation"
-                android:text="@string/dllocation"
-                android:layout_marginTop="10dp"
-                app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/nightModeContainer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="36dp"
+                android:background="@drawable/container_bg"
+                android:padding="15dp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@id/dllocation">
+                app:layout_constraintTop_toBottomOf="@id/largeDisc">
 
                 <TextView
                     android:id="@+id/nightModeText"
@@ -172,9 +164,9 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/work_sans"
                     android:text="@string/switch_between_light_dark_theme"
                     android:textSize="12sp"
-                    android:fontFamily="@font/work_sans"
                     app:layout_constraintEnd_toStartOf="@id/nightModeRadioButton"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/nightModeText" />
@@ -196,6 +188,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/container_bg"
+                android:padding="15dp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
                 app:layout_constraintTop_toBottomOf="@id/nightModeContainer">
@@ -214,9 +208,9 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/work_sans"
                     android:text="@string/toggle_pip_mode"
                     android:textSize="12sp"
-                    android:fontFamily="@font/work_sans"
                     app:layout_constraintEnd_toStartOf="@id/pipRadioButton"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/pictureInPictureText" />
@@ -234,64 +228,24 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/google_server"
+                android:id="@+id/serverholder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/container_bg"
+                android:padding="15dp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
                 app:layout_constraintTop_toBottomOf="@id/pictureInPictureContainer">
 
                 <TextView
-                    android:id="@+id/googelservertext"
+                    android:id="@+id/servertext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/Google_Server"
+                    android:text="@string/servertext"
                     android:textColor="@color/favourite_header"
                     android:textSize="20sp"
-                    app:layout_constraintEnd_toStartOf="@id/googletoogle"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Toogle_Google_Server"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/work_sans"
-                    app:layout_constraintEnd_toStartOf="@id/googletoogle"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/googelservertext" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/googletoogle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/googelservertext"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="TouchTargetSizeCheck" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/sb_server"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-                app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@id/google_server">
-
-                <TextView
-                    android:id="@+id/sbstreamtxt"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sbstreamhead"
-                    android:textColor="@color/favourite_header"
-                    android:textSize="20sp"
-                    app:layout_constraintEnd_toStartOf="@id/sbstreamtoogle"
+                    app:layout_constraintEnd_toStartOf="@id/servertoogle"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -299,22 +253,21 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/work_sans"
-                    android:text="@string/sbstreamtext"
+                    android:text="@string/servertextdesc"
                     android:textSize="12sp"
-                    app:layout_constraintEnd_toStartOf="@id/sbstreamtoogle"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sbstreamtxt" />
+                    app:layout_constraintEnd_toStartOf="@id/servertoogle"
+                    app:layout_constraintStart_toStartOf="@id/serverholder"
+                    app:layout_constraintTop_toBottomOf="@id/servertext" />
 
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/sbstreamtoogle"
+                <Button
+                    android:id="@+id/servertoogle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/sbstreamtxt"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="TouchTargetSizeCheck" />
-
+                    android:background="@null"
+                    app:layout_constraintEnd_toEndOf="@id/serverholder"
+                    app:layout_constraintStart_toEndOf="@id/servertext"
+                    app:layout_constraintTop_toTopOf="@id/servertext"
+                    tools:ignore="SpeakableTextPresentCheck" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -322,9 +275,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/container_bg"
+                android:padding="15dp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@id/sb_server">
+                app:layout_constraintTop_toBottomOf="@id/serverholder">
 
                 <TextView
                     android:id="@+id/controlstext"
@@ -340,9 +295,9 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/work_sans"
                     android:text="@string/controlstext"
                     android:textSize="12sp"
-                    android:fontFamily="@font/work_sans"
                     app:layout_constraintEnd_toStartOf="@id/toogleadvance"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/controlstext" />
@@ -360,53 +315,14 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/qualitytoogle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/advancecontrols"
-                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-                app:layout_constraintStart_toStartOf="@id/guidelineStart">
-
-                <TextView
-                    android:id="@+id/qualitytoogletext"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/favourite_header"
-                    android:textSize="20sp"
-                    android:text="@string/qualitytoogle"
-                    app:layout_constraintEnd_toStartOf="@id/button"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/qualitytext"
-                    android:textSize="12sp"
-                    android:fontFamily="@font/work_sans"
-                    app:layout_constraintEnd_toStartOf="@id/button"
-                    app:layout_constraintStart_toStartOf="@id/qualitytoogle"
-                    app:layout_constraintTop_toBottomOf="@id/qualitytoogletext"/>
-
-                <Button
-                    android:id="@+id/button"
-                    android:layout_width="55dp"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:text="@string/qualitychoose"
-                    app:layout_constraintEnd_toEndOf="@id/qualitytoogle"
-                    app:layout_constraintStart_toEndOf="@id/qualitytoogletext"
-                    app:layout_constraintTop_toTopOf="@id/qualitytoogle" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/container_bg"
+                android:padding="15dp"
                 app:layout_constraintEnd_toStartOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@id/qualitytoogle">
+                app:layout_constraintTop_toBottomOf="@id/advancecontrols">
 
                 <TextView
                     android:id="@+id/textView"
@@ -462,4 +378,4 @@
     </ScrollView>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>

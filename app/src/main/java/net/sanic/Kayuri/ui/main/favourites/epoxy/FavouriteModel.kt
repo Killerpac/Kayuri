@@ -42,20 +42,32 @@ abstract class FavouriteModel : EpoxyModelWithHolder<FavouriteModel.MovieHolder>
             "${animeImageTransition}_${favouriteModel.imageUrl}"
         holder.animeImageView.transitionName = animeImageTransition
 
+        if(favouriteModel.animeName!!.endsWith("(Dub)",true)) {
+            holder.dubindicator.visibility = View.VISIBLE
+            holder.subindicator.visibility = View.GONE
+        }else{
+            holder.dubindicator.visibility = View.GONE
+            holder.subindicator.visibility = View.VISIBLE
+        }
+
     }
     class MovieHolder : EpoxyHolder(){
-        lateinit var recyclerAnimeCommonBinding: RecyclerAnimeCommonBinding
+        lateinit var commonBinding: RecyclerAnimeCommonBinding
         lateinit var animeImageView: AppCompatImageView
         lateinit var animeTitle: TextView
         lateinit var releasedDate: TextView
         lateinit var root: ConstraintLayout
+        lateinit var dubindicator: TextView
+        lateinit var subindicator: TextView
 
         override fun bindView(itemView: View) {
-            recyclerAnimeCommonBinding = RecyclerAnimeCommonBinding.bind(itemView)
-            animeImageView = recyclerAnimeCommonBinding.animeImage
-            animeTitle = recyclerAnimeCommonBinding.animeTitle
-            releasedDate = recyclerAnimeCommonBinding.releasedDate
-            root = recyclerAnimeCommonBinding.getRoot()
+            commonBinding = RecyclerAnimeCommonBinding.bind(itemView)
+            animeImageView = commonBinding.animeImage
+            animeTitle = commonBinding.animeTitle
+            releasedDate = commonBinding.releasedDate
+            root = commonBinding.root
+            dubindicator = commonBinding.dubindicator
+            subindicator = commonBinding.subindicator
         }
 
     }

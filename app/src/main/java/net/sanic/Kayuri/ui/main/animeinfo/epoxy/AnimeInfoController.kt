@@ -1,73 +1,40 @@
 package net.sanic.Kayuri.ui.main.animeinfo.epoxy
 
-import android.Manifest
-import android.app.Activity
-import android.app.AlertDialog
-import android.app.DownloadManager
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
-import android.os.Environment
 import android.view.View
-import androidx.core.app.ActivityCompat
 import com.airbnb.epoxy.TypedEpoxyController
-import com.google.android.material.snackbar.Snackbar
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableObserver
-import io.realm.RealmList
 import net.sanic.Kayuri.R
-import net.sanic.Kayuri.ui.main.player.EpisodeRepository
+import net.sanic.Kayuri.ui.main.animeinfo.AnimeInfoRepository
 import net.sanic.Kayuri.ui.main.player.VideoPlayerActivity
-import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.EpisodeModel
-import net.sanic.Kayuri.utils.parser.HtmlParser
-import net.sanic.Kayuri.utils.parser.extractors.gogoplay
-import okhttp3.ResponseBody
+import net.sanic.Kayuri.utils.model.RecentlyPlayed
 import timber.log.Timber
 
 
 class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
     var animeName: String = ""
-    var quality:RealmList<String> = RealmList()
-    private var compositeDisposable = CompositeDisposable()
-    private val episodeRepository = EpisodeRepository()
-    private val READ_STORAGE_PERMISSION_REQUEST_CODE = 41
+    var imageurl:String = ""
+    var categoryurl:String = ""
     private lateinit var isWatchedHelper: net.sanic.Kayuri.utils.helper.WatchedEpisode
-    private lateinit var load:AlertDialog
-    private lateinit var id:String
+    private val repo = AnimeInfoRepository()
     override fun buildModels(data: ArrayList<EpisodeModel>?) {
-        data?.forEach {
-            EpisodeModel_()
-                .id(it.episodeurl)
-                .episodeModel(it)
-                .clickListener { model, _, clickedView, _ ->
-                    when(clickedView.id) {
-                        R.id.cardView ->  startVideoActivity(model.episodeModel(), clickedView)
-                        R.id.downloadbutton -> {
-                            if(!checkPermissionForReadExtertalStorage(clickedView))
-                            {
-                                requestPermissionForReadExtertalStorage(clickedView)
-                            }
-                            else {
-                                downloadshit(model.episodeModel(), clickedView)
-                                   val shit = AlertDialog.Builder(clickedView.context,R.style.RoundedCornersDialog).apply {
-                                    setView(R.layout.load)
-                                    setCancelable(false)
-                                }
-                                load = shit.create()
-                                load.show()
+        data?.forEach{
+                EpisodeModel_()
+                    .id(it.episodeurl)
+                    .episodeModel(it)
+                    .clickListener { model, _, clickedView, _ ->
+                        when(clickedView.id) {
+                            R.id.cardView ->  {
+                                playedEpisode(model.episodeModel)
+                                startVideoActivity(model.episodeModel(), clickedView)
                             }
                         }
                     }
-
-                }
-                .spanSizeOverride { totalSpanCount, _, _ ->
-                    totalSpanCount / totalSpanCount
-                }
-                .watchedProgress(isWatchedHelper.getWatchedDuration(it.episodeurl.hashCode()))
-                .addTo(this)
+                    .spanSizeOverride { totalSpanCount, _, _ ->
+                        totalSpanCount / totalSpanCount
+                    }
+                    .watchedProgress(isWatchedHelper.getWatchedDuration(it.episodeurl.hashCode()))
+                    .addTo(this)
         }
     }
 
@@ -76,8 +43,26 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
         isWatchedHelper = net.sanic.Kayuri.utils.helper.WatchedEpisode(animeName)
     }
 
+    fun setanimeimageandcategoryurl(url:String?,categoryurl:String?) {
+        Timber.e(url)
+        Timber.e(categoryurl)
+        this.imageurl = url.toString()
+        this.categoryurl = categoryurl.toString()
+    }
+
     fun isWatchedHelperUpdated(): Boolean {
         return ::isWatchedHelper.isInitialized
+    }
+
+    fun playedEpisode(episodeModel: EpisodeModel,categoryurl: String = this.categoryurl,animeName: String = this.animeName,imageUrl:String = this.imageurl){
+        val playedmodel= RecentlyPlayed()
+        playedmodel.episodeUrl = episodeModel.episodeurl
+        playedmodel.episodeNumber = episodeModel.episodeNumber.replace("EP","Episode")
+        playedmodel.imageUrl  = imageUrl
+        playedmodel.title = animeName
+        playedmodel.categoryUrl = categoryurl
+        playedmodel.ID = episodeModel.episodeurl.hashCode()
+        repo.addrecentplayed(playedmodel)
     }
 
     private fun startVideoActivity(episodeModel: EpisodeModel, clickedView: View) {
@@ -87,120 +72,5 @@ class AnimeInfoController : TypedEpoxyController<ArrayList<EpisodeModel>>() {
         intent.putExtra("animeName", animeName)
 //        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         clickedView.context.startActivity(intent)
-    }
-
-    private fun downloadshit(episodeModel: EpisodeModel, clickedView: View) {
-
-        fun getEpisodeUrlObserver(type: Int): DisposableObserver<ResponseBody> {
-            return object : DisposableObserver<ResponseBody>() {
-                var urlList:RealmList<String> = RealmList()
-                override fun onComplete() {
-                    var num = 0
-                    if (!urlList.isNullOrEmpty()) {
-                        load.dismiss()
-                        if(quality.first()!!.contains("autop") || quality.first()!!.contains("hlsp")){
-                            Snackbar.make(clickedView.rootView,"No Download Links Found!!",3000).show()
-                            return
-                        }
-                       val dialog = AlertDialog.Builder(clickedView.context,R.style.RoundedCornersDialog)
-                        dialog.apply {
-                            setTitle("Choose Quality")
-                            setSingleChoiceItems(quality.toTypedArray(), 0) { _, which ->
-                                num = which
-                            }
-                            setPositiveButton("OK") { dialog, _ ->
-                                urlList[num]?.let { downloadmanager(it, episodeModel, clickedView) }
-                                dialog.dismiss()
-                            }
-                            setNegativeButton("Cancel") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                        }
-                        dialog.show()
-                    }
-                }
-                override fun onNext(response: ResponseBody) {
-                    when(type) {
-                        C.TYPE_MEDIA_URL -> {
-                            val episodeInfo = gogoplay.parseMediaUrl(response = response.string())
-                            id = Regex("id=([^&]+)").find(episodeInfo.vidcdnUrl!!)!!.value.removePrefix("id=")
-                            episodeInfo.vidcdnUrl?.let {
-                                    compositeDisposable.add(
-                                        episodeRepository.fetchM3u8Url(episodeInfo.vidcdnUrl!!,"pp")
-                                            .subscribeWith(
-                                                getEpisodeUrlObserver(C.TYPE_M3U8_PREP)
-                                            )
-                                    )
-                            }
-                        }
-                        C.TYPE_M3U8_URL -> {
-                            val m3u8Url: Pair<RealmList<String>,RealmList<String>> = gogoplay.parseencrypturls(response = response.string())
-                            Timber.e(m3u8Url.toString())
-                            urlList = m3u8Url.first
-                            quality = m3u8Url.second
-                        }
-                        C.TYPE_M3U8_PREP -> {
-                            val m3u8Pre = gogoplay.parseencryptajax(response = response.string(),id)
-                            compositeDisposable.add(
-                                episodeRepository.m3u8preprocessor("${C.REFERER}encrypt-ajax.php?${m3u8Pre}")
-                                    .subscribeWith(
-                                        getEpisodeUrlObserver(C.TYPE_M3U8_URL)
-                                    )
-                            )
-                        }
-                    }
-                }
-
-                override fun onError(e: Throwable) {
-                    load.dismiss()
-                    Snackbar.make(clickedView.rootView,"An Unexpected Error Occurred.Please Try Again Later",3000).show()
-                }
-
-            }
-        }
-        fun fetchdownloadlink(url: String) {
-            compositeDisposable.add(
-                episodeRepository.fetchEpisodeMediaUrl(url = url).subscribeWith(
-                    getEpisodeUrlObserver(
-                        C.TYPE_MEDIA_URL
-                    )
-                )
-            )
-        }
-        fetchdownloadlink("${C.BASE_URL}${episodeModel.episodeurl}")
-    }
-
-    fun downloadmanager(link:String,episodeModel: EpisodeModel,clickedView: View){
-        Timber.e(link)
-        val download:DownloadManager.Request = DownloadManager.Request(Uri.parse(link))
-            .setTitle("$animeName:${episodeModel.episodeNumber}")
-            .setDescription("Downloading..")
-            .addRequestHeader("Referer",C.REFERER)
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setAllowedOverMetered(true)
-            .setDestinationInExternalPublicDir(Environment.DIRECTORY_MOVIES,"$animeName/${episodeModel.episodeNumber}.mp4")
-        val manager = clickedView.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        manager.enqueue(download)
-        Snackbar.make(clickedView.rootView,"Started Downloading ${episodeModel.episodeNumber} of $animeName",4000).show()
-
-    }
-    private fun checkPermissionForReadExtertalStorage(clickedView: View): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val result: Int =clickedView.context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-            return result == PackageManager.PERMISSION_GRANTED
-        }
-        return false
-    }
-
-    private fun requestPermissionForReadExtertalStorage(clickedView: View) {
-        try {
-            ActivityCompat.requestPermissions(
-                (clickedView.context as Activity?)!!, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                READ_STORAGE_PERMISSION_REQUEST_CODE
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw e
-        }
     }
 }

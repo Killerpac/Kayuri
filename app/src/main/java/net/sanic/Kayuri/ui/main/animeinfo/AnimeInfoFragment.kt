@@ -1,32 +1,31 @@
 package net.sanic.Kayuri.ui.main.animeinfo
 
-import android.animation.TimeInterpolator
-import android.os.Build
 import android.os.Bundle
-import android.os.StrictMode
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.size
 import androidx.fragment.app.Fragment
-import net.sanic.Kayuri.databinding.FragmentAnimeinfoBinding
-import net.sanic.Kayuri.databinding.LoadingBinding
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
+import net.sanic.Kayuri.MainActivity
 import net.sanic.Kayuri.R
+import net.sanic.Kayuri.databinding.FragmentAnimeinfoBinding
+import net.sanic.Kayuri.databinding.LoadingBinding
 import net.sanic.Kayuri.ui.main.animeinfo.epoxy.AnimeInfoController
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Tags.GenreTags
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.AnimeInfoModel
-import timber.log.Timber
 
 class AnimeInfoFragment : Fragment() {
 
@@ -35,7 +34,6 @@ class AnimeInfoFragment : Fragment() {
     private val episodeController by lazy {
         AnimeInfoController()
     }
-
     private lateinit var animeInfoBinding: FragmentAnimeinfoBinding
     private lateinit var loadingBinding: LoadingBinding
 
@@ -46,20 +44,26 @@ class AnimeInfoFragment : Fragment() {
     ): View {
         animeInfoBinding = FragmentAnimeinfoBinding.inflate(inflater, container, false)
         loadingBinding = LoadingBinding.inflate(inflater, animeInfoBinding.root)
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.shared_element)
+        sharedElementEnterTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.shared_element)
         return animeInfoBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setPreviews()
         viewModelFactory = AnimeInfoViewModelFactory(AnimeInfoFragmentArgs.fromBundle(requireArguments()).categoryUrl!!)
         viewModel = ViewModelProvider(this, viewModelFactory).get(AnimeInfoViewModel::class.java)
+        setPreviews()
         setupRecyclerView()
         setObserver()
         transitionListener()
         setOnClickListeners()
     }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        (activity as MainActivity).barvisibility(View.GONE)
+        super.onViewStateRestored(savedInstanceState)
+    }
+
 
 
     private fun setPreviews() {
@@ -83,6 +87,7 @@ class AnimeInfoFragment : Fragment() {
             it?.let {
                 animeInfoBinding.animeInfoRoot.visibility = View.VISIBLE
                 episodeController.setData(it)
+                setupepisodecountcontainer(viewModel.animetotalcount)
             }
         }
 
@@ -93,7 +98,6 @@ class AnimeInfoFragment : Fragment() {
                 loadingBinding.loading.visibility = View.GONE
             }
         }
-
         viewModel.isFavourite.observe(viewLifecycleOwner) {
             if (it) {
                 animeInfoBinding.favourite.setImageDrawable(
@@ -121,7 +125,6 @@ class AnimeInfoFragment : Fragment() {
         animeInfoBinding.animeInfoType.text = animeInfoModel.type
         animeInfoBinding.animeInfoTitle.text = animeInfoModel.animeTitle
         animeInfoBinding.toolbarText.text = animeInfoModel.animeTitle
-
         animeInfoBinding.flowLayout.removeAllViews()
         animeInfoModel.genre.forEach {
             val genreUrl = it.genreUrl
@@ -136,6 +139,7 @@ class AnimeInfoFragment : Fragment() {
             animeInfoBinding.flowLayout.addView(genreView)
         }
         episodeController.setAnime(animeInfoModel.animeTitle)
+        episodeController.setanimeimageandcategoryurl(AnimeInfoFragmentArgs.fromBundle(requireArguments()).animeImageUrl,viewModel.categoryUrl)
         animeInfoBinding.animeInfoSummary.text = animeInfoModel.plotSummary
         animeInfoBinding.favourite.visibility = View.VISIBLE
         animeInfoBinding.animeInfoRoot.visibility = View.VISIBLE
@@ -144,15 +148,46 @@ class AnimeInfoFragment : Fragment() {
         animeInfoBinding.statusLayout.visibility = View.VISIBLE
     }
 
+    private fun setupepisodecountcontainer(count:Int){
+        if (count > 50){
+            val rage:ArrayList<String> = ArrayList()
+            for (i in 1..count step 50){
+                if(i+49>count) {
+                    rage.add("$i - $count")
+                    break
+                }
+                rage.add("$i - ${i + 49}")
+            }
+            val menu = ArrayAdapter(
+                requireContext(),
+                R.layout.textviiew_episoderange,
+                rage
+            )
+            animeInfoBinding.filterMenu.hint = rage.first()
+            animeInfoBinding.filterMenu.setAdapter(menu)
+            animeInfoBinding.episoderangelayout.visibility = View.VISIBLE
+            animeInfoBinding.filterMenu.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    viewModel.episodestartcount =  s.toString().substringBefore(" -")
+                    viewModel.episodeendcount = s.toString().substringAfter("- ")
+                    viewModel.fetchAnimeInfo()
+                    }
+                override fun afterTextChanged(s: Editable?) {
+                }
+
+            })
+        }
+    }
     private fun setupRecyclerView(){
-        episodeController.spanCount = Utils.calculateNoOfColumns(requireContext(), 165f)
+        episodeController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
         animeInfoBinding.animeInfoRecyclerView.adapter = episodeController.adapter
         val itemOffsetDecoration = ItemOffsetDecoration(context, R.dimen.episode_offset_left)
         animeInfoBinding.animeInfoRecyclerView.addItemDecoration(itemOffsetDecoration)
         animeInfoBinding.animeInfoRecyclerView.apply {
-            layoutManager = GridLayoutManager(context,Utils.calculateNoOfColumns(requireContext(), 165f))
+            layoutManager = GridLayoutManager(context,Utils.calculateNoOfColumns(requireContext(), 150f))
             (layoutManager as GridLayoutManager).spanSizeLookup = episodeController.spanSizeLookup
-
         }
     }
 
@@ -167,11 +202,9 @@ class AnimeInfoFragment : Fragment() {
                 ) {
 
                 }
-
                 override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
                     animeInfoBinding.topView.cardElevation = 0F
                 }
-
                 override fun onTransitionChange(
                     p0: MotionLayout?,
                     startId: Int,
@@ -186,10 +219,8 @@ class AnimeInfoFragment : Fragment() {
                         animeInfoBinding.toolbarText.alpha = (1 - progress)
                     }
                 }
-
                 override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
                 }
-
             }
         )
     }

@@ -42,6 +42,15 @@ abstract class AnimeCommonModel : EpoxyModelWithHolder<AnimeCommonModel.MovieHol
             "${animeImageTransition}_${animeMetaModel.imageUrl}_${animeMetaModel.ID}"
         holder.animeImageView.transitionName = animeImageTransition
 
+        //sub dub indication
+        if(animeMetaModel.title.endsWith("(Dub)",true)) {
+            holder.dubindicator.visibility = View.VISIBLE
+            holder.subindicator.visibility = View.GONE
+        }else{
+            holder.dubindicator.visibility = View.GONE
+            holder.subindicator.visibility = View.VISIBLE
+        }
+
     }
     class MovieHolder : EpoxyHolder(){
         lateinit var commonBinding: RecyclerAnimeCommonBinding
@@ -49,6 +58,8 @@ abstract class AnimeCommonModel : EpoxyModelWithHolder<AnimeCommonModel.MovieHol
         lateinit var animeTitle: TextView
         lateinit var releasedDate: TextView
         lateinit var root: ConstraintLayout
+        lateinit var dubindicator: TextView
+        lateinit var subindicator: TextView
 
         override fun bindView(itemView: View) {
             commonBinding = RecyclerAnimeCommonBinding.bind(itemView)
@@ -56,6 +67,8 @@ abstract class AnimeCommonModel : EpoxyModelWithHolder<AnimeCommonModel.MovieHol
             animeTitle = commonBinding.animeTitle
             releasedDate = commonBinding.releasedDate
             root = commonBinding.root
+            dubindicator = commonBinding.dubindicator
+            subindicator = commonBinding.subindicator
         }
 
     }

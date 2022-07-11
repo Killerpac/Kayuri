@@ -7,10 +7,10 @@
 
     <TextView
         android:id="@+id/genre"
+        android:background="@drawable/container_bg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
-        android:background="@drawable/shape_sub_dub"
         android:fontFamily="@font/work_sans"
         android:minWidth="8dp"
         android:minHeight="8dp"

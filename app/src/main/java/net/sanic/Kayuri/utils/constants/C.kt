@@ -26,6 +26,7 @@ class C {
         const val TYPE_POPULAR_ANIME =2
         const val TYPE_RECENT_DUB = 3
         const val TYPE_GENRE = 4
+        const val TYPE_PLAYED = 9
         const val TYPE_MOVIE = 5
         const val TYPE_NEW_SEASON = 6
         const val TYPE_DEFAULT= -1
@@ -41,11 +42,12 @@ class C {
 
 
         const val GENRE_POSITION = 0
-        const val NEWEST_SEASON_POSITION = 3
-        const val RECENT_SUB_POSITION = 1
-        const val RECENT_DUB_POSITION = 2
-        const val POPULAR_POSITION = 5
-        const val MOVIE_POSITION = 4
+        const val PLAYED_POSITION = 1
+        const val NEWEST_SEASON_POSITION = 4
+        const val RECENT_SUB_POSITION = 2
+        const val RECENT_DUB_POSITION = 3
+        const val POPULAR_POSITION = 6
+        const val MOVIE_POSITION = 5
 
         //Episode URL Type
         const val TYPE_MEDIA_URL = 100
@@ -64,9 +66,10 @@ class C {
         const val TYPE_GENRE_UPDATE = 3001
 
         //Network Requests Header
-        const val USER_AGENT = "Mozilla/5.0 (Linux; Android 8.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Focus/7.0.13 Chrome/70.0.3538.110 Mobile Safari/537.36"
+        const val USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36"
         const val ORIGIN = "https://gogoanime.gg/"
-        const val  REFERER = "https://goload.pro/"
+        const val REFERER = "https://goload.pro/"
+        const val SERVER = 0
 
         //Preferred Quality
         const val QUALITY = "Auto"

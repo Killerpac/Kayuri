@@ -34,6 +34,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource.InvalidResponseCodeException
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.error_screen_video_player.view.*
 import kotlinx.android.synthetic.main.exo_player_custom_controls.*
@@ -45,15 +46,16 @@ import net.sanic.Kayuri.R
 import net.sanic.Kayuri.utils.constants.C.Companion.ERROR_CODE_DEFAULT
 import net.sanic.Kayuri.utils.constants.C.Companion.NO_INTERNET_CONNECTION
 import net.sanic.Kayuri.utils.constants.C.Companion.RESPONSE_UNKNOWN
+import net.sanic.Kayuri.utils.exoplayer.ExoCache
+import net.sanic.Kayuri.utils.exoplayer.OnSwipeTouchListener
 import net.sanic.Kayuri.utils.model.Content
 import net.sanic.Kayuri.utils.preference.PreferenceHelper
-import okhttp3.Cache
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.dnsoverhttps.DnsOverHttps
 import timber.log.Timber
-import java.io.File
 import java.net.InetAddress
+
 
 class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     AudioManager.OnAudioFocusChangeListener {
@@ -70,7 +72,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     private var trackSelector: DefaultTrackSelector? = null
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaSessionConnector: MediaSessionConnector
-
     private lateinit var audioManager: AudioManager
     private lateinit var mFocusRequest: AudioFocusRequest
     private lateinit var content: Content
@@ -80,13 +81,12 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     private var isFullScreen = false
     private var isVideoPlaying: Boolean = false
     private var quality:RealmList<String> = RealmList()
-
+    private var animecache = ExoCache
     private val speeds = arrayOf(0.25f, 0.5f, 1f, 1.25f, 1.5f, 2f)
     private val showableSpeed = arrayOf("0.25x", "0.50x", "1x", "1.25x", "1.50x", "2x")
     private var checkedItem = 2
     private var selectedSpeed = 2
     private var eandex = 0
-    private var dtybit = false
     private var tempbit = false
 
     override fun onCreateView(
@@ -124,6 +124,10 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     private fun initializePlayer() {
         trackSelectionFactory = AdaptiveTrackSelection.Factory()
         trackSelector = DefaultTrackSelector(requireContext())
+        trackSelector!!.setParameters(
+            trackSelector!!
+                .buildUponParameters()
+                .setAllowVideoMixedMimeTypeAdaptiveness(true))
         player = ExoPlayer.Builder(requireContext()).setTrackSelector(trackSelector!!)
             .setSeekBackIncrementMs(10000)
             .setSeekForwardIncrementMs(10000)
@@ -167,12 +171,14 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         if(lastPath!!.contains("m3u8"))
         {
             tempbit=true
-            val appCache = Cache(File("cacheDir", "okhttpcache"), 10 * 1024 * 1024)
-            val bootstrapClient = OkHttpClient.Builder().cache(appCache).build()
+            val bootstrapClient = OkHttpClient.Builder().build()
             val client:OkHttpClient = if (PreferenceHelper.sharedPreference.getdns()){
                 val dns = DnsOverHttps.Builder().client(bootstrapClient)
-                    .url("https://security.cloudflare-dns.com/dns-query".toHttpUrl())
-                    .bootstrapDnsHosts(InetAddress.getByName("1.1.1.1"))
+                    .url("https://dns.google/dns-query".toHttpUrl())
+                    .bootstrapDnsHosts(InetAddress.getByName("8.8.8.8"))
+                    .post(true)
+                    .resolvePublicAddresses(true)
+                    .resolvePrivateAddresses(true)
                     .build()
                 bootstrapClient.newBuilder().dns(dns).build()
             } else{
@@ -181,10 +187,14 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
             val dataSource = {
                 val dataSource = OkHttpDataSource.Factory(client)
                     .setUserAgent(requests.USER_AGENT)
-                    .setDefaultRequestProperties(hashMapOf("Referer" to requests.REFERER))
+                    .setDefaultRequestProperties(hashMapOf("Referer" to PreferenceHelper.sharedPreference.getReferrer()))
                 dataSource.createDataSource()
             }
-            return HlsMediaSource.Factory(dataSource)
+            val cacheDataSourceFactory = CacheDataSource.Factory()
+                .setCache(animecache.getcacheinstance(requireContext()))
+                .setUpstreamDataSourceFactory(dataSource)
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+            return HlsMediaSource.Factory(cacheDataSourceFactory)
                     .setAllowChunklessPreparation(true)
                     .createMediaSource(MediaItem.fromUri(uri))
         }
@@ -192,10 +202,14 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
            val dataSource = {
                 val dataSource: DataSource.Factory = DefaultHttpDataSource.Factory()
                     .setUserAgent(requests.USER_AGENT)
-                    .setDefaultRequestProperties(hashMapOf("Referer" to requests.REFERER))
+                    .setDefaultRequestProperties(hashMapOf("Referer" to PreferenceHelper.sharedPreference.getReferrer()))
                 dataSource.createDataSource()
             }
-            return ProgressiveMediaSource.Factory(dataSource)
+            val cacheDataSourceFactory = CacheDataSource.Factory()
+                .setCache(animecache.getcacheinstance(requireContext()))
+                .setUpstreamDataSourceFactory(dataSource)
+                .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+            return ProgressiveMediaSource.Factory(cacheDataSourceFactory)
                     .createMediaSource(MediaItem.fromUri(uri))
         }
 
@@ -219,7 +233,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         } ?: kotlin.run {
             previousEpisode.visibility = View.GONE
         }
-        if(!content.url.isNullOrEmpty()){
+        if(!content.url.isEmpty()){
             updateVideoUrl(content.url,content.index)
         }else{
             showErrorLayout(show = true, errorCode = RESPONSE_UNKNOWN, errorMsgId = R.string.server_error)
@@ -234,19 +248,12 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
 
     private fun loadVideo(seekTo: Long? = 0,index: Int, playWhenReady: Boolean = true) {
         val links:ArrayList<MediaSource> = ArrayList()
-        val preferredquality = PreferenceHelper.sharedPreference.getpreferredquality()
         showLoading(true)
         showErrorLayout(false, 0, 0)
         videoUrl.forEach {
             links.add(buildMediaSource(Uri.parse(it)))
         }
-        if(preferredquality != "Auto" && quality.indexOf(preferredquality) != -1 && !dtybit)
-        {
-            player.setMediaSource(links[quality.indexOf(preferredquality)])
-        }
-        else{
-            player.setMediaSource(links[index])
-        }
+        player.setMediaSource(links[index])
         player.prepare()
         eandex = index
         seekTo?.let {
@@ -321,7 +328,7 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     }
 
     private fun refreshData() {
-        if (::content.isInitialized && !content.url.isNullOrEmpty()) {
+        if (::content.isInitialized && !content.url.isEmpty()) {
             loadVideo(player.currentPosition, content.index , true)
         } else {
             (activity as VideoPlayerActivity).refreshM3u8Url()
@@ -331,7 +338,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
 
 
     private fun playNextEpisode() {
-        dtybit = false
         saveWatchedDuration()
         playOrPausePlayer(playWhenReady = false, loseAudioFocus = false)
         showLoading(true)
@@ -340,7 +346,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     }
 
     private fun playPreviousEpisode() {
-        dtybit = false
         saveWatchedDuration()
         playOrPausePlayer(playWhenReady =false, loseAudioFocus = false)
         showLoading(true)
@@ -404,7 +409,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
     private fun showDialog() {
         if(tempbit){
             var mappedTrackInfo = trackSelector?.currentMappedTrackInfo
-
             try {
                 trackSelector?.let {
                     TrackSelectionDialogBuilder(
@@ -415,7 +419,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
                     ).setTheme(R.style.RoundedCornersDialog).build().show()
                 }
             } catch (ignored: java.lang.NullPointerException) {
-
             }
         }
         else {
@@ -428,7 +431,6 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
                     eandex = which
                 }
                 setPositiveButton("OK") { dialog, _ ->
-                    dtybit = true
                     loadVideo(player.currentPosition, i)
                     dialog.dismiss()
                 }
@@ -440,6 +442,20 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
             dialog.show()
         }
     }
+
+    override fun onTracksChanged(
+        trackGroups: TrackGroupArray,
+        trackSelections: TrackSelectionArray
+    ) {
+        try {
+            val videoQuality = trackSelections.get(0)?.getFormat(0)?.height.toString() + "p"
+            //TODO Change controls for quality
+            exo_track_selection_view.text = videoQuality
+        } catch (ignore: NullPointerException) {
+        }
+
+    }
+
 
     // set playback speed for exoplayer
     private fun setPlaybackSpeed(speed: Float) {
@@ -481,23 +497,9 @@ class VideoPlayerFragment : Fragment(), View.OnClickListener, Player.Listener,
         dialog.show()
     }
 
-    override fun onTracksChanged(
-        trackGroups: TrackGroupArray,
-        trackSelections: TrackSelectionArray
-    ) {
-        try {
-            val videoQuality = trackSelections.get(0)?.getFormat(0)?.height.toString() + "p"
-            //TODO Change controls for quality
-            exo_track_selection_view.text = videoQuality
-        } catch (ignore: NullPointerException) {
-        }
-
-    }
-
     override fun onPlayerError(error: PlaybackException) {
         isVideoPlaying = false
         val cause = error.cause
-        dtybit = false
         if (cause is HttpDataSource.HttpDataSourceException) {
             // An HTTP error occurred.
             val httpError: HttpDataSource.HttpDataSourceException = cause

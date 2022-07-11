@@ -9,7 +9,7 @@ apply plugin: 'realm-android'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -23,9 +23,9 @@ android {
     defaultConfig {
         applicationId "net.sanic.Kayuri"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 8
-        versionName "1.8.0"
+        versionName "1.8.1"
         vectorDrawables.useSupportLibrary = true
         archivesBaseName = "Kayuri-v$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -78,6 +78,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'com.ms-square:expandableTextView:0.1.4'
     implementation 'kr.co.prnd:readmore-textview:1.0.0'
+    implementation 'com.google.android.material:material:1.6.1'
 
     //Card View
     implementation "androidx.cardview:cardview:1.0.0"
@@ -120,8 +121,11 @@ dependencies {
     implementation 'com.google.android.exoplayer:extension-mediasession:2.17.1'
     implementation 'com.google.android.exoplayer:extension-okhttp:2.17.1'
 
-    //Expandable TextView
-    implementation 'com.ms-square:expandableTextView:0.1.4'
+    //sheets
+    implementation("com.maxkeppeler.sheets:input:2.2.8")
+
+    //vertical seekbar
+    implementation 'com.github.lukelorusso:VerticalSeekBar:1.2.7'
 
     //Navigation Library
     def nav_version = "2.3.5"

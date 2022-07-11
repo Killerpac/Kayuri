@@ -1,29 +1,32 @@
 package net.sanic.Kayuri.ui.main.home.epoxy
 
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.airbnb.epoxy.*
+import com.airbnb.epoxy.EpoxyAttribute
+import com.airbnb.epoxy.EpoxyHolder
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.*
 import net.sanic.Kayuri.utils.Tags.GenreTags
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
 import net.sanic.Kayuri.utils.model.GenreModel
+import net.sanic.Kayuri.utils.model.RecentlyPlayed
 import org.apmem.tools.layouts.FlowLayout
 
-
 @EpoxyModelClass(layout = R.layout.recycler_anime_recent_sub_dub_2)
+
 abstract class AnimeSubDubModel2 : EpoxyModelWithHolder<AnimeSubDubModel2.SubDubHolder>(){
 
     @EpoxyAttribute
     lateinit var animeMetaModel: AnimeMetaModel
     @EpoxyAttribute
     lateinit var clickListener: View.OnClickListener
+
 
     override fun bind(holder: SubDubHolder) {
         Glide.with(holder.animeImageView.context).load(animeMetaModel.imageUrl)
@@ -132,7 +135,6 @@ abstract class AnimeMiniHeaderModel : EpoxyModelWithHolder<AnimeMiniHeaderModel.
         holder.animeType.text = typeName
     }
 
-
     class AnimeMiniHeaderHolder : EpoxyHolder(){
 
         lateinit var animeType: TextView
@@ -145,6 +147,53 @@ abstract class AnimeMiniHeaderModel : EpoxyModelWithHolder<AnimeMiniHeaderModel.
 
     }
 
+}
+
+@EpoxyModelClass(layout = R.layout.recycler_recentlyplayed)
+abstract class AnimeRecentlyPlayedModel : EpoxyModelWithHolder<AnimeRecentlyPlayedModel.RecentlyPlayedHolder>(){
+
+    @EpoxyAttribute
+    lateinit var recentlyplayedmodel:RecentlyPlayed
+    @EpoxyAttribute
+    lateinit var clickListener: View.OnClickListener
+
+    override fun bind(holder: RecentlyPlayedHolder) {
+        super.bind(holder)
+            Glide.with(holder.animeImageView.context).load(recentlyplayedmodel.imageUrl)
+                .into(holder.animeImageView)
+            holder.animeTitle.text = recentlyplayedmodel.title
+            holder.animeEpisode.text = recentlyplayedmodel.episodeNumber
+            holder.animeImageView.setOnClickListener(clickListener)
+            holder.animeTitle.setOnClickListener(clickListener)
+
+            //Set Shared Element for Anime Title
+            var animeTitleTransition = holder.animeTitle.context.getString(R.string.shared_title)
+            animeTitleTransition =
+                "${animeTitleTransition}_${recentlyplayedmodel.title}_${recentlyplayedmodel.ID}_recent"
+            holder.animeTitle.transitionName = animeTitleTransition
+
+            //Set Shared Element for Anime Image
+            var animeImageTransition = holder.animeImageView.context.getString(R.string.shared_image)
+            animeImageTransition =
+                "${animeImageTransition}_${recentlyplayedmodel.imageUrl}_${recentlyplayedmodel.ID}_recent"
+            holder.animeImageView.transitionName = animeImageTransition
+    }
+
+    class RecentlyPlayedHolder : EpoxyHolder() {
+        lateinit var recentlyplayedBinding: RecyclerRecentlyplayedBinding
+        lateinit var animeImageView: AppCompatImageView
+        lateinit var animeCardView: CardView
+        lateinit var animeTitle: TextView
+        lateinit var animeEpisode: TextView
+
+        override fun bindView(itemView: View) {
+            recentlyplayedBinding = RecyclerRecentlyplayedBinding.bind(itemView)
+            animeImageView = recentlyplayedBinding.animeImage
+            animeCardView = recentlyplayedBinding.animeCardView
+            animeTitle = recentlyplayedBinding.animeTitle
+            animeEpisode = recentlyplayedBinding.episodeNumber
+        }
+    }
 }
 
 @EpoxyModelClass(layout = R.layout.tags_genre)

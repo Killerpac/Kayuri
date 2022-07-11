@@ -46,7 +46,6 @@ class NetworkInterface {
     }
 
     interface FetchEpisodeMediaUrl {
-
         @GET
         fun get(
             @HeaderMap header: Map<String, String>,
@@ -64,7 +63,7 @@ class NetworkInterface {
     }
 
     interface FetchM3u8Url {
-        @GET
+       @GET
        @Headers("watchsb:streamsb")
         fun get(
             @HeaderMap header: Map<String, String>,
@@ -74,6 +73,15 @@ class NetworkInterface {
 
     interface  Fetch3u8preprocessor {
         @GET
+        @Headers("X-Requested-With:XMLHttpRequest")
+        fun get(
+            @HeaderMap header: Map<String, String>,
+            @Url url: String
+        ): Observable<ResponseBody>
+    }
+
+    interface  FetchXstreamCdn {
+        @POST
         @Headers("X-Requested-With:XMLHttpRequest")
         fun get(
             @HeaderMap header: Map<String, String>,
@@ -94,7 +102,7 @@ class NetworkInterface {
         @GET(C.EPISODE_LOAD_URL)
         fun get(
             @HeaderMap header: Map<String, String>,
-            @Query("ep_start") startEpisode: Int = 0,
+            @Query("ep_start") startEpisode: String,
             @Query("ep_end") endEpisode: String,
             @Query("id") id: String,
             @Query("default_ep") defaultEp: Int = 0,

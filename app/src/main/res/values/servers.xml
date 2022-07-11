@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="servers">
+        <item>Vidcdn</item>
+        <item>GogoPlay</item>
+        <item>SbPlay</item>
+        <item>XStreamCdn</item>
+    </string-array>
+</resources>

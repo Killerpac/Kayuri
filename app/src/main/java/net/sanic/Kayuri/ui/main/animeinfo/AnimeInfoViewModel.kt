@@ -11,16 +11,17 @@ import net.sanic.Kayuri.utils.model.EpisodeModel
 import net.sanic.Kayuri.utils.model.FavouriteModel
 import net.sanic.Kayuri.utils.parser.HtmlParser
 import okhttp3.ResponseBody
-import org.jetbrains.annotations.Async
-import timber.log.Timber
 
 class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
 
-    private var categoryUrl: String? = null
+    var categoryUrl: String? = null
     private var _animeInfoModel: MutableLiveData<AnimeInfoModel> = MutableLiveData()
     private var _episodeList: MutableLiveData<ArrayList<EpisodeModel>> = MutableLiveData()
     var episodeList: LiveData<ArrayList<EpisodeModel>> = _episodeList
     var animeInfoModel: LiveData<AnimeInfoModel> = _animeInfoModel
+    var episodestartcount = "0"
+    var episodeendcount = "50"
+    var animetotalcount = 0
     private val animeInfoRepository = AnimeInfoRepository()
     private var compositeDisposable = CompositeDisposable()
     private var _isFavourite: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -51,13 +52,14 @@ class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
                     compositeDisposable.add(
                         animeInfoRepository.fetchEpisodeList(
                             id = animeInfoModel.id,
-                            endEpisode = animeInfoModel.endEpisode,
+                            episodestartcount,
+                            episodeendcount,
                             alias = animeInfoModel.alias
                         )
                             .subscribeWith(getAnimeInfoObserver(C.TYPE_EPISODE_LIST))
                     )
                     _isFavourite.value = animeInfoRepository.isFavourite(animeInfoModel.id)
-
+                    animetotalcount = animeInfoModel.endEpisode.toInt()
 
                 } else if (typeValue == C.TYPE_EPISODE_LIST) {
                     _episodeList.value = HtmlParser.fetchEpisodeList(response = response.string())
@@ -66,7 +68,6 @@ class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
             }
 
             override fun onComplete() {
-              //  animeInfoModel.value?.let { animeInfoRepository.searchMalForAnime(it.animeTitle) }
             }
 
             override fun onError(e: Throwable) {
@@ -106,10 +107,6 @@ class AnimeInfoViewModel(categoryUrl: String) : CommonViewModel() {
         )
         _isFavourite.value = true
     }
-
-//    fun setUrl(url: String) {
-//        this.categoryUrl = url
-//    }
 
     override fun onCleared() {
         if (!compositeDisposable.isDisposed) {

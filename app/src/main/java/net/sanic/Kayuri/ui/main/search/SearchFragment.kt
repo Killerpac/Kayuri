@@ -1,31 +1,29 @@
 package net.sanic.Kayuri.ui.main.search
 
 import android.content.Context
-import android.content.res.Configuration
-import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
-import android.view.KeyEvent
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView.OnEditorActionListener
-import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialElevationScale
 import com.google.android.material.transition.MaterialFadeThrough
+import net.sanic.Kayuri.MainActivity
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentSearchBinding
 import net.sanic.Kayuri.databinding.LoadingBinding
@@ -34,6 +32,7 @@ import net.sanic.Kayuri.utils.CommonViewModel2
 import net.sanic.Kayuri.utils.ItemOffsetDecoration
 import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
+import timber.log.Timber
 
 
 class SearchFragment : Fragment(), View.OnClickListener,
@@ -66,8 +65,8 @@ class SearchFragment : Fragment(), View.OnClickListener,
     }
 
     private fun setEditTextListener() {
-        searchBinding.searchEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH || event.action == KeyEvent.ACTION_DOWN) {
+        searchBinding.searchEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyBoard()
                 searchBinding.searchEditText.clearFocus()
                 viewModel.fetchSearchList(v.text.toString().trim())
@@ -75,6 +74,32 @@ class SearchFragment : Fragment(), View.OnClickListener,
             }
             false
         })
+        searchBinding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(count >=2 && before > 0) {
+                    Timber.e(count.toString())
+                    Timber.e(before.toString())
+                    Timber.e(start.toString())
+                    viewModel.fetchSearchList(s.toString().trim())
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+        })
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        shownavbar(View.VISIBLE)
+    }
+
+    private fun shownavbar(visibility:Int,transition:Boolean = false){
+        (requireActivity() as MainActivity).barvisibility(visibility)
     }
 
 
@@ -84,26 +109,21 @@ class SearchFragment : Fragment(), View.OnClickListener,
     private fun setupTransitions(view: View) {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
+        enterTransition = MaterialElevationScale(true).apply {
+            duration = 300
+        }
         exitTransition = MaterialFadeThrough().apply {
             duration = 300
         }
         reenterTransition = MaterialFadeThrough().apply {
             duration = 300
         }
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            drawingViewId = R.id.navHostFragmentContainer
-            duration = 300
-            scrimColor = Color.TRANSPARENT
-            fadeMode = MaterialContainerTransform.FADE_MODE_THROUGH
-            startContainerColor = ContextCompat.getColor(view.context, android.R.color.transparent)
-            endContainerColor = ContextCompat.getColor(view.context, android.R.color.transparent)
-        }
     }
     private fun setAdapters() {
         searchController = SearchController(this)
-        searchController.spanCount = Utils.calculateNoOfColumns(requireContext(), 150f)
+        searchController.spanCount = Utils.calculateNoOfColumns(requireContext(), 140f)
         searchBinding.searchRecyclerView.apply {
-            layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 150f))
+            layoutManager = GridLayoutManager(context, Utils.calculateNoOfColumns(requireContext(), 140f))
             adapter = searchController.adapter
             (layoutManager as GridLayoutManager).spanSizeLookup = searchController.spanSizeLookup
         }
@@ -224,6 +244,7 @@ class SearchFragment : Fragment(), View.OnClickListener,
 
     override fun animeTitleClick(model: AnimeMetaModel, sharedTitle: View, sharedImage: View) {
         hideKeyBoard()
+        shownavbar(View.GONE)
         val extras = FragmentNavigatorExtras(
             sharedTitle to resources.getString(R.string.shared_title),
             sharedImage to resources.getString(R.string.shared_image)

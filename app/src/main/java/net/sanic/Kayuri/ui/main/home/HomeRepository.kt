@@ -9,11 +9,13 @@ import net.sanic.Kayuri.utils.Utils
 import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.model.AnimeMetaModel
 import net.sanic.Kayuri.utils.model.GenreModel
+import net.sanic.Kayuri.utils.model.RecentlyPlayed
 import net.sanic.Kayuri.utils.realm.InitalizeRealm
 import net.sanic.Kayuri.utils.rertofit.NetworkInterface
 import net.sanic.Kayuri.utils.rertofit.RetrofitHelper
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
+import timber.log.Timber
 
 class HomeRepository {
     private var retrofit: Retrofit = RetrofitHelper.getRetrofitInstance()!!
@@ -67,6 +69,30 @@ class HomeRepository {
         }
     }
 
+
+    fun addrecentplayed(model:RecentlyPlayed){
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
+        try {
+            realm.executeTransaction { realm1: Realm ->
+                realm1.insertOrUpdate(model)
+            }
+        }catch (exp:Exception){
+
+        }
+    }
+
+     fun deleteRecentlyPlayedFromRealm(){
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
+        try {
+            realm.executeTransaction { realm1: Realm ->
+                if(realm1.where(RecentlyPlayed::class.java).findAll().size > 10) realm1.where(RecentlyPlayed::class.java).findFirstAsync().deleteFromRealm()
+            }
+        }catch (exp:Exception){
+            Timber.e("Error")
+
+        }
+    }
+
     fun addGenreDataInRealm(genreList: ArrayList<GenreModel>) {
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
 
@@ -89,7 +115,6 @@ class HomeRepository {
 
     fun fetchFromRealm(typeValue: Int): ArrayList<AnimeMetaModel> {
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
-
         val list: ArrayList<AnimeMetaModel> = ArrayList()
         try {
             val results =
@@ -102,9 +127,23 @@ class HomeRepository {
         return list
     }
 
+    fun fetchFromRealmRecentPlayed(): ArrayList<RecentlyPlayed> {
+        val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
+        val list: ArrayList<RecentlyPlayed> = ArrayList()
+        try {
+            val results =
+                realm.where(RecentlyPlayed::class.java).findAll()
+            results?.let {
+                list.addAll(it)
+            }
+        } catch (ignored: Exception) {
+        }
+        list.reverse()
+        return list
+    }
+
     fun fetchGenresFromRealm(): ArrayList<GenreModel> {
         val realm: Realm = Realm.getInstance(InitalizeRealm.getConfig())
-
         val list: ArrayList<GenreModel> = ArrayList()
         try {
             val results = realm.where(GenreModel::class.java).sort("genreName", Sort.ASCENDING)?.findAll()

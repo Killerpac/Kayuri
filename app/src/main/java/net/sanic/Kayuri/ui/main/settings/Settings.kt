@@ -1,7 +1,5 @@
 package net.sanic.Kayuri.ui.main.settings
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,19 +10,20 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.transition.MaterialContainerTransform
-import com.google.android.material.transition.MaterialFadeThrough
+import com.maxkeppeler.sheets.input.InputSheet
+import com.maxkeppeler.sheets.input.type.InputRadioButtons
 import net.sanic.Kayuri.MainActivity
 import net.sanic.Kayuri.R
 import net.sanic.Kayuri.databinding.FragmentSettingsBinding
-import net.sanic.Kayuri.utils.constants.C
 import net.sanic.Kayuri.utils.preference.Preference
 import net.sanic.Kayuri.utils.preference.PreferenceHelper
 
 class Settings : Fragment(), View.OnClickListener {
 
     private lateinit var settingsBinding: FragmentSettingsBinding
+    private val servers = arrayOf("Vidcdn","GogoPlay","SbStream","XStreamCdn")
     private lateinit var rootView: View
-    lateinit var sharesPreference: Preference
+    private lateinit var sharesPreference: Preference
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,30 +37,41 @@ class Settings : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupTransitions(view)
         sharesPreference = PreferenceHelper.sharedPreference
-        settingsBinding.button.text = sharesPreference.getpreferredquality()
+        settingsBinding.servertoogle.text = servers[sharesPreference.getserver()]
         setRadioButtons()
         setOnClickListeners()
         super.onViewCreated(view, savedInstanceState)
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        hidenavbar()
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        hidenavbar()
+        super.onViewStateRestored(savedInstanceState)
+    }
+
+
     private fun setOnClickListeners() {
         settingsBinding.back.setOnClickListener(this)
-        settingsBinding.button.setOnClickListener(this)
+        settingsBinding.servertoogle.setOnClickListener {
+            serversheet()
+        }
     }
     private fun setRadioButtons() {
         settingsBinding.nightModeRadioButton.isChecked = sharesPreference.getNightMode()
         settingsBinding.nightModeRadioButton.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setNightMode(isChecked)
-            (activity as MainActivity).toggleDayNight()
+            (requireActivity() as MainActivity).toggleDayNight()
         }
 
         settingsBinding.pipRadioButton.isChecked = sharesPreference.getPIPMode()
         settingsBinding.pipRadioButton.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setPIPMode(isChecked)
         }
-        settingsBinding.googletoogle.isChecked = sharesPreference.getGoogleServer()
-        settingsBinding.googletoogle.setOnCheckedChangeListener { _, isChecked ->
-            sharesPreference.setGoogleServer(isChecked)
-        }
+
         settingsBinding.toogleadvance.isChecked = sharesPreference.getadvancecontrols()
         settingsBinding.toogleadvance.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setadvancecontrols(isChecked)
@@ -70,20 +80,11 @@ class Settings : Fragment(), View.OnClickListener {
         settingsBinding.toogledns.setOnCheckedChangeListener { _, isChecked ->
             sharesPreference.setdns(isChecked)
         }
-        settingsBinding.sbstreamtoogle.isChecked = sharesPreference.getSB()
-        settingsBinding.sbstreamtoogle.setOnCheckedChangeListener{ _, isChecked ->
-            sharesPreference.setSB(isChecked)
-        }
     }
+
     private fun setupTransitions(view: View) {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        exitTransition = MaterialFadeThrough().apply {
-            duration = 300
-        }
-        reenterTransition = MaterialFadeThrough().apply {
-            duration = 300
-        }
         sharedElementEnterTransition = MaterialContainerTransform().apply {
             drawingViewId = R.id.navHostFragmentContainer
             duration = 300
@@ -93,34 +94,32 @@ class Settings : Fragment(), View.OnClickListener {
             endContainerColor = ContextCompat.getColor(view.context, android.R.color.transparent)
         }
     }
-    private fun qualitydialog(){
-        val qualities = arrayOf("360p","480p","720p","1080p")
-        var checkeditem = 0
-        val alertDialog = AlertDialog.Builder(requireContext(),R.style.RoundedCornersDialog)
-        alertDialog.apply { 
-            setTitle("Preferred Quality")
-            setSingleChoiceItems(qualities,checkeditem) {_,which ->
-                    checkeditem = which
+
+    private fun hidenavbar(){
+        (requireActivity() as MainActivity).barvisibility(View.GONE)
+    }
+
+    private fun serversheet(){
+        val sheet = InputSheet().build(requireContext()){
+            title("Choose Server")
+            with(InputRadioButtons() {
+                required()
+                selected(sharesPreference.getserver())
+                label("Available Servers")
+                options(servers.toMutableList())
+            })
+            onPositive { result ->
+                sharesPreference.setserver(result.getInt("0"))
+                settingsBinding.servertoogle.text = servers[sharesPreference.getserver()]
             }
-            setPositiveButton("OK") {dialog, _ ->
-                sharesPreference.setpreferredquality(qualities[checkeditem])
-                settingsBinding.button.text = qualities[checkeditem]
-                dialog.dismiss()
-            }
-            setNegativeButton("Cancel") {dialog, _ ->
-                dialog.dismiss()
-            }
-            alertDialog.create().show()
         }
+        sheet.show()
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.back -> {
                 findNavController().popBackStack()
-            }
-            R.id.button -> {
-                qualitydialog()
             }
         }
     }

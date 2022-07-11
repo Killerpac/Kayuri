@@ -51,11 +51,10 @@
 
     <ImageButton
         android:id="@+id/exo_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:src="@drawable/ic_media_play"
         android:background="?selectableItemBackgroundBorderless"
-        android:padding="10dp"
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -85,14 +84,13 @@
         android:background="?selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
-        android:padding="10dp"
         android:src="@drawable/ic_media_pause"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.501" />
+ />
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -176,16 +174,16 @@
     android:gravity="center">
 
         <TextView
-            android:id="@+id/skipop"
+            android:id="@+id/previousEpisode"
             android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_marginEnd="40dp"
             android:gravity="center"
-            app:drawableStartCompat="@drawable/ic_iskipop"
             android:fontFamily="@font/work_sans"
-            android:text="@string/skipop"
+            android:text="@string/previous_episode"
             android:textColor="@color/media_player_controls"
             android:textSize="15sp"
+            app:drawableStartCompat="@drawable/ic_prevep"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/previousEpisode"
             app:layout_constraintStart_toStartOf="parent"
@@ -193,20 +191,20 @@
             />
 
         <TextView
-        android:id="@+id/previousEpisode"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="40dp"
-        android:gravity="center"
-        android:fontFamily="@font/work_sans"
-        android:text="@string/previous_episode"
-        android:textColor="@color/media_player_controls"
-        android:textSize="15sp"
-        app:drawableStartCompat="@drawable/ic_prevep"
-        app:layout_constraintStart_toEndOf="@id/skipop"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/exo_speed_selection_view"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+            android:id="@+id/skipop"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="40dp"
+            android:gravity="center"
+            app:drawableStartCompat="@drawable/ic_iskipop"
+            android:fontFamily="@font/work_sans"
+            android:text="Skip OP"
+            android:textColor="@color/media_player_controls"
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@id/skipop"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/exo_speed_selection_view"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/exo_speed_selection_view"

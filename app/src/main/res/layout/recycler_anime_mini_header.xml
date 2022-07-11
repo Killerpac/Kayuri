@@ -4,20 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
     android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/typeName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/raleway_semibold"
-        android:paddingTop="20dp"
-        android:paddingBottom="26dp"
+        android:fontFamily="@font/gotham"
+        android:paddingTop="14dp"
+        android:paddingBottom="24dp"
         android:textColor="@color/recycler_mini_header_title"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

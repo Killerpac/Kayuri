@@ -29,7 +29,7 @@ class GenreViewModel(genreUrl: String) : CommonViewModel2() {
         pageNumber = 1
         val list = _genreList.value
         list?.clear()
-        _genreList.value = list
+        _genreList.value = list.let { list }
         if (!super.isLoading()) {
             genreUrl?.let {
                 compositeDisposable.add(
@@ -64,7 +64,7 @@ class GenreViewModel(genreUrl: String) : CommonViewModel2() {
 
             override fun onNext(response: ResponseBody) {
                 val list = HtmlParser.parseMovie(response = response.string(), typeValue = C.TYPE_DEFAULT)
-                if (list.isNullOrEmpty() || list.size < 20) {
+                if (list.isEmpty() || list.size < 20) {
                     _canNextPageLoaded = false
                 }
                 if (searchType == C.TYPE_GENRE_NEW) {
@@ -73,7 +73,7 @@ class GenreViewModel(genreUrl: String) : CommonViewModel2() {
                 } else if (searchType == C.TYPE_GENRE_UPDATE) {
                     val updatedList = _genreList.value
                     updatedList?.addAll(list)
-                    _genreList.value = updatedList
+                    _genreList.value = updatedList.let { updatedList }
                     updateLoadingState(loading = Loading.COMPLETED, e = null, isListEmpty = isListEmpty())
                 }
                 pageNumber++

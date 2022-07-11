@@ -1,20 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/app_background</item>
+        <item name="android:navigationBarColor">@color/secondary_background</item>
         <item name="android:statusBarColor" tools:targetApi="23">@color/app_background</item>
     </style>
 
-    <style name="VideoPlayer" parent="Theme.AppCompat.Light.NoActionBar">
-
-        <item name="colorPrimary">@color/colorPrimary</item>
+    <style name="VideoPlayer" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="o_mr1">shortEdges</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowNoTitle">true</item>
@@ -23,7 +24,7 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="SplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_drawable</item>
         <item name="android:navigationBarColor">@color/app_background</item>
     </style>
@@ -47,7 +48,7 @@
         <item name="fontFamily">sans-serif</item>
     </style>
 
-    <style name="RoundedCornersDialog" parent="@style/Theme.MaterialComponents.DayNight.Dialog">
+    <style name="RoundedCornersDialog" parent="@style/Theme.AppCompat.Dialog">
         <item name="android:windowBackground">@drawable/dialog_bg</item>
     </style>
 
